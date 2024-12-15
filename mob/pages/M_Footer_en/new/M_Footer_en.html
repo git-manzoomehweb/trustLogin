@@ -1,0 +1,87 @@
+<basis core="dbsource" source="basiscore" name="db" mid="5" lid="2" usedforid="[##cms.cms.ownerid##]">
+    <member name="info" type="view" />
+</basis>
+<div id="footer">
+    <div class="row1-footer font_12">
+        <div class="about-text">
+            <basis core="view" datamembername="db.info">
+                <face filter="prpID=7994">
+                    <h1>Travel agency @answer </h1>
+                </face>
+                <face filter="prpID=7999">
+                    <div> @answer </div>
+                </face>
+                <face filter="prpID=8000">
+                    <div>Phone calls and support : @answer</div>
+                </face>
+            </basis>
+
+        </div>
+        <div>
+            <basis core="view" datamembername="db.info">
+                <face filter="prpID=7994">
+                    <h3>about @answer</h3>
+                </face>
+                <face filter="prpID=8004" replace="true">
+                    <div class="about-text">
+                        @answer
+                    </div>
+                </face>
+                <replace tagname="bold"><b>@val2</b></replace>
+                <replace tagname="link">
+                    <a href="/@val3"> @val2 </a>
+                </replace>
+            </basis>
+        </div>
+    </div>
+    <div class="row2-footer">
+        <p class="row2-footer-section1 float_left font_10">
+            <a class="transition" href="https://cdn.basiscore.net/basisfly.com/Specialized-Travel-Agency-Website-Design"
+                target="_blank">Web
+                Design </a> & <a class="transition" href="https://cdn.basiscore.net/basisfly.com/EN-default.bc"
+                target="_blank">
+                Online Reservation
+            </a><img class="basisfly-logo" src="https://cdn.basiscore.net/basisfly.com/images/basisfly-newlogo.png"
+                alt="basisfly" width="50" height="12">
+        </p>
+        <p class="row2-footer-section2 float_right">
+            <img src="https://cdn.basiscore.net/basisfly.com/images/reservation_trust-login.png" alt="trust-login"
+                width="76" height="15" />
+        </p>
+
+        <div class="clr"></div>
+    </div>
+</div>
+<script type="text/javascript" src="https://cdn.basiscore.net/basisfly.com/js/reservation_menu-responsive.js"></script>
+<script type="text/javascript">
+    $(document).ready(function (e) {
+        $(".about-text").each(function (index, element) {
+            len = $(this).text().length;
+            if (len > 600) {
+                $(this).text($(this).text().substr(0, 600) + '...')
+            }
+        });
+    });
+    //<!---------------js menu--------------->//
+    var menu = new MmenuLight(
+        document.querySelector('#menu'),
+        'all'
+    );
+    var navigator = menu.navigation({
+        selectedClass: 'Selected',
+        slidingSubmenus: true,
+        theme: 'light',
+        title: 'Online reservation... '
+    });
+
+    var drawer = menu.offcanvas({
+        position: 'left'
+    });
+
+    //	Open the menu.
+    document.querySelector('a[href="#menu"]')
+        .addEventListener('click', evnt => {
+            evnt.preventDefault();
+            drawer.open();
+        });
+</script>

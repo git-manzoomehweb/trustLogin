@@ -1,0 +1,316 @@
+<basis core="call" file="Client_CheckRkey.inc"></basis> <!-- updated login -->
+    
+    <basis core="group" name="0" if="[##db.checkrkey.userid|(0)##]=0">
+    <p style="text-align:center;font-family:tahoma">You are not allowed to access this page</p>
+    </basis>
+    
+    <basis core="group" name="1" if="[##db.checkrkey.userid|(0)##]<>0">  
+        <basis core="external.fly.ws" procedurename="dbsource" source="cmsDbService2" name="db">
+            <member name="get_unit_currency" method="cms" query='{
+                "name": "db",
+                "mid": "20",
+                "member": [
+                    {
+                        "type": "list",
+                        "dmnid": "[##cms.cms.domainid##]",
+                        "name": "q",
+                        "lid": "2",
+                        "request": "get_unit_currency"
+                    }
+                ]
+            }' />
+        </basis> 
+        <basis core="group" name="Delay_1">
+            <basis core='inlinesource' name='db' >
+                <member name='unit_title' format="json" preview="" postsql="select value from [db.unit_title] where field = 'title'" >
+                    {"root": [##db.get_unit_currency.result##]}
+                </member>
+            </basis>
+        <basis core="dbsource" source="trust_login" mid="24" name="db" lid="1" ownerid="[##cms.cms.ownerid##]" >
+        <member name="dmnid" type="scalar" request="getdmnid" preview=""/>
+        </basis>
+    
+        <basis core="group" name="G1">
+        <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource" >
+        <member 
+        name="online_charging"
+        method="cms"
+        query='{ 
+        "name": "db",
+        "mid": "20",
+        "member":[{ 
+        "name": "q", 
+        "type":"list",
+        "request": "Allow_Online_Charging",
+        "userid": "[##db.checkrkey.userid|(0)##]",
+        "dmnid":"[##db.dmnid.dmnid##]"
+        }]} '  />
+        </basis>
+    
+        <basis core="group" name="DelayTwo">
+        <basis core="inlinesource" name="db">
+       
+        <member 
+           name="ownerid" 
+           format="json" 
+           preview="" 
+           postsql="select value from [db.ownerid] where field = 'ownerid'"> 
+           {"root":[##db.online_charging.result##]}
+        </member>
+        <member 
+           name="code" 
+           format="json" 
+           preview="" 
+           postsql="select value from [db.code] where field = 'code'"> 
+           {"root":[##db.online_charging.result##]}
+        </member>
+        <member 
+        name="credit" 
+        format="json" 
+        preview="" 
+        postsql="select value from [db.credit] where field = 'credit'"> 
+        {"root":[##db.online_charging.result##]}
+     </member>
+    </basis>
+    
+        <basis core="group" name="charging1" if="[##db.code.Value##]='0'">
+            <p style="text-align:center;font-family:tahoma">You are not allowed to access this page</p>
+        </basis>
+    
+        <basis core="group" name="charging2" if="[##db.code.Value##]<>'0'">
+          <!doctype html>
+            <html>
+                <head>
+                    <title></title>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+                    <style type="text/css">
+                        <basis core="call" file="EN-Panel_User_css.inc"/>
+                    </style>
+                    <link rel="stylesheet" href="/css/Panel-master-css.css" type="text/css">
+                    <script src="[##cms.cms.cdn##]/_js/jquery-1.8.0.min.js"></script>       
+                </head>
+    
+                <body>
+                    <div class="Panel_Container">
+                        <basis core="call" file="EN-Panel-Menu.inc" />
+                        <div class="Panel_Wrraper_Box">
+                            <basis core="call" file="EN-Panel-Dashboard-Header.inc" />
+                            <basis core="call" file="EN-Panel-Icon.inc"/>
+                            <basis core="group" name="credit" if="'[##db.credit.Value##]'<>''">
+                                <div class="Panel_Box">
+                                    <div class="Panel_Box_title">
+                                        <span>Credit</span>
+                                    </div>
+                                    <div class="Panel_Box_Content" style="margin-bottom: 30px;">
+                                        <span>Residual credit</span>
+                                        <input class="cost_credit" type="text" onkeyup="Seprator(this)" readonly value="[##db.credit.Value##]"><span>[##db.unit_title.Value##]</span>
+                                        
+                                    </div>
+                                </div>
+                            </basis>
+                            <div class="Panel_Box">
+                                <div class="Panel_Box_title">
+                                    <span>Online charging</span>
+                                </div>
+                                <div class="Panel_Box_Content" style="margin-bottom: 30px;">
+                                    <span>Enter the amount to pay the online charge</span>
+                                    <input class="cost_onlineCharging seprator" type="text" onkeyup="Seprator(this)">
+                                    <button class="pay_charging">the payment</button>
+                                </div>
+    
+                               <div class="Panel_invoice_View">
+                                    <div class="Panel_Box_title">List of payment gateways</div>
+                                    <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource" >
+                                        <member 
+                                        name="webservice_list"
+                                        method="cms"
+                                        query='
+                                        { 
+                                            "name": "db",
+                                            "mid": "20",
+                                            "member":
+                                            [
+                                                { 
+                                                    "name": "q", 
+                                                    "type":"list",
+                                                    "request": "webservice_list",
+                                                    "type": "5",
+                                                    "lid": "2"
+                                                }
+                                            ] 
+                                        } '  />
+                                    </basis>
+                                    <basis core="group" name="info">
+                                        <basis core="inlinesource" name="db" >
+                                              <member name="bank" format="json"   postsql="select  Id , ParentId , case when trim(Field) is null  then  (select field from [db.bank] where id = m.parentid )else field end as field, value , type , path  from [db.bank] as m">{"root":[##db.webservice_list.result##]}</member>
+                                        </basis>
+                                        <basis core="tree" datamembername="db.bank" idcol="id" parentidcol="parentid" nullvalue="null">
+                                                <face filter="ParentId in ('1')"> 
+                                                    <table class="invoice_tbl PaymentTable">
+                                                        <thead>
+                                                            <tr>
+                                                               <th>Payment gateway</th>
+                                                               <th>Payment link</th>
+                                                               <th>The amount payable</th>
+    
+                                                            </tr>
+                                                        </thead>
+                                                       <tbody class="invoice_tbody">@child</tbody>
+                                                    </table>
+                                                </face>
+                                                 <face filter="Field in ('bank') and type in ('Object')">
+                                                     <tr>@child</tr>
+                                                 </face>
+                                                 <face filter="Field in ('id')"><td><input type="hidden" name="id" value="@value" class="bankId"></face>
+                                                 <face filter="Field in ('logo')"><span><img src="@value" width="45"></span></td></face>
+                                                 <face filter="Field in ('persianName')">
+                                                    <td><span class="button_payment" style="cursor: pointer;" onclick="button_payment(this)">Click here to pay online through the @value portal</span></td>
+                                                    
+                                                </face>
+                                                <face filter="field = 'unit'">
+                                                    <td>
+                                                    <input type="hidden" value="@value" class="webservice-unit">
+                                                </face>
+                                                <face filter="field = 'moneytype'">
+                                                    <span class="Panel_Seprator"
+                                                    style="margin-left: 10px;"></span><span> @value </span></td>
+                                                </face>
+                                                 <face filter="type in ('array','object')">@child</face>
+                                             </basis>
+                                            </basis>
+                                </div>
+                            </div>
+                            <div class="Panel_Box online_charging_list">
+                               
+                            </div>
+    
+                            <basis core="call" file="EN-Panel-Dashboard-Footer.inc" />
+                        </div>
+    
+                        <div class="clr"></div>
+                    </div>
+                    <div class="form_payment"></div>
+    
+                    <script src="[##cms.cms.cdn##]/_js/User_Panel.js"></script>                 
+                    <style type="text/css">
+                        @font-face{font-family:'IRANSansWeb';src:url('http://cdn.basiscore.net/_fonts/IRANSansWeb.eot');src:local('?'),url('http://cdn.basiscore.net/_fonts/IRANSansWeb.woff2') format("woff"),url('http://cdn.basiscore.net/_fonts/IRANSansWeb.ttf') format("truetype"),url('http://cdn.basiscore.net/_fonts/IRANSansWeb.otf') format("otf");font-weight:400;font-style:normal}
+                        @font-face{font-family:'FontAwesome';src:local('FontAwesome'),url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.eot?#iefix');src:local('?'),url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.woff') format("woff"),url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.ttf') format("truetype"),url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.otf') format("otf");font-weight:400;font-style:normal}
+    
+                        @font-face{font-family:'IRANSansWeb';src:url('https://cdn.basiscore.net/_fonts/IRANSansWeb.eot');src:local('?'),url('https://cdn.basiscore.net/_fonts/IRANSansWeb.woff2') format("woff"),url('https://cdn.basiscore.net/_fonts/IRANSansWeb.ttf') format("truetype"),url('https://cdn.basiscore.net/_fonts/IRANSansWeb.otf') format("otf");font-weight:400;font-style:normal}
+                        @font-face{font-family:'FontAwesome';src:local('FontAwesome'),url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.eot?#iefix');src:local('?'),url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.woff') format("woff"),url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.ttf') format("truetype"),url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.otf') format("otf");font-weight:400;font-style:normal}
+                        .cost_onlineCharging,.cost_credit{
+                            display: inline-block;
+                            width: 120px;
+                            color:#5b5959;
+                            box-sizing: border-box;
+                            font-family: 'IRANSansWeb';
+                            font-size: 12px;
+                            border: 1px solid #C7D6DB;
+                            background:#f7f9fb;
+                            border-radius: 4px;
+                            padding: 2px;
+                            margin: 2px;
+                        }
+                        .pay_charging{
+                            font-family: 'IRANSansWeb';
+                            font-size: 12px;
+                            cursor: pointer;
+                            border-radius: 5px;
+                            text-align: center;
+                            width: 75px;
+                            padding: 3px;
+                            margin: 3px;
+                            display: inline-block;
+                            box-sizing: border-box;
+                            border: 1px solid #C7D6DB;
+                        }
+
+                        .Panel_invoice_View{display: none;}
+    
+                    </style>  
+                    <script type="text/javascript">
+                        $(".cost_credit").each(function  () {
+                            $(this).val(new Intl.NumberFormat().format($(this).val()))
+                       })
+                        function Seprator(a)
+                        {
+                            $(a).keyup(function(event) 
+                            {
+                                if(event.which >= 37 && event.which <= 40) return;
+                                $(this).val(function(index, value) 
+                                {
+                                    return value
+                                    .replace(/\D/g, "")
+                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                                    ;
+                                });
+                            });
+                        }
+    
+                        function button_payment(a)
+                        {
+                            var phonenumber = $(".user-mobile-info").val();
+                            var bankId=$(a).closest('tr').find(".bankId").val()
+                            var x = $(".cost_onlineCharging").val();
+                            var y = x.split(",");
+                            var z = "";
+                            for (var i = 0; i < y.length; i++) {
+                                z += y[i]
+                            };
+                            var form='<form action="/EN-Panel_charging_Connecting_Bank.bc" method="post"><input type="hidden" name="phonenumber" value="' + phonenumber +
+                            '"><input type="hidden" name="bank_id" value="'+bankId+'"><input type="hidden" name="price_charging" value="'+z+'"><input type="hidden" name="reciverownerid" value="[##db.ownerid.Value##]"><input type="hidden" name="userid" value="[##db.checkrkey.userid|(0)##]"></form>'
+                            $(".form_payment").html(form)
+                            if (bankId == '71') {
+                                $(a).closest(".Panel_Box").append('<div class="ajax_loading" style="text-align: center;"><div class="loader"></div> </div>');
+                                $.ajax({
+                                    url: $(".form_payment").find("form").attr("action"),
+                                    type: $(".form_payment").find("form").attr("method"),
+                                    data: $($(".form_payment").find("form")).serialize(),
+                                    success: function (response) {
+                                        $(a).closest(".Panel_Box").find(".ajax_loading").remove();
+                                        $(a).closest(".Panel_Box").append(response);
+                                    }
+                                });
+                            }else{
+                                $(".form_payment").find("form").submit()
+                            }
+                        }
+    
+                        $(".pay_charging").click(function(){
+                            
+                            $(this).closest(".Panel_Box_Content").next(".Panel_invoice_View").find(".Panel_Seprator").
+                            text($(this).siblings(".cost_onlineCharging").val())
+                            if (($(this).siblings(".cost_onlineCharging").val() !="0") && ($(this).siblings(".cost_onlineCharging").val() !="")){
+                                 $(".Panel_invoice_View").css("display","block")
+                                }
+                        
+                        })
+    
+                        $.ajax({
+                          url:"/EN-Panel_search_OnlineCharging.bc",
+                          type:"post",
+                          data:{
+                            supplierdmnid: '[##db.dmnid.dmnid##]',
+                            reciverownerid : '[##db.ownerid.Value##]',
+                            unit_title : '[##db.unit_title.Value##]',
+                            lid : '2'
+                            },
+                            success: function(result){
+                              $(".online_charging_list").empty().html(result)
+                            }
+                        });
+    
+    
+                       
+    
+                    </script>         
+                </body>
+            </html>
+        </basis>
+    
+    
+    </basis>
+    </basis>
+    </basis>
+</basis>

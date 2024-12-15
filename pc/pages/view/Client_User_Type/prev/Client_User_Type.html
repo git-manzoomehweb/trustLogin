@@ -1,0 +1,19 @@
+<basis core="dbsource" source="trust_login8" mid="24" name="db" lid="1" rkey="[##cms.cookie.rkey##]">
+    <member name="useridmain" type="scalar" request="userid" preview="" />
+</basis>
+<basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+    <member method="cms" name="get_account_type" query='{
+        "name": "db",
+        "mid": "20",
+        "member": [
+            {
+                "type": "list",
+                "name": "credit",
+                "request": "get_account_type",
+                "userid": "[##db.useridmain.userid##]",
+                "dmnid": "[##cms.cms.domainid##]"
+            }
+        ]
+    } ' />
+</basis>
+[##db.get_account_type.result##]

@@ -1,0 +1,267 @@
+<basis core="dbsource" source="basiscore" lid="1" mid="20" name="tour">
+    <member name="cat" type="tree" request="cat" parentid="0" order="ord"
+        postsql="select catid,title,parentid,link from [tour.cat] where parentid in(152072,152083,152088)" />
+</basis>
+<basis core="dbsource" source="basiscore" lid="1" mid="1" name="article">
+    <member name="cat" type="tree" request="cat" parentid="0"
+        postsql="select catid,title,parentid,link from [article.cat] where parentid in(152073,152075,152076,152077,152078,152306,152402)" />
+</basis>
+<basis core="dbsource" source="basiscore" name="db" mid="5" lid="1" usedforid="[##cms.cms.ownerid##]">
+    <member name="info" type="view" />
+</basis>
+
+<header class="header p-relative">
+    <section class="bc-main">
+        <div class="first-part-header">
+            <div class="float-right width_70 font_14 dir-rtl">
+                <nav class="section-menu p-relative">
+                    <ul class="nav-bar">
+                        <li class="menu-item"><a href="/" class="color_2">صفحه اصلی</a></li>
+                        <li class="menu-item menu-item-has-children p-relative">
+                            <a href="">تورها <i class="fa fa-angle-down"></i></a>
+                            <basis core="tree" datamembername="tour.cat" idcol="catid" parentidcol="parentid"
+                                nullvalue="152072">
+                                <layout>
+                                    <ul class="sub-menu">
+                                        @child
+                                    </ul>
+                                </layout>
+                                <face level="end" filter="link is null">
+                        <li><a href="/tour-list.bc?catid=@catid"> @title</a></li>
+                        </face>
+                        <face level="end">
+                            <li><a href="/@link"> @title</a></li>
+                        </face>
+                        <face level="1" filter="link is null">
+                            <li><a href="/tour-list.bc?catid=@catid"> @title <small class="icon-arrow"></small></a>
+                                <ul class="sub-menu">
+                                    @child
+                                </ul>
+                            </li>
+                        </face>
+                        <face level="1">
+                            <li><a href="/@link"> @title <small class="icon-arrow"></small></a>
+                                <ul class="sub-menu">
+                                    @child
+                                </ul>
+                            </li>
+                        </face>
+
+                        <face level="2" filter="link is null">
+                            <li><a href="/tour-list.bc?catid=@catid"> @title <small class="icon-arrow"></small></a>
+                                <ul class="sub-menu">
+                                    @child
+                                </ul>
+                            </li>
+                        </face>
+                        <face level="2">
+                            <li><a href="/@link"> @title <small class="icon-arrow"></small></a>
+                                <ul class="sub-menu">
+                                    @child
+                                </ul>
+                            </li>
+                        </face>
+                        </basis>
+                        </li>
+                        <li class="menu-item menu-item-has-children p-relative"><a href="">مجله گردشگری <i
+                                    class="fa fa-angle-down"></i></a>
+                            <basis core="tree" dataMemberName="article.cat" idCol="catid" parentidCol="ParentID"
+                                nullvalue="152073">
+                                <layout>
+                                    <ul class="sub-menu">
+                                        @child
+                                    </ul>
+                                </layout>
+                                <face level="end" filter="link is null">
+                        <li><a href="/article-list.bc?catid=@catid"> @title</a></li>
+                        </face>
+                        <face level="end">
+                            <li><a href="/@link"> @title</a></li>
+                        </face>
+                        <face level="1" filter="link is null">
+                            <li><a href="/article-list.bc?catid=@catid"> @title <small class="icon-arrow"></small></a>
+                                <ul class="sub-menu">
+                                    @child
+                                </ul>
+                            </li>
+                        </face>
+                        <face level="1">
+                            <li><a href="/@link"> @title <small class="icon-arrow"></small></a>
+                                <ul class="sub-menu">
+                                    @child
+                                </ul>
+                            </li>
+                        </face>
+                        <face level="2" filter="link is null">
+                            <li><a href="/article-list.bc?catid=@catid"> @title <small class="icon-arrow"></small></a>
+                                <ul class="sub-menu">
+                                    @child
+                                </ul>
+                            </li>
+                        </face>
+                        <face level="2">
+                            <li><a href="/@link"> @title <small class="icon-arrow"></small></a>
+                                <ul class="sub-menu">
+                                    @child
+                                </ul>
+                            </li>
+                        </face>
+                        </basis>
+                        </li>
+                        <li class="menu-item"><a href="درخواست-ویزا">درخواست ویزا</a></li>
+                        <li class="menu-item"><a href="تماس-با-ما">درباره ما </a></li>
+                        <li>
+                            <div
+                                class="Login_Information background-color_2 color_white btn_1 hvr-icon-wobble-vertical transition hvr-ripple-out">
+                                <span>ورود اعضا</span>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="float-left width_30">
+                <a href="/" class="float_left">
+                    <img class="logo" src="[##cms.cms.cdn##]/images/logo.png" width="150" height="100" alt="فرافلای" />
+                </a>
+                <div class="info-tel font_15">
+                    <span class="tel"><i class="fas fa-phone font-color_1"></i>
+
+                        <a href="tel:02144645858"> 02144645858</a>
+
+                    </span>
+                </div>
+            </div>
+            <div class="clr"></div>
+        </div>
+        <div class="second-part-header p-relative unvisible dir-rtl text-center font_16">
+            <div class="col1-second-part-header float-right"><a href="#menu" class="menu_link"><span></span></a></div>
+            <div class="col2-second-part-header float-right"><a href="/"><img src="[##cms.cms.cdn##]/images/M_logo.png"
+                        alt="فراسوی لیان" width="" height="80" /></a></div>
+            <div class="col3-second-part-header float-left p-relative"></div>
+            <nav id="menu" class="unvisible">
+                <div class="top-menu"><img src="[##cms.cms.cdn##]/images/M_logo.png" alt="فراسوی لیان" width=""
+                        height="90" />
+                </div>
+                <ul>
+                    <li class="Selected"><a href="/"><i class="fa fa-home"></i>صفحه اصلی</a>
+                    </li>
+                    <li><i class="fa fa-user"></i><span>حساب کاربری</span>
+                        <ul>
+                            <li class="Login-statusAllowed"><a onclick="Login_funcmob(this)" class="Login-options"
+                                    data-type="2"><i class="fa fa-sign-in-alt"></i>ورود به حساب کاربری</a></li>
+                            <li><a onclick="Login_funcmob(this)" class="Login-options" data-type="3"><i
+                                        class="fa fa-user"></i>ثبت نام</a></li>
+                            <li><a onclick="Login_funcmob(this)" class="Login-options" data-type="4"><i
+                                        class="fa fa-unlock"></i>بازیابی کلمه عبور</a>
+                            </li>
+                            <li><a onclick="Login_funcmob(this)" class="Login-options" data-type="5"><i
+                                        class="fa fa-user"></i>ارسال مجدد ایمیل</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <basis core="tree" datamembername="tour.cat" idcol="catid" parentidcol="parentid"
+                        nullvalue="152072">
+                        <layout>
+                            <li><i class="fa fa-link"></i><span>تورها</span>
+                                <ul>
+                                    @child
+                                </ul>
+                            </li>
+                        </layout>
+                        <face level="end" filter="link is null">
+                            <li><a href="/tour-list.bc?catid=@catid"> <i class="fa fa-link"></i>@title</a></li>
+                        </face>
+                        <face level="end">
+                            <li><a href="/@link"><i class="fa fa-link"></i> @title</a></li>
+                        </face>
+                        <face level="1" filter="link is null">
+                            <li><span class="font-weight"> @title</span>
+                                <ul>
+                                    <li><a href="/tour-list.bc?catid=@catid"><i class="fa fa-link"></i> @title </a></li>
+                                    @child
+                                </ul>
+                            </li>
+                        </face>
+                        <face level="1">
+                            <li><span class="font-weight"> @title</span>
+                                <ul>
+                                    <li><a href="/@link"> <i class="fa fa-link"></i>@title </a></li>
+                                    @child
+                                </ul>
+                            </li>
+                        </face>
+                        <face level="2" filter="link is null">
+                            <li><span class="font-weight"> @title</span>
+                                <ul>
+                                    <li><a href="/tour-list.bc?catid=@catid"><i class="fa fa-link"></i> @title </a></li>
+                                    @child
+                                </ul>
+                            </li>
+                        </face>
+                        <face level="2">
+                            <li><span class="font-weight"> @title</span>
+                                <ul>
+                                    <li><a href="/@link"> <i class="fa fa-link"></i>@title </a></li>
+                                    @child
+                                </ul>
+                            </li>
+                        </face>
+                    </basis>
+                    <li><a><i class="fa fa-link"></i>مجله گردشگری</a>
+                        <basis core="tree" dataMemberName="article.cat" idCol="catid" parentidCol="ParentID"
+                            nullvalue="152073">
+                            <layout>
+                                <ul>
+                                    @child
+                                </ul>
+                            </layout>
+                            <face level="end" filter="link is null">
+                    <li><a href="/article-list.bc?catid=@catid"><i class="fa fa-link"></i> @title</a></li>
+                    </face>
+                    <face level="end">
+                        <li><a href="/@link"> <i class="fa fa-link"></i>@title</a></li>
+                    </face>
+                    <face level="1" filter="link is null">
+                        <li><span class="font-weight"> @title</span>
+                            <ul>
+                                <li><a href="/article-list.bc?catid=@catid"><i class="fa fa-link"></i> @title </a></li>
+                                @child
+                            </ul>
+                        </li>
+                    </face>
+                    <face level="1">
+                        <li><span class="font-weight"> @title</span>
+                            <ul>
+                                <li><a href="/@link"><i class="fa fa-link"></i> @title </a></li>
+                                @child
+                            </ul>
+                        </li>
+                    </face>
+                    <face level="2" filter="link is null">
+                        <li><span class="font-weight"> @title</span>
+                            <ul>
+                                <li><a href="/article-list.bc?catid=@catid"><i class="fa fa-link"></i> @title </a></li>
+                                @child
+                            </ul>
+                        </li>
+                    </face>
+                    <face level="2">
+                        <li><span class="font-weight"> @title</span>
+                            <ul>
+                                <li><a href="/@link"> <i class="fa fa-link"></i>@title </a></li>
+                                @child
+                            </ul>
+                        </li>
+                    </face>
+                    </basis>
+                    </li>
+                    <li><a href="درخواست-ویزا">درخواست ویزا</a></li>
+                    <li><a href="تماس-با-ما"><i class="fa fa-phone"></i>ارتباط با ما</a></li>
+                </ul>
+            </nav>
+            <div class="clr"></div>
+        </div>
+        <div class="clr"></div>
+    </section>
+    <div class="clr"></div>
+</header>

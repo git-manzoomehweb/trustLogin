@@ -1,0 +1,62 @@
+<basis core="group" name="hasNot-rkey" if="'[##cms.cookie.rkey##]' = ''">
+    <basis core="external.fly.ws" source="cmsDbService[##cms.form.sid|(2)##]" procedurename="dbsource" name="db">
+        <member name="oneway_train" method="train"  postsql="select replace(replace(replace(replace(replace(replace(replace(replace(result,'None','null'),'undefined','null'),'\xa0',' '),'/x',' '),'\x',' '),'nan','null'),' inf','null'),' -inf' , 'null') as 'result' from [db.oneway_train]" query='{
+            "name": "db",
+            "mid": "20",
+            "member": [
+                {
+                    "type": "list",
+                    "name": "q",
+                    "request": "onewaysearch",
+                    "IP": "[##cms.request.clientip##]",
+                    "fromcity": "[##cms.form.from##]",
+                    "tocity": "[##cms.form.to##]",
+                    "date": "[##cms.form.fdate##]",
+                    "adultcount": "[##cms.form.adult##]",
+                    "userid": "0",
+                    "trackingNo": "[##cms.cookie.trackingid##]",
+                    "childcountandage": "[##cms.form.child##][##cms.form.select-age##]",
+                    "PrivateCompartment": "[##cms.form.PrivateCompartment##]",
+                    "CompartmentType": "[##cms.form.CompartmentType##]",
+                    "dmnid": "[##cms.cms.domainid##]",
+                    "lid": "[##cms.form.clid|(1)##]",
+                    "schemaid":"401",
+                    "unit": "10"
+                }
+            ]
+        } ' preview=""/>
+       </basis>
+       [##db.oneway_train.result##]
+
+</basis>
+<basis core="group" name="has-rkey" if="'[##cms.cookie.rkey##]' <> ''">
+   <basis core="call" file="Client_CheckRkey.inc"></basis>
+    <basis core="external.fly.ws" source="cmsDbService[##cms.form.sid|(2)##]" procedurename="dbsource" name="db">
+        <member name="oneway_train" method="train"  postsql="select replace(replace(replace(replace(replace(replace(replace(replace(result,'None','null'),'undefined','null'),'\xa0',' '),'/x',' '),'\x',' '),'nan','null'),' inf','null'),' -inf' , 'null') as 'result' from [db.oneway_train]" query='{
+            "name": "db",
+            "mid": "20",
+            "member": [
+                {
+                    "type": "list",
+                    "name": "q",
+                    "request": "onewaysearch",
+                    "IP": "[##cms.request.clientip##]",
+                    "fromcity": "[##cms.form.from##]",
+                    "tocity": "[##cms.form.to##]",
+                    "date": "[##cms.form.fdate##]",
+                    "adultcount": "[##cms.form.adult##]",
+                    "userid": "[##db.checkrkey.userid##]",
+                    "trackingNo": "[##cms.cookie.trackingid##]",
+                    "childcountandage": "[##cms.form.child##][##cms.form.select-age##]",
+                    "PrivateCompartment": "[##cms.form.PrivateCompartment##]",
+                    "CompartmentType": "[##cms.form.CompartmentType##]",
+                    "dmnid": "[##cms.cms.domainid##]",
+                    "lid": "[##cms.form.clid|(1)##]",
+                    "schemaid":"401",
+                    "unit": "10"
+                }
+            ]
+        } ' preview=""/>
+       </basis>
+       [##db.oneway_train.result##]
+</basis>

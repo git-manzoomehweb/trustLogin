@@ -1,0 +1,66 @@
+<basis core="group" name="hasNot-rkey" if="'[##cms.cookie.rkey##]' = ''">
+    <basis core="external.fly.ws" source="cmsDbService2" procedurename="dbsource" name="db">
+        <member name="backtoback" method="flight"
+            postsql="select replace(replace(replace(replace(replace(replace(replace(replace(result,'None','null'),'undefined','null'),'\xa0',' '),'/x',' '),'\x',' '),'nan','null'),' inf','null'),' -inf' , 'null') as 'result' from [db.backtoback]"
+            query='{
+            "name": "db",
+            "mid": "20",
+            "member": [
+                {
+                    "type": "list",
+                    "name": "q",
+                    "request": "backtobacksearch",
+                    "IP": "[##cms.request.clientip##]",
+                    "userAgent": "[##cms.request.user-agent##]",
+                    "fromcity": "[##cms.query.from##]",
+                    "tocity": "[##cms.query.to##]",
+                    "departuredate": "[##cms.query.fdate##]",
+                    "returndate": "[##cms.query.tdate##]",
+                    "adultcount": "[##cms.query.adult##]",
+                    "userid": "0",
+                    "trackingNo": "[##cms.cookie.trackingid##]",
+                    "share": "[##cms.query.share##]",
+                    "childcountandage": "[##cms.query.child##][##cms.query.select-age##]",
+                    "classname": ["[##cms.query.FlightClass##]"],
+                    "lid": "[##cms.query.clid|(1)##]",
+                    "unit": "10"
+                }
+            ]
+        } ' preview="" />
+    </basis>
+    [##db.backtoback.result##]
+
+</basis>
+<basis core="group" name="has-rkey" if="'[##cms.cookie.rkey##]' <> ''">
+    <basis core="call" file="Client_CheckRkey.inc"></basis>
+    <basis core="external.fly.ws" source="cmsDbService2" procedurename="dbsource" name="db">
+        <member name="backtoback" method="flight"
+            postsql="select replace(replace(replace(replace(replace(replace(replace(replace(result,'None','null'),'undefined','null'),'\xa0',' '),'/x',' '),'\x',' '),'nan','null'),' inf','null'),' -inf' , 'null') as 'result' from [db.backtoback]"
+            query='{
+            "name": "db",
+            "mid": "20",
+            "member": [
+                {
+                    "type": "list",
+                    "name": "q",
+                    "request": "backtobacksearch",
+                    "IP": "[##cms.request.clientip##]",
+                    "userAgent": "[##cms.request.user-agent##]",
+                    "fromcity": "[##cms.query.from##]",
+                    "tocity": "[##cms.query.to##]",
+                    "departuredate": "[##cms.query.fdate##]",
+                    "returndate": "[##cms.query.tdate##]",
+                    "adultcount": "[##cms.query.adult##]",
+                    "userid": "[##db.checkrkey.userid##]",
+                    "trackingNo": "[##cms.cookie.trackingid##]",
+                    "share": "[##cms.query.share##]",
+                    "childcountandage": "[##cms.query.child##][##cms.query.select-age##]",
+                    "classname": ["[##cms.query.FlightClass##]"],
+                    "lid": "[##cms.query.clid|(1)##]",
+                    "unit": "10"
+                }
+            ]
+        } ' preview="" />
+    </basis>
+    [##db.backtoback.result##]
+</basis>

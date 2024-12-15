@@ -1,0 +1,381 @@
+<basis core="call" file="Client_CheckRkey.inc"></basis> <!-- updated login -->
+    
+<basis core="group" name="0" if="[##db.checkrkey.userid|(0)##]=0">
+    <p style="text-align:center;font-family:tahoma">You are not allowed to access this page</p>
+</basis>
+    
+<basis core="group" name="1" if="[##db.checkrkey.userid|(0)##]<>0">   
+  
+    <basis core="group" name="Delay_1">
+        <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource" >
+            <member 
+            name="HotelGroup-Item"  method="panel"
+            query= '{ 
+             "name": "db",
+             "mid": "20",
+             
+             "schema": 
+             {
+                "countries": {
+                    "action": "find",
+                    "map": "countries",
+                    "options": {
+                        "id": {
+                            "action": "find",
+                            "map": "id"
+                        },
+                        "name": {
+                            "action": "find",
+                            "map": "name"
+                        }
+                    }
+                },
+                "cities": {
+                    "action": "find",
+                    "map": "cities",
+                    "options": {
+                        "id": {
+                            "action": "find",
+                            "map": "id"
+                        },
+                        "name": {
+                            "action": "find",
+                            "map": "name"
+                        }
+                    }
+                },
+                "views": {
+                    "action": "find",
+                    "map": "views",
+                    "options": {
+                        "id": {
+                            "action": "find",
+                            "map": "id"
+                        },
+                        "name": {
+                            "action": "find",
+                            "map": "name"
+                        }
+                    }
+                }
+            },
+             "member":[{ 
+             "type":"list",
+             "name": "q",
+             "request": "Panel_HotelGroup_Item",
+             "lid":"2",
+             "dmnid" : "[##cms.cms.domainid##]"}] 
+            }' />
+        </basis>
+        <basis core="group" name="Delay_2">
+            <basis core="inlinesource" name="db">
+                <member name="HotelGroup-Item-Tree" format="json">{"root":[##db.HotelGroup-Item.result##]}</member>
+            </basis>
+
+            <!doctype html>
+            <html>
+                <head>
+                    <title>List of hotels</title>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+                    <style type="text/css">
+                        <basis core="call" file="EN-Panel_User_css.inc"/>
+                        <basis core="call" file="EN-Panel-Basis_Calendar_css.inc"/>
+                    </style>
+             
+                    <style type="text/css">
+                        <basis core="call" file="EN-Panel-Basis_Calendar_css.inc"/>
+                    </style>
+                    <script src="[##cms.cms.cdn##]/_js/jquery-1.8.0.min.js"></script> 
+                    <script type="text/javascript">
+                        <basis core="call" file="EN-Panel-Basis_Calendar_js.inc"/>
+                    </script>
+                    <style type="text/css">
+                        .searchhotel {
+                          width: 50%;
+                          float: right;
+                        }
+                        .tooltip {
+                          visibility: hidden;
+                          position: absolute;
+                          padding: 4px 8px;
+                          background: #555;
+                          bottom: -35px;
+                          color: #fff;
+                          text-align: center;
+                          z-index: 999;
+                          left: 8px;
+                          opacity: 0;
+                          border-radius: 5px;
+                        border-top-left-radius: 0;
+                        }
+                        .tooltip::after {
+                          content: '';
+                          width: 0;
+                          height: 0;
+                          border-bottom: 5px solid #555;
+                          border-left: 5px solid transparent;
+                          border-right: 5px solid transparent;
+                          top: -5px;
+                          left: 0;
+                          position: absolute;
+                        }
+                        .fa-search-plus::before {
+                          content: "\f00e";
+                        }
+                        .e1::before {
+                          content: '\f00c ';
+                          color: #72c279;
+                        }
+                        .e0::before {
+                          content: '\f00d ';
+                          color: #e62929;
+                        }
+                        .Panel_invoice_List .tbody_row tr:last-child {
+                          display: none;
+                        }
+                        .Panel_invoice_List table tr td a:hover {
+                         
+                          transform: none;
+                        }
+                        .btn-default:hover .tooltip{opacity:1;visibility:visible}
+                    </style>
+                </head>
+
+                <body>
+                    <div class="Panel_Container">
+                        <basis core="call" file="EN-Panel-Menu_HotelManager.inc" />
+                        <div class="Panel_Wrraper_Box">
+                             <basis core="call" file="EN-Panel-Dashboard-Header.inc" />
+                            <basis core="call" file="EN-Panel-Icon.inc"/>              
+                           
+
+                            <div class="ScrollTop"></div>
+                            
+                            <div class="Panel_Box"> 
+                                <div class="section_load_data"></div>      
+                                <form action="/EN-Panel_Hotel_List_Result.bc?page=1" method="post"  onsubmit="return validateForm()" class="Panel_form_search">                   
+                                    <div class="Panel_Box_title">
+                                        <span>Search in hotel</span>
+                                        <button class="Panel_Edit_icon search" style="background:none;border:0;cursor:pointer;"></button>         
+                                    </div>
+
+                                    <div class="Panel_Box_Content">
+                                        <div class="penel_invoice_SearchBox">                                    
+                                            
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <ul style="width: 100%;">
+                                                            <li class="searchhotel">
+                                                                <div class="Panel_search_title">HotelgroupName</div>
+                                                                <div class="Panel_search_content"><input autocomplete="off" type="text" name="groupname"></div>
+                                                                <div class="clr"></div>                  
+                                                            </li>
+                                                            <li class="searchhotel">
+                                                                <div class="Panel_search_title">HotelName</div>
+                                                                <div class="Panel_search_content"><input autocomplete="off" type="text" name="hotelname"></div>
+                                                                <div class="clr"></div>                  
+                                                            </li>
+                                                            <li class="searchhotel">
+                                                                <div class="Panel_search_title">country </div>
+                                                                <div class="Panel_search_content">
+                                                                        <div class="Inner_Panel_search_content">
+                                                                            <i class="fa fa-spinner"></i> 
+                                                                            <select class="filter  search_input search_select countrySearch" name="country" >
+                                                                                <option value="">-</option>
+                                                                                <basis core="tree" datamembername="db.HotelGroup-Item-Tree" idcol="id" parentidcol="parentid" nullvalue="null">
+                                                                                  <face filter="Field in ('cities','views') and type in ('array')"></face>
+                                                                                  <face filter="Field in ('countries') and type in ('array')">@child</face>
+                                                                                  <face filter="Field in ('id')"><option value="@Value"></face>
+                                                                                  <face filter="Field in ('name')">@Value</option></face>
+                                                                                  <face filter="type in ('array','object')">@Child</face>
+                                                                                </basis>
+                                                                            </select>   
+                                                                        </div>
+                                                                       
+                                                                    </div>
+                                                                    <div class="clr"></div>                  
+                                                            </li>
+     
+                                                           
+                                                            <li class="searchhotel">
+                                                                    <div class="Panel_search_title">city </div>
+                                                                    <div class="Panel_search_content">
+                                                                        <div class="Inner_Panel_search_content">
+                                                                            <i class="fa fa-spinner"></i> 
+                                                                            <select class="filter  search_input search_select countrySearch" name="city" >
+                                                                                <option value="">-</option>
+                                                                                <basis core="tree" datamembername="db.HotelGroup-Item-Tree" idcol="id" parentidcol="parentid" nullvalue="null">
+                                                                                  <face filter="Field in ('countries','views') and type in ('array')"></face>
+                                                                                  <face filter="Field in ('cities') and type in ('array')">@child</face>
+                                                                                  <face filter="Field in ('id')"><option value="@Value"></face>
+                                                                                  <face filter="Field in ('name')">@Value</option></face>
+                                                                                  <face filter="type in ('array','object')">@child</face>
+                                                                                </basis>
+                                                                            </select>
+                                                                        </div>
+                                                                       
+                                                                    </div>
+                                                                    <div class="clr"></div>                  
+                                                            </li>
+                                                            <li class="searchhotel">
+                                                                    <div class="Panel_search_title">star </div>
+                                                                    <div class="Panel_search_content">
+                                                                        <div class="Inner_Panel_search_content">
+                                                                            <i class="fa fa-spinner"></i> 
+                                                                           <select class="filter search_input enabelSearch" name="star">
+                                                                             <option value="" selected="">-</option>
+                                                                             <option value="1">1</option>
+                                                                             <option value="2">2 </option>
+                                                                             <option value="3">3 </option>
+                                                                             <option value="4">4 </option>
+                                                                             <option value="5">5 </option>
+                                                                             </select>
+                                                                        </div>
+                                                                       
+                                                                    </div>
+                                                                    <div class="clr"></div>                  
+                                                            </li>
+                                                            <li class="searchhotel">
+                                                                    <div class="Panel_search_title">status  : </div>
+                                                                    <div class="Panel_search_content">
+                                                                        <div class="Inner_Panel_search_content">
+                                                                            <i class="fa fa-spinner"></i> 
+                                                                            <select class="filter search_input enabelSearch" name="enable">
+                                                                                <option value="">-</option>
+                                                                                <option value="1" selected>active</option>
+                                                                                <option value="0">Inactive</option>
+                                                                            </select>
+                                                                        </div>
+                                                                       
+                                                                    </div>
+                                                                    <div class="clr"></div>                  
+                                                            </li>
+                                                            
+                                                      </ul>
+                                                    </td>
+                                                    
+                                                </tr>
+                                            </table>                                    
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="Panel_Box">
+                                <div class="ajax_loading" style="text-align:center;display:none;">
+                                    <div class="loader"></div>
+                                </div>
+                                
+                                <div class="penel_invoice_ResultBox"></div>
+                            </div>
+
+                            <basis core="call" file="EN-Panel-Dashboard-Footer.inc" />
+                        </div>
+
+                        <div class="clr"></div>
+                    </div>
+                    <basis core="call" file="Panel-Basis_Calendar.inc"/>
+                    <script src="[##cms.cms.cdn##]/_js/User_Panel.js"></script> 
+                    <script type="text/javascript">
+                        $(".ajax_loading").fadeIn()
+                        $.ajax(
+                        {
+                            url: "/EN-Panel_Hotel_List_Result.bc?page=1",
+                            type: "post",
+                            data: {
+                                groupname: "[##cms.form.groupname##]",
+                                hotelname: "[##cms.form.hotelname##]",
+                                cityid: "[##cms.form.city##]",
+                                countryid: "[##cms.form.country##]",
+                                star: "[##cms.form.star##]",
+                                enable: "[##cms.form.enable##]",
+                            },
+                            success: function(response) 
+                            {
+                                $(".ajax_loading").fadeOut(); 
+                                $(".penel_invoice_ResultBox").empty().html(response);
+                            }
+                        }) 
+
+
+                        $(function() 
+                        {
+                            $(".Panel_form_search").on("submit", function(event) 
+                            {
+                                var error = 0
+                                var input = document.getElementsByClassName("ValidDate");
+                                var regex = /(1397|1398|1399|14\d\d)-((0|1)\d|(1|0)(1|2))-((0|1|2)\d|(3)(1|0))/
+
+                                for (var i = 0; i < input.length; i++) 
+                                {
+                                    if (input[i].value.length!=0 && !regex.test(input[i].value)) 
+                                        error++;
+                                }
+
+                                if (error)
+                                    return false 
+                                else
+                                {
+                                    $(window).scrollTop($('.ScrollTop').offset().top)
+                                    $(".penel_invoice_ResultBox").hide()
+                                    $(".ajax_loading").fadeIn()
+                                    event.preventDefault();
+                                    
+                                    $.ajax(
+                                    {
+                                        url:  $(".Panel_form_search").attr("action"),
+                                        type: $(".Panel_form_search").attr("method"),
+                                        data: $(this).serialize(),
+
+                                        success: function(response) 
+                                        {
+                                            $(".ajax_loading").fadeOut(); 
+                                            $(".penel_invoice_ResultBox").empty().html(response);
+                                            $(".penel_invoice_ResultBox").show()
+                                        }
+                                    });
+                                }     
+                            });
+                        });
+
+                        function ValidDate(evt,input)
+                        {
+                            var charCode = (evt.which) ? evt.which : event.keyCode
+
+                            if (!(charCode >= 48 && charCode <= 57) && !(charCode >= 96 && charCode <= 105) && charCode!=8)
+                            { 
+                                $(input).val($(input).val().substring(0,$(input).val().length-1))
+                                return
+                            }
+
+                            if (($(input).val().length==4 || $(input).val().length==7) && charCode == 8)   
+                                $(input).val($(input).val().substring(0,$(input).val().length-1))
+                           
+                            if($(input).val().length==4 || $(input).val().length==7)
+                                $(input).val($(input).val()+"-")
+                        }
+
+                    
+               
+                   
+                    </script>
+
+                    <style type="text/css">
+                        @font-face{font-family:'IRANSansWeb';src:url('http://cdn.basiscore.net/_fonts/IRANSansWeb.eot');src:local('?'),url('http://cdn.basiscore.net/_fonts/IRANSansWeb.woff2') format("woff"),url('http://cdn.basiscore.net/_fonts/IRANSansWeb.ttf') format("truetype"),url('http://cdn.basiscore.net/_fonts/IRANSansWeb.otf') format("otf");font-weight:400;font-style:normal}
+                        @font-face{font-family:'FontAwesome';src:local('FontAwesome'),url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.eot?#iefix');src:local('?'),url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.woff') format("woff"),url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.ttf') format("truetype"),url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.otf') format("otf");font-weight:400;font-style:normal}
+
+                        @font-face{font-family:'IRANSansWeb';src:url('https://cdn.basiscore.net/_fonts/IRANSansWeb.eot');src:local('?'),url('https://cdn.basiscore.net/_fonts/IRANSansWeb.woff2') format("woff"),url('https://cdn.basiscore.net/_fonts/IRANSansWeb.ttf') format("truetype"),url('https://cdn.basiscore.net/_fonts/IRANSansWeb.otf') format("otf");font-weight:400;font-style:normal}
+                        @font-face{font-family:'FontAwesome';src:local('FontAwesome'),url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.eot?#iefix');src:local('?'),url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.woff') format("woff"),url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.ttf') format("truetype"),url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.otf') format("otf");font-weight:400;font-style:normal}
+                        .links_List {
+                          width: 50%;
+                          float: right;
+                        }
+                    </style>           
+                </body>
+            </html>
+      
+        </basis>
+    </basis>
+</basis>

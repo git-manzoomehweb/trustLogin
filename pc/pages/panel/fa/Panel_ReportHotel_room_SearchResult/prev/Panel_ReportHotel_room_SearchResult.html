@@ -1,0 +1,360 @@
+<basis core="dbsource" source="trust_login8" mid="24" name="Paneluser" lid="1" rkey="[##cms.cookie.rkey##]">
+    <member name="login" type="scalar" request="userid"></member>
+</basis>
+
+
+
+<basis core="group" name="Delay_1">
+    <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+        <member name="reportroom_list" method="panel" query='{ 
+                "name":"db",
+                "mid":"20",
+                "member":[{ 
+                "type":"scalar",
+                "name":"q", 
+                "request":"Panel_Report_Room_List",
+                "dmnid":"[##cms.cms.domainid##]",
+                "Hid":"[##cms.form.hotelid##]",
+                "manager":"[##Paneluser.login.userid##]",
+                "from_date" : "[##cms.form.fdate##]",
+                "to_date" : "[##cms.form.tdate##]"
+
+            }]} '
+            postsql="select replace(replace(replace(replace(replace(result,'None','null'),'nan','NaN'),'\xa0','null'),' inf','null'),' -inf' , 'null') as 'result' from [db.reportroom_list]"
+            preview="" />
+    </basis>
+
+
+    <basis core="group" name="Delay_4">
+
+        <basis core="inlinesource" name="db">
+            <member name="reportroom_list-Tree" format="json" postsql="select Id,ParentId,case when trim(Field) is null then (select field from [db.reportroom_list-Tree] where id= b.parentid) else Field end as Field,Value,Type,Path from 
+            [db.reportroom_list-Tree] as b">
+                {"root":[##db.reportroom_list.result##]}
+            </member>
+
+        </basis>
+
+
+
+        <div class="Panel_Box_Content" style="overflow: scroll;direction: rtl;">
+            <div class="Panel_invoice_List">
+
+                <basis core="tree" datamembername="db.reportroom_list-Tree" idcol="id" parentidcol="parentid"
+                    nullvalue="null">
+                    <layout>
+                        <table class="table customer coupon-result">@child</table>
+                    </layout>
+
+                    <face filter="field in ('msg') and Value in ('no data')">
+                        <p style="text-align: center;padding: 90px 0px;font-size: 17px;color: red;">در این تاریخ اتاقی
+                            برای نمایش وجود ندارد</p>
+                    </face>
+
+                    <face filter="field in ('date_names') and type='Object'">
+                        <thead>@child</thead>
+                    </face>
+
+                    <face filter="field in ('room')">
+                        <th class="">@value</th>
+                    </face>
+
+                    <face filter="field in ('_id')">
+                        <th class=""><input type="hidden" name="dateid" value="@value"><br>
+                    </face>
+
+                    <face filter="field in ('sstring')">
+                        <p> @value</p>
+                    </face>
+
+                    <face filter="field in ('mstring')">
+                        <p style="font-size: 11px;">(@value)</p>
+                        </th>
+                    </face>
+
+                    <face filter="field in ('operation')">
+                        <th class="">عملیات</th>
+                    </face>
+
+                    <face filter="field in ('rooms') and type='Array'">
+                        <tbody>@child</tbody>
+                    </face>
+
+                    <face filter="field in ('roomdata') and type in ('Object') ">
+                        <tr class="odd">@child</tr>
+                    </face>
+
+                    <face filter="field in ('room_name') and type in ('Scalar.String') ">
+                        <td>
+                            <p><input type="hidden" class="roomname" value="@value"> @value
+                            <p>
+                    </face>
+                    <face filter="field in ('group_name') and type in ('Scalar.String') ">
+                        <p><input type="hidden" class="groupname" value="@value">(@value)
+                        <p>
+                    </face>
+
+
+                    <face filter="field in ('room_id') and type in ('Scalar.String') ">
+                        <input type="hidden" class="roomid" value="@value"></td>
+                    </face>
+
+                    <face filter="field in ('sold') and type in ('Array') ">
+                        @child
+                        <td>
+                            <span>
+                                <form target="_blank" action="/Panel_Report_Room.bc?id=[##cms.form.hotelid##]"
+                                    class="edit btn btn-default passenget_btn reportrooms" method="post">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                    <span class="tooltip">گزارش اتاق</span>
+                                    <input type="hidden" name="hid" value="[##cms.form.hotelid##]">
+                                    <input type="hidden" name="roomname" class="roomname" value="">
+                                    <input type="hidden" name="groupname" class="groupname" value="">
+                                    <input type="hidden" name="roomid" class="room_id" value="">
+                                    <input type="hidden" name="fdate" class="from_date" value="">
+                                    <input type="hidden" name="tdate" class="to_date" value="">
+                                </form>
+                            </span>
+                        </td>
+                    </face>
+
+                    <face filter="field in ('sold') and type in ('Object') ">
+                        <td>
+                            <div class="count1">@child</div>
+                        </td>
+                    </face>
+
+                    <face filter="field in ('count') and type in ('Scalar.Numeric')  and value not in ('10000')">
+                        <span class="detail">
+                            <span style="color: red">-</span>
+                            <span class="detailcount detail" style="color: #666 !important;">
+                                <span>@value</span>
+                            </span>
+                            <span class="boxcont">تعداد کل :@value</span>
+                        </span>
+                    </face>
+
+                    <face filter="field in ('count') and type in ('Scalar.Numeric') and value in ('10000')">
+                        <span class="detail">
+                            <input type="hidden" class="inputonrequest" value="@value">
+                            <span style="color: red">-</span>
+                            <span class="detailcount" style="color: #666 !important;">
+                                <span>∞</span>
+                            </span>
+                            <span class="boxcont">تعداد کل :Onrequest</span>
+                        </span>
+                    </face>
+
+                    <face filter="field in ('sold') and type in ('Scalar.Numeric')">
+                        <span class="detail" style="color: green !important;">
+                            <span class="detailcount details" style="color: green !important;">
+                                @value
+                            </span>
+
+                            <span class="boxcont">تعداد فروخته شده: @value<br>
+                    </face>
+
+                    <face filter="field in ('passenger_count') and type in ('Scalar.Numeric')">
+                        تعداد مسافر :@value <br>
+                    </face>
+
+                    <face filter="field in ('checkin_count') and type in ('Scalar.Numeric')">
+                        تعداد ورودی اتاق : @value</span></span>
+                    </face>
+
+                    <face filter="field in ('available') and type in ('Scalar.Numeric') and value in ('10000')">
+                        <span class="detail">
+                            <span class="detailcount" style="color: #f00c !important;">
+                                <span>∞</span>
+                            </span>
+                            <span style="color: red">=</span>
+                            <span class="boxcont">تعداد باقی مانده : Onrequest</span>
+                        </span>
+                    </face>
+
+                    <face filter="field in ('available') and type in ('Scalar.Numeric') and value not in ('10000')">
+                        <span class="detail">
+                            <span class="detailcount" style="color: #f00c !important;">
+                                <span>@value</span>
+                            </span>
+                            <span style="color: red">=</span>
+                            <span class="boxcont">تعداد باقی مانده :@value</span>
+                        </span>
+                    </face>
+
+                    <face filter="field in ('stopSale') and value in ('1')">
+                        <div style="width: 100%;margin-top: 10px;">
+                            <a class="edit btn btn-default passenget_btn">
+                                <i class="fa fa-stop" aria-hidden="true"></i>
+                                <span class="tooltip">stopSale</span></a>
+                    </face>
+
+                    <face filter="field in ('stopSale') and value in ('0')">
+                        <div style="width: 100%;margin-top: 10px;">
+                    </face>
+
+                    <face filter="field in ('factorlist')">
+                        <span class="form" style="display: none;"></span>
+                        <input type="hidden" value="@value" class="factorlist">
+                        <a target="_blank"
+                            data-href="/Panel_passenger_reporthotel.bc?id=[##cms.form.hotelid##]&schemaid=251&page=1&bcpage=71"
+                            class="edit btn btn-default passenget_btn" onclick="linkss(this)"><i
+                                class="fa fa-male"></i><span class="tooltip">مشاهده لیست مسافران</span></a>
+                        <a target="_blank"
+                            data-href="/Panel-InvoiceList-hotelManager.bc?bcpage=101&page=1&report=0&open=0"
+                            class="edit btn btn-default invoice_btn btn_list" onclick="linkss(this)"><i
+                                class="fa fa-file-text-o"></i><span class="tooltip">لیست قراردادها</span></a>
+            </div>
+            </face>
+            <face filter="type in ('array','object')">@child</face>
+    </basis>
+    </div>
+    </div>
+    <script>
+
+        $(".reportrooms").each(function (index, element) {
+            var roomid = $(this).closest("tr").find(".roomid").val()
+            var roomname = $(this).closest("tr").find(".roomname").val()
+            var groupname = $(this).closest("tr").find(".groupname").val()
+
+
+            $(this).find(".room_id").val(roomid)
+            $(this).find(".roomname").val(roomname)
+            $(this).find(".groupname").val(groupname)
+            $(this).find(".from_date").val($(this).closest(".Panel_Box").siblings(".Panel_Box").find(".form_search").find(".fdate").val())
+            $(this).find(".to_date").val($(this).closest(".Panel_Box").siblings(".Panel_Box").find(".form_search").find(".tdate").val())
+        })
+        $(".inputonrequest").each(function () {
+            $(this).closest("tr").find(".reportrooms").attr("action", "");
+            $(this).closest("tr").find(".reportrooms").css("background-color", "#DEDEDE")
+            $(this).closest("tr").find(".reportrooms").removeClass("reportrooms")
+        })
+
+        $(".reportrooms").click(function () {
+            $(this).submit()
+        })
+
+
+    </script>
+
+
+    <style type="text/css">
+        .customer thead>tr>th {
+
+            border-bottom: 1px solid #a0d0eb !important;
+            border-top: 1px solid #a0d0eb !important;
+            white-space: nowrap;
+            padding: 0 25px;
+            position: sticky;
+            top: 0;
+            z-index: 9;
+            border: 0;
+            white-space: nowrap;
+            font-weight: normal;
+
+
+        }
+
+        .customer tbody>tr>td {
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+
+        .boxcont {
+            z-index: 999;
+            background-color: #fff;
+            line-height: 14px;
+
+            padding: 10px 0;
+            border-radius: 5px;
+            display: none;
+            position: absolute;
+            border: 1px solid #eee;
+            box-shadow: 0 0 3px 1px #f1f1f1;
+        }
+
+
+        .detail {
+            height: 0;
+        }
+
+        .detail:hover .boxcont {
+            display: block;
+        }
+
+        .detailcount {
+            border-radius: 3px !important;
+            border: 1px solid #e3e3e3;
+            background-color: #f8f8f8;
+            width: 20px;
+            height: 20px;
+            line-height: 22px;
+            direction: ltr;
+            display: inline-block;
+            position: relative;
+        }
+
+
+        .fa-stop::before {
+            content: "\f04d";
+            color: #dd5050;
+            font-size: 10px;
+        }
+
+        .customer .btn {
+            height: 25px;
+        }
+
+        .box1 {
+            min-height: 320px;
+            height: 400px;
+        }
+
+        .fa-male::before {
+            content: "\f183";
+        }
+
+        .fa-file-text-o::before {
+            content: "\f0f6";
+        }
+
+        .table a:hover {
+            text-decoration: none;
+        }
+
+        .customer .btn {
+            display: inline-block;
+            margin-bottom: 0;
+            font-weight: normal;
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            background-image: none;
+            border: 1px solid transparent;
+            border-top-color: transparent;
+            border-right-color: transparent;
+            border-bottom-color: transparent;
+            border-left-color: transparent;
+            white-space: nowrap;
+            padding: 6px 6px;
+            font-size: 12px;
+            line-height: 1.42857;
+            height: 15px;
+            user-select: none;
+
+        }
+
+        .customer .btn-default {
+            color: #363A41;
+            background-color: #fff;
+            border-color: #DEDEDE;
+            position: relative;
+        }
+    </style>
+
+
+
+</basis>
+
+</basis>

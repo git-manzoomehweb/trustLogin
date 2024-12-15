@@ -1,0 +1,354 @@
+<style>
+    .panel_Menu_ul li a {
+        color: #25213b;
+        line-height: 40px;
+    }
+
+    .panel_Menu_icon span {
+        color: #25213b;
+
+    }
+
+    .panel_Menu_icon .logoutConfirm::before {
+        content: "\f08b";
+        font-family: FontAwesome;
+        color: #25213b;
+        line-height: 29px;
+    }
+
+    .panel_Menu_icon .panelConfirm::before {
+        content: "\f007";
+        font-family: FontAwesome;
+        color: #25213b;
+        line-height: 29px;
+    }
+
+    .panel_Menu_Box {
+
+        background: #f7f9fb;
+    }
+
+    .panel_Menu_ul li {
+        border-bottom: 1px solid #e1e1e1;
+    }
+
+    .panel_Menu_icon div {
+
+        margin: 25px auto;
+    }
+
+    .fa-home:before {
+        content: "\f015";
+        font-family: FontAwesome;
+    }
+
+    .fa-dashboard:before,
+    .fa-tachometer:before {
+        content: "\f0e4";
+        font-family: FontAwesome;
+    }
+
+    .fa-user:before {
+        content: "\f007";
+        font-family: FontAwesome;
+    }
+
+    .fa-envelope:before {
+        content: "\f0e0";
+        font-family: FontAwesome;
+    }
+
+    .fa-file-invoice:before {
+        content: "\f570";
+        font-family: FontAwesome;
+    }
+
+    .fa-file:before {
+        content: "\f15b";
+        font-family: FontAwesome;
+    }
+
+    .fa-shopping-bag:before {
+        content: "\f290";
+        font-family: FontAwesome;
+    }
+
+    .fa-user-plus:before {
+        content: "\f234";
+        font-family: FontAwesome;
+    }
+
+    .fa-user-circle-o:before {
+        content: "\f2be";
+        font-family: FontAwesome;
+    }
+
+    .fa-hotel:before {
+        content: "\f594";
+        font-family: FontAwesome;
+    }
+
+    .fa-black-tie:before {
+        content: "\f27e";
+        font-family: FontAwesome;
+
+    }
+
+    .fa-money:before {
+        content: "\f0d6";
+        font-family: FontAwesome;
+    }
+
+    .fa-user-times:before {
+        content: "\f235";
+        font-family: FontAwesome;
+    }
+
+    .fa-file-text-o:before {
+        content: "\f0f6";
+        font-family: FontAwesome;
+    }
+
+    .fa {
+        margin-left: 10px;
+    }
+
+    .panel_Menu_ul li a:hover {
+        border-bottom: none;
+        color: #3498db;
+        /* رنگ آبی روشن در حالت هاور */
+    }
+</style>
+
+<basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+    <member method="cms" name="get_account_type" query='{
+        "name": "db",
+        "mid": "20",
+        "member": [
+            {
+                "type": "list",
+                "name": "credit",
+                "request": "get_account_type",
+                "userid": "[##db.checkrkey.userid|(0)##]",
+                "dmnid": "[##cms.cms.domainid##]"
+            }
+        ]
+    } ' />
+</basis>
+
+
+<basis core="api" name="api.schema" run="AtClient" url="https://api.trust-login.com/schema/[##cms.cookie.rkey##]/ar"
+    method="get"></basis>
+
+<basis core="callback" run="atclient" triggers="answer.data" method="callbackUserinformation"></basis>
+
+<basis core="call" if="{##db.runLogout.value|(false)##}" run="AtClient" file="/authentication/dmntoken"
+    triggers="db.runLogout" onrendered="setDmnTokenForLogout"></basis>
+
+<basis core="api" name="api.logout" if="{##db.logout.run|(false)##}" run="AtClient"
+    url='https://api.trust-login.com/logout/{##db.logout.value##}' method="post"
+    body='{"dmntoken": "{##db.logout.dmntoken##}"}' triggers="db.logout" onprocessed="onProcessedLogOut"></basis>
+
+<basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+    <member method="cms" name="UnreadCount" query='
+    { 
+       "name": "db", 
+       "mid": "20",
+       "member":
+       [
+            { 
+               "name": "q",
+               "type":"list",
+               "request":"UnreadCount", 
+               "userid" : "[##db.checkrkey.userid|(0)##]"               
+            }
+        ]
+    } ' preview="" />
+</basis>
+
+<basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+    <member method="cms" name="checkPointSetting" query='
+    { 
+       "name": "db", 
+       "member":
+       [
+            { 
+               "name": "check_point_setting",
+               "type":"list",
+               "request":"checkPointSetting", 
+               "userid" : "[##db.checkrkey.userid|(0)##]",  
+               "dmnid" : "[##cms.cms.domainid##]",  
+               "ownerid" : "[##cms.cms.ownerid##]"           
+            }
+        ]
+    } ' preview="" />
+</basis>
+
+
+<div class="menu-btn" style="display: none;"><i class="fa fa-bars"></i></div>
+<div class="panel_Menu_Box">
+    <i class="fa fa-times close-box"></i>
+    <div class="panel_Menu">
+        <div class="panel_Menu_icon">
+            <div>
+                <span>الملف الشخصي <span class="default-name"></span><span class="default-family"></span></span>
+                <input type="hidden" value="" class="user-mobile-info" />
+                <span class="logoutConfirm" onclick="logoutConfirm()" title="مخرج"><span></span></span>
+                <a class="panelConfirm" href="/AR-Panel-Dashboard.bc" title="لوحة التحکم"><span></span></a>
+                <div class="clr"></div>
+            </div>
+        </div>
+
+
+
+        <ul class="panel_Menu_ul">
+            <li> <a href="/"><i class="fa fa-home" aria-hidden="true"></i>
+                    الصفحه الرئیسیه</a> </li>
+            <li> <a href="/AR-Panel-Dashboard.bc"> <i class="fa fa-tachometer"></i>
+                    لوحة التحکم
+
+                </a> </li>
+            <li> <a href="/AR-Panel-Profile.bc"><i class="fa fa-user"></i>
+                    ملفي</a> </li>
+            <li> <a><i class="fa fa-envelope"></i>
+                    قائمة الرسائل </a> </li>
+            <li><a href="/AR-Panel-InvoiceList.bc"><i class="fa fa-file" aria-hidden="true"></i>
+                    قائمة الحجوزات([##db.UnreadCount.result##])</a></li>
+            <basis core="group" name="Checkagencyuser_exist" if="'[##db.get_account_type.result##]' = '2'">
+                <li><a href="/AR-Panel-Chargingonline.bc"><i class="fa fa-money" aria-hidden="true"></i>
+                        الدفع عبر الإنترنت</a></li>
+                <li><a href="/AR-Panel-userlist.bc"> <i class="fa fa-user-times"></i>
+                        قائمة العملاء</a></li>
+            </basis>
+
+            <basis core="group" name="LoyaltyClub_exist" if="'[##db.checkPointSetting.result##]' = '1'">
+                <li><a href="/AR-Panel-LoyaltyClub.bc"><i class="fa fa-users"></i>
+                        نادي العملاء</a></li>
+            </basis>
+
+
+        </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    $(".menu-btn").click(function () {
+        $(".panel_Menu_Box").addClass("active-menu");
+    })
+
+    $(".close-box").click(function () {
+        $(".panel_Menu_Box").removeClass("active-menu");
+    })
+    async function callbackUserinformation(args) {
+        const responseJson = args.source?.rows[0];
+        let name = "";
+        let family = "";
+        const properties = responseJson.properties;
+        properties?.forEach((e) => {
+            if (e.prpId == 1) {
+                document.querySelector(".default-name").textContent = e.answers[0].parts[0].values[0].value;
+                name = e.answers[0].parts[0].values[0].value;
+                if (document.querySelector(".Panel_UserInfo")) {
+                    document.querySelector(".profile-info-1").textContent = e.answers[0].parts[0].values[0].value;
+                }
+            } else if (e.prpId == 2) {
+                document.querySelector(".default-family").textContent = e.answers[0].parts[0].values[0].value;
+                family = e.answers[0].parts[0].values[0].value;
+                if (document.querySelector(".Panel_UserInfo")) {
+                    document.querySelector(".profile-info-2").textContent = e.answers[0].parts[0].values[0].value;
+                }
+            } else if (e.prpId == 3) {
+                if (document.querySelector(".Panel_UserInfo")) {
+                    document.querySelector(".profile-info-3").textContent = e.answers[0].parts[0].values[0].value;
+                }
+            } else if (e.prpId == 4) {
+                if (document.querySelector(".Panel_UserInfo")) {
+                    document.querySelector(".profile-info-4").textContent = e.answers[0].parts[0].values[0].value;
+                }
+            } else if (e.prpId == 5) {
+                if (e.answers[0].parts[0].values[0].value !== '' || e.answers[0].parts[0].values[0].value !== '-') {
+                    document.querySelector(".user-mobile-info").value = `+98${e.answers[0].parts[0].values[0].value}`;
+
+                }
+                if (document.querySelector(".Panel_UserInfo")) {
+                    document.querySelector(".profile-info-5").textContent = e.answers[0].parts[0].values[0].value;
+                }
+
+
+            } else if (e.prpId == 6) {
+                if (document.querySelector(".Panel_UserInfo")) {
+                    document.querySelector(".profile-info-6").textContent = e.answers[0].parts[0].values[0].value;
+                }
+
+            } else if (e.prpId == 7) {
+                if (document.querySelector(".Panel_UserInfo")) {
+                    if (e.answers[0].parts[0].values[0].value == 668) {
+                        document.querySelector(".profile-info-7").textContent = "سيد"
+                    } else {
+                        document.querySelector(".profile-info-7").textContent = "السّيدة"
+                    }
+                }
+
+            } else if (e.prpId == 8) {
+                if (document.querySelector(".Panel_UserInfo")) {
+                    document.querySelector(".profile-info-8").textContent = e.answers[0].parts[0].values[0].value;
+                }
+
+            } else if (e.prpId == 9) {
+                if (document.querySelector(".Panel_UserInfo")) {
+                    document.querySelector(".profile-info-9").textContent = e.answers[0].parts[0].values[0].value;
+                }
+
+            }
+
+        });
+        if (document.querySelector(".username__content")) {
+            document.querySelector(".username__content").value = `${name} ${family}`
+        }
+        if (properties.length < 3) {
+            document.querySelector(".default-name").textContent = 'لا اسم';
+        }
+
+
+    }
+    function logoutConfirm() {
+        $bc.setSource("db.runLogout", true);
+    }
+
+    function setDmnTokenForLogout() {
+        const thisdmntoken = document.getElementById("dmntoken").value;
+        dmntoken = thisdmntoken;
+        $bc.setSource("db.logout", {
+            value: checkCookie("rkey"),
+            run: true,
+            dmntoken: dmntoken,
+        });
+    }
+    function eraseCookie(name) {
+        document.cookie = name + "=; Max-Age=-99999999; path=/";
+    }
+    async function onProcessedLogOut(args) {
+        const response = args.response;
+        const responseJson = await response.json();
+        if (responseJson.errorid == 30) {
+            eraseCookie("rkey");
+            window.location = '/';
+        }
+    }
+    function checkCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+
+        return "";
+    }
+
+</script>

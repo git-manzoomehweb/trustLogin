@@ -1,0 +1,347 @@
+<basis core="call" file="Client_BasisCore_Script.inc"></basis>
+<basis core="component.basiscore.exposer" run="atclient" component="documentlist_component"></basis>
+
+<basis core="dbsource" source="trust_login8" mid="24" name="Paneluser" lid="1" rkey="[##cms.cookie.rkey##]" > 
+    <member name="login" type="scalar"  request="userid"/>
+</basis>
+    
+<basis core="group" name="0" if="[##Paneluser.login.userid##]=0">
+    <p style="text-align:center;font-family:tahoma">شما مجاز به دسترسی به این صفحه نمی باشید</p>
+</basis>
+    
+<basis core="group" name="1" if="[##Paneluser.login.userid##]<>0">   
+   
+    <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource" >
+        <member method="cms"
+        name="checkUser"
+        query='
+        {
+            "name": "db",
+            "mid": "20",
+            "member":
+            [
+                { 
+                    "name": "q",
+                    "type":"list",
+                    "request": "check_userCounter",
+                    "userid":"1020087",
+                    "user":"admin"
+                }
+            ] 
+        } '/> 
+    </basis>
+
+    <basis core="external.fly.ws" procedurename="dbsource" source="cmsDbService2" name="db">
+        <member name="ownerid" method="cms" query='{
+            "name": "db",
+            "mid": "20",
+            "member": [
+                {
+                    "type": "list",
+                    "dmnid": "[##cms.cms.domainid##]",
+                    "userid": "1020087",
+                    "lid": "2",
+                    "request": "get_userid_counteragency"
+                }
+            ]
+        }' preview=""/>
+    </basis>
+    <basis core="api" name="api.save" url="https://basisfly.com/panel/new/[##cms.cms.rkey##]" method="post"
+    content-type="application/json" run="atclient" triggers="db.save cms.form" if="{##cms.form.run|(false)##}" body='{ 
+        "name": "db", 
+        "mid": "20",
+        "method": "cms",
+        "member":
+        [ 
+            { 
+            "type":"list",
+            "name": "q", 
+            "dmnid": "[##cms.cms.domainid##]",
+            "userid": "1020087",
+            "lid": "2",
+            "request": "get_userid_counteragency"
+
+            }
+        ]
+    }' onprocessed="onProcessed_ownerid">
+</basis>
+
+    <basis:1 core="group" if="[##db.checkUser.result##]<>1">
+        <p style="text-align:center;font-family:tahoma">شما مجاز به دسترسی به این صفحه نمی باشید</p>
+    </basis:1> 
+    <basis:2 core="group" if="[##db.checkUser.result##]=1">
+        <basis core="dbsource" source="trust_login" mid="24" name="db" lid="1" ownerid="[##cms.cms.ownerid##]" >
+            <member name="dmnid" type="scalar" request="getdmnid" preview=""/>
+        </basis>  
+    <basis core="group" name="Delay_1">
+        <!doctype html>
+        <html>
+            <head>
+                <title>لیست اسناد حسابداری</title>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+                <style type="text/css">
+                    <basis core="call" file="Panel_User_css.inc"/>
+                    <basis core="call" file="Panel-Basis_Calendar_css.inc"/>
+                </style>
+                <link rel="stylesheet" href="/css/Panel-master-css.css" type="text/css">
+                <script src="[##cms.cms.cdn##]/_js/jquery-1.8.0.min.js"></script> 
+                <script type="text/javascript">
+                    <basis core="call" file="Panel-Basis_Calendar_js.inc"/>
+                </script>
+            </head>
+    
+            <body>
+                <div class="Panel_Container">
+                    <basis core="call" file="Panel-Menu.inc" />
+                        <div class="Panel_Wrraper_Box">
+                            <basis core="call" file="Panel-Dashboard-Header.inc" />
+                            <basis core="call" file="Panel-Icon.inc"/>                  
+                    
+    
+                            <div class="ScrollTop"></div>
+                            
+                            <div class="Panel_Box"> 
+                                <div class="section_load_data"></div>      
+                                <form  class="Panel_form_search" method="post">                   
+                                    <input type="hidden" value="[##cms.cms.domainid##]" name="dmnid"/>
+                                    <input type="hidden" value="[##cms.cms.ownerid##]" name="ownerid"/>
+                                    <div class="Panel_Box_title" style="position: relative;">
+                                        <span>جستجو در اسناد حسابداری</span>
+                                        <button class="Panel_Edit_icon search" type="submit" style="background:none;border:0;cursor:pointer;"></button>         
+                                        <div class="popup searchDate_Error"><span style="direction: rtl;">امکان جستجو  بازه بزرگتر از دو  ماه وجود ندارد</span></div>
+                                    </div>
+    
+                                    <div class="Panel_Box_Content">
+                                        <div class="penel_invoice_SearchBox">      
+                                            <input type="hidden" value="" name="fdateid" class="fdateid"/>    
+                                            <input type="hidden" value="" name="tdateid" class="tdateid"/>                            
+                                            <table class="Basis_Date_Box" style="padding-bottom:8px">
+                                                <colgroup>
+                                                    <col width="100%">
+                                                 
+                                                </colgroup>
+    
+    
+                                                <tr>
+   
+                                                    <td>
+                                                        <div class="date_box_inner">
+                                                        <span class="Panel_search_date_txt">از تاریخ :</span><input type="text" name="fromdate" class="Basis_Date start_date Panel_search_date  ValidDate" onclick="Basis_Calendar(this,'[##cms.cms.date##]', 0)" data-active="0" data-cache="0" onkeyup="ValidDate(event,this)" onblur="CheckFormat(this)" autocomplete="off" readonly="true">
+                                                        <span class="Error_date">تاریخ وارد شده نامعتبر است</span>
+                                                        </div> 
+                                                    </td>
+    
+                                                    <td>
+                                                        <div class="date_box_inner">
+                                                        <span class="Panel_search_date_txt">تا تاریخ :</span><input type="text" name="todate" class="Basis_Date end_date Panel_search_date ValidDate" onclick="Basis_Calendar(this,'[##cms.cms.date##]', 0)" data-active="0" data-cache="0" onkeyup="ValidDate(event,this)" onblur="CheckFormat(this)" autocomplete="off" readonly="true">
+                                                        <span class="Error_date">تاریخ وارد شده نامعتبر است</span> 
+                                                        </div> 
+                                                    </td>
+                                                </tr>
+                                            </table>
+    
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <ul>
+                                                            <li>
+                                                                <div class="Panel_search_title">شماره قرارداد :</div>
+                                                                <div class="Panel_search_content"><input autocomplete="off" type="text" name="factorid" class="factorid"></div>
+                                                                <div class="clr"></div>                  
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </table>                                    
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+    
+                            <div class="Panel_Box">
+                               
+                                <div class="penel_invoice_ResultBox">
+                                    <basis core="call" run="AtClient" file="accounting_document_list.inc" method="post" query="{##db.documentlist.query|({'userid':[##db.ownerid.result##],'dmnid':[##cms.cms.domainid##],'ownerid':[##cms.cms.ownerid##]})##}" triggers="db.documentlist"></basis>
+                                </div>
+                            </div>
+    
+                            <basis core="call" file="Panel-Dashboard-Footer.inc" />
+                        </div>
+    
+                        <div class="clr"></div>
+                    </div>
+                    <basis core="call" file="Panel-Basis_Calendar.inc"/>
+                    <script src="[##cms.cms.cdn##]/_js/User_Panel.js"></script> 
+                    <script type="text/javascript">
+                       
+                        
+                        onsubmit_form()
+                        function onsubmit_form(){
+                            var main_json={
+                                        'dmnid':[##cms.cms.domainid##],
+                                        'ownerid':[##cms.cms.ownerid##],
+                                        'userid':[##db.ownerid.result##],
+                                        'factorid':document.querySelector(".factorid").value,
+                                        'fromdate':document.querySelector(".start_date").value,
+                                        'todate':document.querySelector(".end_date").value,
+                                    }
+                               
+                            $bc.setSource("db.documentlist", [{
+                                "query": JSON.stringify(main_json),
+                                "run": true
+                            }]);
+
+                        }
+    
+                        $(function() 
+                        {
+                            $(".Panel_form_search").on("submit", function(event) 
+                            {
+                                var start_date=0
+                                var end_date=0
+                                if(document.querySelector(".start_date").getAttribute("data-cache")){
+                                    start_date=document.querySelector(".start_date").getAttribute("data-cache").split("_")[0]
+                                    if(document.querySelector(".start_date").getAttribute("data-cache") !="0"){
+                                        document.querySelector(".fdateid").value=document.querySelector(".start_date").getAttribute("data-cache").split("_")[0]
+                                    }
+                                    
+
+                                }
+                                if(document.querySelector(".end_date").getAttribute("data-cache")){
+                                    end_date=document.querySelector(".end_date").getAttribute("data-cache").split("_")[0]
+                                    if(document.querySelector(".end_date").getAttribute("data-cache")!="0"){
+                                        document.querySelector(".tdateid").value=document.querySelector(".end_date").getAttribute("data-cache").split("_")[0]
+
+                                    }
+                                   
+
+                                }
+
+                               
+
+                                var error = 0
+                                var input = document.getElementsByClassName("ValidDate");
+                                var regex = /(1397|1398|1399|14\d\d)-((0|1)\d|(1|0)(1|2))-((0|1|2)\d|(3)(1|0))/
+    
+                                for (var i = 0; i < input.length; i++) 
+                                {
+                                    if (input[i].value.length!=0 && !regex.test(input[i].value)) 
+                                        error++;
+                                }
+                                // if(start_date && end_date){
+                                //     var difference=parseInt(end_date)-parseInt(start_date)
+                                //     if(difference>62){
+                                //             $(".searchDate_Error").show()
+                                //             error++
+                                //     }
+                                //     else{
+                                //         $(".searchDate_Error").hide()
+                                        
+                                //     }
+
+                                // }
+    
+                                if (error)
+                                    return false 
+                                else
+                                {
+                                    $(window).scrollTop($('.ScrollTop').offset().top)
+                                    // $(".penel_invoice_ResultBox").hide()
+                                    // $(".ajax_loading").fadeIn()
+                                    event.preventDefault();
+                                    
+                                    var main_json={
+                                        'dmnid':[##cms.cms.domainid##],
+                                        'ownerid':[##cms.cms.ownerid##],
+                                        'userid':[##db.ownerid.result##],
+                                        'factorid':document.querySelector(".factorid").value,
+                                        'fromdate':document.querySelector(".start_date").value,
+                                        'todate':document.querySelector(".end_date").value,
+                                    }
+                               
+                                    $bc.setSource("db.documentlist", [{
+                                        "query": JSON.stringify(main_json),
+                                        "run": true
+                                    }]);
+                                    // $(".ajax_loading").fadeOut()
+                                }     
+                            });
+                        });
+    
+                        function ValidDate(evt,input)
+                        {
+                            var charCode = (evt.which) ? evt.which : event.keyCode
+    
+                            if (!(charCode >= 48 && charCode <= 57) && !(charCode >= 96 && charCode <= 105) && charCode!=8)
+                            { 
+                                $(input).val($(input).val().substring(0,$(input).val().length-1))
+                                return
+                            }
+    
+                            if (($(input).val().length==4 || $(input).val().length==7) && charCode == 8)   
+                                $(input).val($(input).val().substring(0,$(input).val().length-1))
+                           
+                            if($(input).val().length==4 || $(input).val().length==7)
+                                $(input).val($(input).val()+"-")
+                        }
+    
+                        function CheckFormat(input) 
+                        {
+                            var regex = /(1397|1398|1399|14\d\d)-((0|1)\d|(1|0)(1|2))-((0|1|2)\d|(3)(1|0))/
+                            
+                            if ($(input).val().length != 0  && !regex.test($(input).val()))
+                            {
+                                $(input).closest("td").find(".Error_date").show()
+                            }
+                            else
+                                $(input).closest("td").find(".Error_date").hide()
+                        }
+                  
+            
+                    </script>
+    
+                    <style type="text/css">
+                        .searchDate_Error{
+                            top: 29px !important;
+                            left: 18px !important;
+                            text-align: right !important;
+                            position: absolute;
+                            width: 130px;
+                            height: 60px;
+                            direction: rtl;
+                            text-align: center;
+                            line-height: 15px;
+                            box-sizing: border-box;
+                            padding: 5px;
+                            padding-top: 5px;
+                            color: #fff;
+                            -moz-border-radius: 5px;
+                            -webkit-border-radius: 5px;
+                            border-radius: 5px;
+                            margin-bottom: 2em;
+                            z-index: 999;
+                            display: none;
+                            font-size: 11px;
+                            padding-top: 15px;
+                            background-color: #fF9000;
+                        }
+                        .Panel_search_content {
+                        width: 90%;
+                        float: left;
+                        }
+                        .Panel_search_title {
+                        width: 10%;
+                        float: right;
+                        }
+                        @font-face{font-family:'IRANSansWeb';src:url('http://cdn.basiscore.net/_fonts/IRANSansWeb.eot');src:local('?'),url('http://cdn.basiscore.net/_fonts/IRANSansWeb.woff2') format("woff"),url('http://cdn.basiscore.net/_fonts/IRANSansWeb.ttf') format("truetype"),url('http://cdn.basiscore.net/_fonts/IRANSansWeb.otf') format("otf");font-weight:400;font-style:normal}
+                        @font-face{font-family:'FontAwesome';src:local('FontAwesome'),url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.eot?#iefix');src:local('?'),url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.woff') format("woff"),url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.ttf') format("truetype"),url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.otf') format("otf");font-weight:400;font-style:normal}
+    
+                        @font-face{font-family:'IRANSansWeb';src:url('https://cdn.basiscore.net/_fonts/IRANSansWeb.eot');src:local('?'),url('https://cdn.basiscore.net/_fonts/IRANSansWeb.woff2') format("woff"),url('https://cdn.basiscore.net/_fonts/IRANSansWeb.ttf') format("truetype"),url('https://cdn.basiscore.net/_fonts/IRANSansWeb.otf') format("otf");font-weight:400;font-style:normal}
+                        @font-face{font-family:'FontAwesome';src:local('FontAwesome'),url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.eot?#iefix');src:local('?'),url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.woff') format("woff"),url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.ttf') format("truetype"),url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.otf') format("otf");font-weight:400;font-style:normal}
+                    </style>           
+                </body>
+        </html>
+    </basis>
+    </basis:2>
+</basis>

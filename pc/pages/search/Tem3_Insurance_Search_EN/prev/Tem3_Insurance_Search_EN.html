@@ -1,0 +1,744 @@
+<basis core="tracking" name="tracking" source="Monitoring" collectionname="activity" dbname="tracking"
+addcookie="true" />
+<basis core="cookie" name="trackingid" value="[##tracking.inserted.id|(0)##]" />
+<basis core="dbsource" source="trust_login8" mid="24" name="db" lid="1" rkey="[##cms.cookie.rkey##]">
+<member name="userid" type="scalar" request="userid" preview="" />
+</basis>
+<basis core="external.fly.ws" source="cmsDbService2" procedurename="dbsource" name="db">
+<member name="get_price" method="insurance" query='{
+    "name": "db",
+    "mid": "20",
+    "schemabase": "[##cms.query.schemabase|(true)##]",
+    "schema": {
+        "boxinfo": {
+          "action": "create",
+          "childs": [
+            {
+              "first": {
+                "action": "create",
+                "childs": [
+                  {
+                    "provider": {
+                      "action": "find",
+                      "map": "provider.provider_id"
+                    }
+                  },
+                  {
+                    "mainprovider": {
+                      "action": "find",
+                      "map": "provider"
+                    }
+                  },
+                  {
+                    "duration": {
+                      "action": "find",
+                      "map": "duration"
+                    }
+                  },
+                  {
+                    "adult": {
+                      "action": "find",
+                      "map": "adult"
+                    }
+                  },
+                  {
+                    "child": {
+                      "action": "find",
+                      "map": "child"
+                    }
+                  },
+                  {
+                    "infant": {
+                      "action": "find",
+                      "map": "infant"
+                    }
+                  },
+                  {
+                    "zone": {
+                      "action": "find",
+                      "map": "zone"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "second": {
+                "action": "create",
+                "childs": [
+                  {
+                    "total": {
+                      "action": "find",
+                      "map": "total"
+                    }
+                  },
+                  {
+                    "commissionn": {
+                      "action": "find",
+                      "map": "commissionn"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "third": {
+                "action": "create",
+                "childs": [
+                  {
+                    "personsContainer": {
+                      "action": "create",
+                      "childs": [
+                        {
+                          "persons": {
+                            "action": "find",
+                            "map": "persons",
+                            "options": {
+                              "price": {
+                                "action": "find",
+                                "map": "price"
+                              },
+                              "tax": {
+                                "action": "find",
+                                "map": "tax"
+                              },
+                              "markups": {
+                                "action": "find",
+                                "map": "markups.totalprovider"
+                              },
+                              "markups2": {
+                                "action": "find",
+                                "map": "markups.totalmarkup"
+                              },
+                              "markupsupplier": {
+                                "action": "find",
+                                "map": "markupsupplier.totalmain"
+                              },
+                              "markupsupplier2": {
+                                "action": "find",
+                                "map": "markupsupplier.totalsupplier"
+                              },
+                              "commissioncostPerson": {
+                                "action": "find",
+                                "map": "commissioncost"
+                              },
+                              "base_price": {
+                                "action": "find",
+                                "map": "base_price"
+                              },
+                              "price_com": {
+                                "action": "find",
+                                "map": "price_com"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "commissioncost": {
+                            "action": "find",
+                            "map": "commissioncost"
+                          }
+                        },
+                        {
+                          "totalcom": {
+                            "action": "find",
+                            "map": "totalcom"
+                          }
+                        }
+                      ]
+                    }
+                  },
+      
+                  {
+                    "obligationp": {
+                      "action": "create",
+                      "childs": [
+                        {
+                          "obligation": {
+                            "action": "find",
+                            "map": "obligation",
+                            "options": {
+                              "title": {
+                                "action": "find",
+                                "map": "title"
+                              },
+                              "limit": {
+                                "action": "find",
+                                "map": "limit"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "cancelrule": {
+                      "action": "find",
+                      "map": "cancelrule"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+     "member":[{
+     "type":"list",
+     "name": "q",
+     "request": "get_price",
+     "IP": "[##cms.request.clientip##]",
+     "countryid" : "[##cms.form.countryid##]",
+     "fromdate":"[##cms.form.fdate##]",
+     "todate":"[##cms.form.tdate##]",
+     "birthday":[[##cms.form.birthday##]],
+     "userid":"[##db.userid.userid##]",
+     "trackingNo":"[##tracking.inserted.id|(0)##]",
+     }]}' postsql="select replace(result,'\x',' ') as 'result' from [db.get_price]" preview="" />
+</basis>
+<basis core="group" name="Delay">
+<basis core="inlinesource" name="db">
+    <member name="list-insurance" format="json"
+        postsql="select  Id , ParentId , case when trim(Field) is null  then  (select field from [db.list-insurance] where id = a.parentid ) else field end as field, value , type , path  from [db.list-insurance] as a"
+        preview="">{"root":[##db.get_price.result##]}</member>
+</basis>
+<!DOCTYPE html>
+<html>
+
+<body onload="onloadFunc();">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Insurance</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="">
+    <meta property="og:image" content="[##cms.cms.cdn##]/images/icon-logo.png">
+    <meta property="og:image:width" content="">
+    <meta property="og:image:height" content="">
+    <meta property="og:image:secure_url" content="[##cms.cms.cdn##]/images/icon-logo.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="">
+    <meta name="author" content="BasisCore">
+    <!----------------CSS FILE---------------->
+    <!----CSS MAIN STYLE---->
+    <link href="https://www.basisfly.com/css/reservation_tem3_style_res_en.css" type="text/css" rel="stylesheet" />
+   <link href="[##cms.cms.cdn##]/css/style_tem_en.css" type="text/css" rel="stylesheet" />
+</head>
+<main class="dir-ltr">
+    <basis core="call" file="header-en.inc" />
+    <section class="content">
+        <section class="loginRegister"></section>
+        <div id="bg-popup" class="unvisible"></div>
+        <div class="message-box unvisible">
+            <i class="icon-message-box">
+                <svg width="50pt" height="50pt" fill="#666" version="1.0" viewBox="0 0 512 512"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(0 512) scale(.1 -.1)">
+                        <path
+                            d="m1958 5059c-518-43-1e3 -273-1362-649-741-772-795-1960-128-2804 30-39 105-121 166-181 338-337 774-546 1256-605 123-15 398-12 519 5 57 8 105 14 106 12 2-1 15-27 30-57 118-235 344-454 600-582 403-202 889-190 1280 32 141 81 174 132 120 185-32 33-60 31-115-6-25-16-83-50-130-73-388-197-846-171-1215 68-119 77-291 251-363 369-303 490-231 1110 175 1512 101 100 186 160 318 225 404 200 875 163 1242-96 87-62 225-200 286-285 222-314 284-722 166-1089-41-126-140-303-219-394-42-47-51-76-35-114 15-34 48-48 89-38 37 9 162 179 229 313 154 304 186 664 92 999-35 120-140 330-219 435-129 171-323 329-509 415l-85 39 5 170c16 517-142 993-465 1403-92 116-135 155-173 155-21 0-38-7-51-22-34-43-24-72 58-167 144-168 276-388 353-588 88-230 124-429 125-693 1-105-2-194-6-198s-44 0-90 9c-46 8-115 18-154 22l-71 6-6 187c-4 135-11 213-27 286-144 676-673 1185-1350 1302-64 11-153 17-270 17s-206-6-270-17c-683-118-1209-630-1352-1315-30-146-33-456-4-607 25-137 63-256 88-277 28-25 70-22 96 5 28 30 28 48-2 151-71 243-75 531-11 782 195 770 974 1261 1749 1103 144-29 233-60 381-134 414-206 703-586 801-1055 13-62 18-132 19-259v-175l-100-17c-410-73-756-315-963-674-90-157-156-367-169-537-3-47-9-91-12-97-3-5-61-15-129-21-334-31-681 63-976 263-127 85-303 264-396 402-71 104-77 110-112 113-27 2-43-3-57-17-36-36-27-71 48-183 342-509 932-786 1547-725l82 8 7-53c3-29 18-100 31-156 14-57 24-105 22-107-11-11-183-25-311-25-167 0-269 10-422 42-354 72-712 266-975 528-704 700-787 1795-197 2587 568 762 1591 1015 2445 603 119-57 248-136 341-206 26-20 55-34 72-34 39 0 69 32 69 74 0 41-31 71-171 163-307 201-630 311-1004 343-134 11-195 11-337-1z" />
+                        <path
+                            d="m2080 4260c-17-17-20-33-20-105s3-88 20-105c25-25 71-26 99-2 41 33 41 172 0 213-25 25-74 24-99-1z" />
+                        <path
+                            d="m1186 3889c-44-35-36-73 31-141 47-47 63-58 90-58 42 0 73 30 73 72 0 25-12 43-58 90-65 64-92 72-136 37z" />
+                        <path
+                            d="m2938 3852c-46-47-58-65-58-90 0-43 31-72 76-72 29 0 44 9 90 54 63 63 72 106 31 144-40 38-73 29-139-36z" />
+                        <path
+                            d="m2082 3670c-22-20-22-26-22-300 0-154-4-280-8-280s-37 30-72 66c-36 36-76 70-89 75-46 18-101-24-101-78 0-22 275-298 311-314 40-16 84 3 98 43 15 43 15 714 0 757-19 53-77 68-117 31z" />
+                        <path
+                            d="m810 2990c-30-30-27-83 6-109 22-17 41-21 101-21 65 0 77 3 98 25 30 30 32 64 4 99-19 24-26 26-105 26-71 0-87-3-104-20z" />
+                        <path
+                            d="m3245 2985c-14-13-25-36-25-50s11-37 25-50c21-22 33-25 94-25 39 0 81 5 95 11 49 23 53 104 7 128-11 6-54 11-96 11-67 0-79-3-100-25z" />
+                        <path
+                            d="m3653 2359c-48-23-89-67-110-116-10-26-13-136-13-533 0-490 0-501 21-546 35-73 118-124 204-124 81 0 157 47 198 124 22 40 22 48 25 516 2 324 0 491-8 526-13 63-67 129-124 155-56 26-140 25-193-2zm153-150c18-20 19-43 19-501v-480l-24-19c-31-25-69-24-98 3l-23 21v479c0 465 1 479 20 498 27 27 81 26 106-1z" />
+                        <path
+                            d="m1265 2172c-16-11-47-38-67-60-58-64-50-125 20-147 29-8 80 22 127 78 42 49 46 87 10 122-29 30-50 31-90 7z" />
+                        <path
+                            d="m2140 1813c-43-16-50-34-50-123 0-78 2-89 23-108 44-41 107-19 123 43 12 48-1 144-22 164-22 22-53 32-74 24z" />
+                        <path
+                            d="m3653 979c-91-45-123-109-123-249 0-115 20-174 74-215 123-94 281-63 347 68 27 51 36 175 20 245-15 62-69 128-125 153-56 26-140 25-193-2zm153-150c15-17 19-36 19-101 0-72-2-82-24-99-31-25-69-24-98 3-20 19-23 31-23 100 0 65 3 81 20 98 27 27 81 26 106-1z" />
+                    </g>
+                </svg>
+            </i>
+            <div class="line-one font_20 font-weight">
+                Your search has been expired
+            </div>
+            <div class="line-two">
+                Please reload the page to get the latest rates
+            </div>
+            <button class="background-color_2 color_white font_16 border-radius cursor-pointer"
+            onclick="window.location='/'">Home</button>
+            <button class="background-color_1 color_white font_16 border-radius cursor-pointer"
+                onclick=" location.reload()">Search Again</button>
+        </div>
+        <section class="searched-container ">
+            <div class="bc-main">
+                <div class="width_85 float-left text-left">
+                    <div class="flight-summary-info">
+                        <div class="item font_16">
+                            <span class="arrival"> <span class="title">Country :
+                                </span>[##cms.form.insurancecountry##]
+                            </span>
+                        </div>
+                        <div class="item font_15">
+                            <span class="dash"><i class="far fa-calendar-check"></i></span>
+                            <span class="title">Departure Date : </span><span>[##cms.form.fdate##]</span> 
+                            <span class="dash"></span>
+                            <span class="title">Arrival Date : </span><span>[##cms.form.tdate##]</span>
+                        </div>
+                        <div class="item font_13 cursor-pointer color_white background-color_1 border-radius btn"
+                            onclick="show_research(this)">
+                            <i class="fa fa-search"></i>Modify Search</div>
+                        <div class="clr"></div>
+                    </div>
+                </div>
+                <div class="width_15 float-right font_13 next-prev-container text-right">
+                    <span class="before-btn cursor-pointer background-color_white"><i
+                            class="fa fa-angle-left color_1"></i>Prev Day 
+                        </span>
+                    <span class="after-btn cursor-pointer background-color_white">Next Day 
+                        <i class="fa fa-angle-right color_1"></i></span>
+                </div>
+                <div class="clr"></div>
+                <div class="searched-items-container unvisible">
+                    <i class="fa fa-times close-research cursor-pointer" onclick="close_research(this)"></i>
+                    <div class="searched-items width_100 background-color_white">
+                        <form method="post" action="/Tem3_Insurance_Search_EN.bc" class="form-research"
+                            id="insurance-form">
+                            <input value='[##cms.form.birthday##]' name="birthday" class="birthday"
+                                type="hidden" />
+                            <input type="hidden" value="[##cms.form.persiancurrent##]" class="persiancurrent"
+                                name="persiancurrent" />
+                            <div class="searched-item width_30 float-left has-border">
+                                <div class="inner width_100 p-relative city">
+                                    <input type="text" oninput="city_search(this)" name="insurancecountry"
+                                        onclick="empty_value(this)" required data-type='5' autocomplete="off"
+                                        value="[##cms.form.insurancecountry##]" class="country text-center" />
+
+                                    <input type="hidden" value="[##cms.form.countryid##]" class="co-id "
+                                        name="countryid">
+                                        <span class="mini-loading p-absolute unvisible"><i
+                                                class="fas fa-spinner fa-spin"></i></span>
+                                        <div class="countryFlight font_12 background-color_white"></div>
+                                </div>
+                                <div class="clr"></div>
+                            </div>
+                            <div class="searched-item width_30 float-left has-border Basis_Date_Box">
+                                <div class="inner width_50 float-left p-relative has-border_">
+                                    <input type="text" value="[##cms.form.fdate##]" name="fdate"
+                                        class="Basis_Date start_date"
+                                        onclick="Basis_Calendar(this,'[##cms.cms.date##]', 1)" data-active="0"
+                                        data-cache="0" readonly="true" autocomplete="off" required />
+                                </div>
+                                <div class="inner width_50 float-left p-relative">
+                                    <input type="text" value="[##cms.form.tdate##]" name="tdate" 
+                                        class="Basis_Date end_date end_date_filled nextCalOpening"
+                                        onclick="Basis_Calendar(this,'[##cms.cms.date##]', 1)" data-active="0"
+                                        data-cache="0" readonly="true" autocomplete="off" required />
+                                </div>
+                                <div class="clr"></div>
+                            </div>
+                            <div class="searched-item p-relative width_20 float-left">
+                                <div class="Wrapper-CountPassenger font_13 cursor-pointer"
+                                    onclick="show_passengers(this)">
+                                    <span class="count-adult">
+                                        <span class="count">[##cms.form.passengercount##]</span>
+                                        <span>Passenger</span>
+                                    </span>
+                                    <div class="clr"></div>
+                                </div>
+                                <div class="CountPassenger room unvisible p-absolute font_11">
+                                    <div class="item-CountPassenger">
+                                        <div class="first-part-CountPassenger width_50 float-left">Passenger </div>
+                                        <div class="second-part-CountPassenger width_50 float-right">
+                                            <div class="passenger-button plus-minus-ins"><span
+                                                    class="background-color_2 plus-btn">+</span></div>
+                                            <div class="passenger-button">
+                                                <input type="text" name="passengercount" class="passengercount"
+                                                    maxlength="4000" readonly
+                                                    value="[##cms.form.passengercount##]" />
+                                            </div>
+                                            <div class="passenger-button plus-minus-ins"><span
+                                                    class="background-color_2 minus-btn">-</span></div>
+                                        </div>
+                                        <div class="clr"></div>
+                                    </div>
+                                    <div class="item-CountPassenger">
+                                        <div class="Wrapper-BirthdatePassenger"></div>
+                                        <div class="clr"></div>
+                                    </div>
+                                    <div class="confirm background-color_1 color_white text-center border-radius cursor-pointer"
+                                        onclick="confirm_search(this)">Confirm</div>
+                                </div>
+                                <i class="icon-passenger p-absolute"><svg xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" viewBox="0 0 24 24">
+                                        <rect width="24" height="24" opacity="0" />
+                                        <path
+                                            d="M18.5,7.355a3.5,3.5,0,1,0-3.893,0,5.347,5.347,0,0,0-1.235.7A3.429,3.429,0,0,0,12.844,8,3.477,3.477,0,0,0,9.755,9.9a4.907,4.907,0,0,0-.923-.518,3.519,3.519,0,1,0-3.9.015A4.786,4.786,0,0,0,2,13.772v7.684a1.5,1.5,0,0,0,1.5,1.5H8.052v0l9.1-.037h3.332a1.5,1.5,0,0,0,1.5-1.5v-8.8A5.653,5.653,0,0,0,18.5,7.355Zm-4.452-2.9a2.5,2.5,0,1,1,2.5,2.5A2.5,2.5,0,0,1,14.05,4.452ZM12.844,9a2.482,2.482,0,1,1-2.485,2.482A2.488,2.488,0,0,1,12.844,9ZM4.351,6.473A2.517,2.517,0,1,1,6.868,8.987,2.518,2.518,0,0,1,4.351,6.473ZM3.507,21.958a.5.5,0,0,1-.5-.5V13.772A3.848,3.848,0,0,1,6.9,9.986a3.95,3.95,0,0,1,2.515.907,3.35,3.35,0,0,0-.06.588,3.476,3.476,0,0,0,1.555,2.894,4.787,4.787,0,0,0-2.862,4.373v3.211Zm5.545-3.211a3.792,3.792,0,0,1,7.584,0v3.176h-.193l-.014,0-7.377.031Zm11.935,2.679a.5.5,0,0,1-.5.5H17.636V18.747a4.784,4.784,0,0,0-2.861-4.372,3.458,3.458,0,0,0-.211-5.9,4.227,4.227,0,0,1,1.988-.5,4.552,4.552,0,0,1,4.435,4.652Z"
+                                            transform="translate(0 0.016)" fill="#000" /></svg>
+                                </i>
+                            </div>
+                            <div class="searched-item width_20 float-left">
+                                <button type="submit"
+                                    class="font_13 cursor-pointer color_white background-color_1 width_100">Search
+                                    </button>
+                            </div>
+                            <div class="clr"></div>
+                            </form>
+                            <div class="clr"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="clr"></div>
+
+        </section>
+        <section class="result-search-container">
+            <div class="bc-main">
+                <div class="waiting-search">
+                    <div class="loading-container">
+                        <div class="loading"></div>
+                        <div class="loading-img"><img src="[##cms.cms.cdn##]/images/logo.png" width="" height=""
+                                alt="logo" /></div>
+                    </div>
+                    <p class="loading-text">Looking for the best insurance ...</p>
+                    <div class="waiting-content width_30 float-left">
+                        <div class="stract-filters float-left width_95">
+                            <div class="stract-filter stract-effect">
+                                <div class="stract-filter-head"></div>
+                                <div class="stract-filter-row">
+                                    <div class="stract-filter-item"></div>
+                                    <div class="stract-filter-item"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="waiting-content width_70 float-right">
+
+                        <div class="stract-result-item stract-effect">
+                            <div class="stract-first-col width_70 float-left p-relative">
+                                <div class="stract-item float-left width_100"></div>
+                            </div>
+                            <div class="width_30 float-right">
+                                <div class="stract-cost-item">
+                                    <div class="stract-cost"></div>
+                                    <div class="stract-btn-item"></div>
+                                </div>
+                            </div>
+                            <div class="clr"></div>
+                        </div>
+                        <div class="stract-result-item stract-effect">
+                            <div class="stract-first-col width_70 float-left p-relative">
+                                <div class="stract-item float-left width_100"></div>
+                            </div>
+                            <div class="width_30 float-right">
+                                <div class="stract-cost-item">
+                                    <div class="stract-cost"></div>
+                                    <div class="stract-btn-item"></div>
+                                </div>
+                            </div>
+                            <div class="clr"></div>
+                        </div>
+                        <div class="stract-result-item stract-effect">
+                            <div class="stract-first-col width_70 float-left p-relative">
+                                <div class="stract-item float-left width_100"></div>
+                            </div>
+                            <div class="width_30 float-right">
+                                <div class="stract-cost-item">
+                                    <div class="stract-cost"></div>
+                                    <div class="stract-btn-item"></div>
+                                </div>
+                            </div>
+                            <div class="clr"></div>
+                        </div>
+                    </div>
+                    <div class="clr"></div>
+                </div>
+                <div id="app" class="unvisible">
+                    <aside class="sidebar-content width_30 float-left">
+                        <div class="filters-container float-left width_95 ">
+                            <p><span class="color_1 font-weight result-count"></span> insurances has been found.</p>
+                            <p class="section-timer">Left Time : <span id="timer" class="color_1 font-weight EnNum font_20">00:00:00</span></p>
+                        </div>
+                    </aside>
+                    <div class="result-content width_70 float-right">
+                        <div class="result-items insurance">
+                            <basis core="tree" datamembername="db.list-insurance" idcol="id" parentidcol="parentid"
+                                nullvalue="null">
+                                <face filter="value = '[]' and field='root'">
+                                    <div class="message-box-nodata dir-ltr">
+                                        <i class="icon-message-box">
+                                            <svg width="50pt" height="50pt" fill="#666" version="1.0" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                                                <g transform="translate(0 512) scale(.1 -.1)">
+                                                    <path d="m593 5102c-100-35-171-115-193-216-8-36-10-508-8-1626l3-1575 21-46c28-60 87-119 150-150 47-23 59-24 306-29l257-5-459-430c-252-236-470-448-485-470-62-96-71-231-22-338 92-201 346-279 521-159 33 23 269 267 611 632 306 327 562 599 569 604 9 6 23 2 43-12 96-68 313-155 464-186 454-93 972 35 1285 317l51 46 1058 6 57 28c69 34 121 91 148 164 20 53 20 76 20 1633s0 1580-20 1633c-27 73-79 130-148 164l-57 28-2060 2c-1957 2-2063 2-2112-15zm4142-194c48-22 55-52 55-228v-160h-835c-908 0-877 2-903-55-15-33-15-57 0-90 26-57-5-55 903-55h835v-1296-1296l-68-68h-416-415l56 83c102 149 181 339 220 533 27 134 24 423-5 560-64 299-201 559-406 772-214 222-458 359-759 424-87 19-133 22-307 22s-220-3-307-22c-294-64-523-190-738-406-223-224-359-476-427-790-18-84-22-133-22-291 0-206 14-299 70-462 28-82 110-256 144-303 11-16 20-32 20-37s-20-25-44-46l-45-37h-341-342l-68 68v1296 1296h835c625 0 841 3 860 12 29 13 55 55 55 88s-26 75-55 88c-19 9-235 12-860 12h-835v166 166l68 68h2026c1549 0 2031-3 2051-12zm-1788-1077c282-58 509-182 693-378 454-486 454-1300-1-1787-211-226-500-362-845-396-645-65-1252 396-1381 1047-21 109-24 355-4 463 88 493 456 901 931 1032 190 53 410 59 607 19zm-1304-2478-66-74-168 166 146 134 154-152-66-74zm-293-138 84-85-50-52c-28-29-220-234-428-455-403-431-407-434-488-419-106 20-169 137-123 226 13 26 901 870 915 870 3 0 43-38 90-85z" />
+                                                    <path d="m2644 4509c-25-13-54-60-54-89 0-51 49-100 100-100s100 49 100 99c0 73-80 122-146 90z" />
+                                                    <path d="m2305 3320c-11-4-101-90-200-189-236-237-234-207-27-414l152-152-140-140c-146-146-176-188-165-233 8-34 338-369 381-388 17-7 42-10 55-7s93 73 177 157l152 151 153-151c83-84 163-154 176-157s35-1 50 4c40 15 379 358 386 391 10 46-19 87-165 233l-140 140 152 152c207 208 210 176-32 418-115 115-194 186-210 190-47 10-83-14-228-158l-142-141-143 141c-169 168-185 178-242 153zm185-384c147-147 174-165 228-151 16 4 85 64 175 153l147 146 87-87 88-87-153-153c-133-135-152-157-152-186 0-18 5-42 11-54s75-86 152-165l142-142-175-175-153 153c-151 149-154 152-197 152s-46-3-197-152l-153-153-174 174 152 155c149 150 152 155 152 197s-3 46-152 196l-152 153 84 85c47 47 87 85 89 85 3 0 71-65 151-144z" />
+                                                </g>
+                                            </svg> </i>
+                                        <div class="line-one font_20 font-weight text-right">
+                                            No results found for your search 
+                                        </div>
+                                        <div class="line-two text-right">
+                                            To get the result, please change the date or route
+                                        </div>
+                                        <button class="background-color_1 color_white font_16 border-radius cursor-pointer" onclick="window.location='/EN'">Home</button>
+                                    </div>
+
+                                </face>
+                                <face filter="field='boxinfo'">
+                                    <div class="result-item">
+                                        <form method="post" action="/Client_Show_insurance_En_ver.2.bc" class="getInsurance">
+                                            <input type="hidden" value="Tem3" name="checkpreurl" />
+                                            <input type="hidden" value="[##cms.form.countryid##]"
+                                                name="countryid" />
+                                            <input type="hidden" value="[##cms.form.fdate##]" name="fdate" />
+                                            <input type="hidden" value="[##cms.form.tdate##]" name="tdate" />
+                                            <input type="hidden" value='[##cms.form.birthday##]' name="birthday"
+                                                class="birthday" />
+                                            <input type="hidden" value="[##cms.form.insurancecountry##]"
+                                                name="insurancecountry" />
+                                            <input type="hidden" value="[##cms.form.passengercount##]"
+                                                name="passengercount" />
+                                            <div class="result-info p-relative">@child</div>
+                                            </form>
+                                    </div>
+                                </face>
+                                <face filter="field='first'">
+                                    <div class="first-col width_70 float-left p-relative">
+                                        <div class="d-flex p-relative">@child</div>
+                                    </div>
+                                </face>
+                                <face filter="field='provider' and value='20'">
+                                    <div class="img-item float-right text-center">
+                                        <img src="https://cdn.basiscore.net/basisfly.com/images/reservation_Pasargad-Ins.png" width="50" height="50"
+                                            alt="pasargad" />
+                                        <input type="hidden" value="@value" name="provider" />
+                                    </div>
+
+                                </face>
+                                <face filter="field='provider' and value='21'">
+                                    <div class="img-item float-right text-center">
+                                        <img src="https://cdn.basiscore.net/basisfly.com/images/reservation_Saman-Ins.png" width="80" height="27"
+                                            alt="Saman" />
+                                        <input type="hidden" value="@value" name="provider" />
+                                    </div>
+                                </face>
+                                <face filter="field='provider' and value='19'">
+                                    <div class="img-item float-right text-center">
+                                        <img src="https://cdn.basiscore.net/basisfly.com/images/reservation_Saman-Ins.png" width="80" height="27"
+                                            alt="samanb2c" />
+                                        <input type="hidden" value="@value" name="provider" />
+                                    </div>
+                                </face>
+                                <face filter="field='mainprovider'">
+                                    <input type="hidden" value='@value' name="insmainprovider" />
+                                </face>
+                                <face filter="field='duration'">
+                                    <input type="hidden" value='@value' name="duration" class="duration" />
+                                </face>
+                                <face filter="field='adult'">
+                                    <input type="hidden" value='@value' name="adult" />
+                                </face>
+                                <face filter="field='child'">
+                                    <input type="hidden" value='@value' name="child" />
+                                </face>
+                                <face filter="field='infant'">
+                                    <input type="hidden" value='@value' name="infant" />
+                                </face>
+                                <face filter="field='zone'">
+                                    <div class="item-info">
+                                        <input type="hidden" value='@value' name="zone" />
+                                        <p class="font_14 zone"> @child </p>
+                                        <div class="details-btn font_12 color_2 text-center cursor-pointer">
+                                            Details
+                                        </div>
+                                    </div>
+
+                                </face>
+                                <face filter="field='en_name'">
+                                    <input type="hidden" value="@value" name="en_name" />
+                                    <span>@value - </span>
+                                </face>
+                                <face filter="field='fa_name'">
+                                    <input type="hidden" value="@value" name="fa_name" />
+                                    <span>@value</span>
+                                </face>
+                                <face filter="field='zone_code'">
+                                    <input type="hidden" value="@value" name="zone_code" />
+                                </face>
+                                <face filter="field='second'">
+                                    <div class="width_30 float-right">
+                                        <div class="cost-item text-center">
+                                            @child
+                                            <div class="btn-item"><button type="submit"
+                                                    class="color_white border-radius font_15 cursor-pointer">Buy Insurance</button></div>
+                                        </div>
+                                    </div>
+                                </face>
+                                <face filter="field='total'">
+                                    <div>
+                                        <input type="hidden" value="@value" name="Maintotal" />
+                                        <div class="color_gray font_11">Price :</div><span
+                                            class="item-costfont_20 font-weight seprator">@value</span><span
+                                            class="color_gray font_11 unit">Rial</span>
+                                    </div>
+                                </face>
+                                <face filter="field='totalcom'">
+                                    <div class="total_com_row unvisible">
+                                        <input type="hidden" value="@value" name="Maintotalcom" /><span
+                                            class="color_gray font_11">Total
+                                            :</span><span
+                                            class="item-costfont_20 font-weight seprator">@value</span><span
+                                            class="color_gray font_11 unit">Rial</span></div>
+                                </face>
+                                <face filter="field='commissioncost'">
+                                    <div class="total_com_row unvisible"><span class="color_gray font_11">Commission
+                                            :</span><span
+                                            class="item-costfont_20 font-weight seprator">@value</span><span
+                                            class="color_gray font_11 unit">Rial</span></div>
+                                </face>
+                                <face filter="field='commissionn'">
+                                    <input type="hidden" value='@value' name="commissionn" />
+                                </face>
+                                <face filter="field='third'">
+                                    <div class="clr"></div>
+                                    <div class="details-container text-right unvisible">
+                                        <div class="wrapper-tab-details d-row font_13 ">
+                                            <div class="tab-details insurance">
+                                                <span class="with-tab active-tab p-relative link_price_tbl"
+                                                    data-active="0">Price Details</span>
+                                            </div>
+                                            <div class="tab-details insurance">
+                                                <span class="with-tab p-relative link_rule_1"> Insurance Obligations
+                                                    </span>
+                                            </div>
+                                            <div class="tab-details insurance p-relative ">
+                                                <span class="with-tab p-relative link_rule_2">Cancellation Rules
+                                                    </span>
+                                            </div>
+                                            <div class="clr"></div>
+                                        </div>
+                                        @child
+                                    </div>
+                                </face>
+                                <face filter="field='personsContainer'">
+                                    <div class="details-row-content details-price">
+                                        <div class="details-item">
+                                            @child
+                                        </div>
+                                    </div>
+                                </face>
+
+                                <face filter="field='persons' and type='array'">
+                                    <table class="details-tbl font_13">
+                                        <tr>
+                                            <th>Passengers</th>
+                                            <th>Passengers Birthdate</th>
+                                            <th>Price</th>
+                                            <th>Commission</th>
+                                            <th>Total</th>
+                                        </tr>
+                                        <tbody class="tbody_tbl">@child</tbody>
+
+                                    </table>
+                                </face>
+                                <face filter="field='persons' and type='object'">
+                                    <tr class="row_tbl">
+                                        <td class="index_row"></td>
+                                        <td class="date_row"></td>
+                                        @child
+                                    </tr>
+                                </face>
+                                <face filter="field='price' ">
+                                    <td><span class="font_11 unit_content">Rial</span><span class="seprator">@value</span>
+                                        <input type="hidden" value="@value" class="price" />
+                                    </td>
+                                </face>
+                                <face filter="field='base_price' ">
+                                    <input type="hidden" value="@value" class="base_price" />
+                                </face>
+                                <face filter="field='price_com' ">
+                                    <td><span class="font_11 unit_content">Rial</span><span class="seprator">@value</span>
+                                    </td>
+                                    <input type="hidden" value="@value" class="price_com" />
+                                </face>
+                                <face filter="field='tax' ">
+                                    <input type="hidden" value="@value" class="tax" />
+                                </face>
+                                <face filter="field='markups' ">
+                                    <input type="hidden" value="@value" class="mtotalprovider" />
+                                </face>
+                                <face filter="field='markups2' ">
+                                    <input type="hidden" value="@value" class="mtotalmarkup" />
+                                </face>
+                                <face filter="field='markupsupplier' ">
+                                    <input type="hidden" value="@value" class="mtotalmain" />
+                                </face>
+                                <face filter="field='markupsupplier2' ">
+                                    <input type="hidden" value="@value" class="mtotalsupplier" />
+                                </face>
+                                <face filter="field='commissioncostPerson'">
+                                    <td><span calss="font_11 unit_content">Rial</span><span class="seprator">@value</span>
+                                        <input type="hidden" value="@value" class="commission" />
+                                        <input type="hidden" value="@value" class="commissioncost" />
+                                    </td>
+                                </face>
+                                <face filter="field='obligationp'">
+                                    <div class="details-row-content unvisible details-rull_1">
+                                        <div class="details-item">
+                                            @child
+                                        </div>
+                                    </div>
+                                </face>
+                                <face filter="field='obligation' and type = 'array'">
+                                    <p class="text-justify max-height font_13">@child</p>
+                                </face>
+                                <face filter="field='obligation' and type = 'object'">
+                                    @child
+                                </face>
+                                <face filter="field='title'">
+                                    <span>@value :</span>
+                                </face>
+                                <face filter="field='limit'">
+                                    <span> @value </span><br>
+                                </face>
+                                <face filter="field='cancelrule'">
+                                    <div class="details-row-content unvisible details-rull_2">
+                                        <div class="details-item">
+                                            <p class="text-justify max-height font_13">@value</p>
+                                        </div>
+                                    </div>
+                                </face>
+                                <face filter="type in ('array','object')">@child</face>
+                            </basis>
+                        </div>
+                    </div>
+                </div>
+                <div class="clr"></div>
+            </div>
+        </section>
+
+    </section>
+    <!----------------JS FILE---------------->
+    <script src="[##cms.cms.cdn##]/_js/jquery/jquery-3.6.3.min.js" type="text/javascript"></script>
+    <!----------------CSS FILE---------------->
+    <link href="https://cdn.basiscore.net/basisfly.com/css/reservation_tem_calendar_en.css" defer type="text/css"rel="stylesheet" />
+    <link href="https://www.basisfly.com/css/reservation_tem3_datepicker_en.css" type="text/css" rel="stylesheet" />
+    </script>
+    <basis core="call" file="footer-en.inc" />
+    <basis core="call" file="Client_Basis_Calendar_EN.inc" />
+</main>
+<script src="https://cdn.basiscore.net/basisfly.com/js/reservation_tem3_reSearch_en.js" type="text/javascript"></script>
+<script src="https://cdn.basiscore.net/basisfly.com/js/reservation_date_pickerUi.js" type="text/javascript"></script>
+<script src="https://cdn.basiscore.net/basisfly.com/js/reservation_date_picker.js" type="text/javascript"></script>
+<script src="https://cdn.basiscore.net/basisfly.com/js/reservation_main_date_picker.js" type="text/javascript"></script>
+<script src="https://cdn.basiscore.net/basisfly.com/js/reservation_insurance_search.js" type="text/javascript"></script>
+<script type="text/javascript">
+    <basis core = "call"  file = "Client_Basis_Calendar_EN_js.inc" />
+</script>
+
+</body>
+
+</html>

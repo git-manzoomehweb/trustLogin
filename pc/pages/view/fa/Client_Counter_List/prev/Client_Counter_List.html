@@ -1,0 +1,29 @@
+<basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+    <member method="cms" name="counter_list" query='{
+    "name" : "db",
+    "mid" : "20",
+    "member" : [ 
+        {
+            "type" : "list",
+            "name" : "q",
+            "request" : "counter_list",
+            "dmnid" : "[##cms.cms.domainid##]",
+            "ownerid" : "[##cms.cms.ownerid##]",
+            "rkey" : "[##cms.cookie.rkey##]"
+        }
+    ]
+}' />
+</basis>
+<basis core="group" name="Delay-1">
+    <basis core="dbsource" name="db" source="trust_login8" usersid="[##db.counter_list.result##]">
+        <member name="usersinformation" request="usersinformation" type="list"></member>
+    </basis>
+    <basis core="print" datamembername="db.usersinformation">
+        <face>
+            <li onclick="select_counter(this)" class="li-item" data-id="@userid">
+                <span class="first-name"> @name </span> <span class="last-name">
+                    @family </span>
+            </li>
+        </face>
+    </basis>
+</basis>

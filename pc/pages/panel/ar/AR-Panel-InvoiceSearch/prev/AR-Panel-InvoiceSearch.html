@@ -1,0 +1,432 @@
+<style>
+    .Basis_Date_Box tr:last-child td {
+    
+      margin-bottom: 10px;
+    }
+        .Panel_invoice_List table tr:nth-child(2n+1) td {
+            background: #FFF;
+        }
+        
+        .Panel_invoice_List table {
+            width: 100%;
+            border-radius: 2px;
+            overflow: hidden;
+            background-color: #e3e3e3;
+            font-family: IRANSansWeb;
+        }
+        .Panel_invoice_List table tr th {
+            text-align: center;
+            background: #FFF;
+            color: #004B85;
+            padding: 5px 0;
+            font-size: 13px;
+            text-align: center !important;
+            height: 50px !important;
+            padding: 10px 10px;
+            font-size: 13px;
+            font-weight: bold;
+            box-sizing: border-box;
+        }
+        
+        .Panel_invoice_List table tr td {
+            border: none;
+            font-size: 12px;
+            position: relative;
+            text-align: center;
+            padding: 5px 10px;
+            word-break: break-word;
+        }
+        .Panel_invoice_List table tr:nth-child(2n) td {
+            background: #F6F6F6;
+        }
+        .fa-file-excel {
+            margin-left: 0px;
+        }
+        
+    </style>
+    <basis core="dbsource" source="trust_login8" mid="24" name="Paneluser" lid="1" rkey="[##cms.cookie.rkey##]" > 
+        <member name="login" type="scalar"  request="userid"></member>
+    </basis>
+      
+    <basis core="group" name="Delay_1">
+        <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+            <member method="cms" name="get_account_type" query='{
+                "name": "db",
+                "mid": "20",
+                "member": [
+                    {
+                        "type": "list",
+                        "name": "credit",
+                        "request": "get_account_type",
+                        "userid": "[##Paneluser.login.userid|(0)##]",
+                        "dmnid": "[##cms.cms.domainid##]"
+                    }
+                ]
+            } ' />
+        </basis>  
+    
+        <basis core="group" name="Delay_66" >
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource" >
+                <member method="cms"
+                name="InvoiceList" 
+                query= '
+                { 
+                   "name": "db", 
+                   "mid": "20",
+                   "member":
+                   [
+                        { 
+                           "name": "q",
+                           "type":"list",
+                           "request":"factorlist",
+                           "search":[##cms.json.header|(0)##],               
+                           "deleted":"[##cms.form.deleted|(0)##]",
+                           "pageindex":"[##cms.query.page|(1)##]",
+                           "perpage":"[##cms.query.perpage|(30)##]",
+                           "userid": "[##Paneluser.login.userid ##]", 
+                           "dmnid": "[##cms.cms.domainid##]",
+                           "lid":"[##cms.form.lid##]",
+                           "accounttype":"[##db.get_account_type.result##]"
+                        }
+                    ]
+                } ' 
+                preview="" ></member>
+            </basis>
+            
+            <basis core="group" name="Delay_4">
+                <basis core='inlinesource' name='db'>
+                    <member name="InvoiceList_Tree" format="json" preview=""> {"root":[##db.InvoiceList.result##]}</member>
+                </basis>
+                <basis core='inlinesource' name='db'>
+                    <member 
+                        name='ResultCount' 
+                        format="json" 
+                        postsql="select value from [db.ResultCount] where field = 'ResultCount'"> 
+                        {"root":[##db.InvoiceList.result##]}
+                    </member>
+                    <member 
+                        name='total' 
+                        format="json" 
+                        postsql="select value from [db.total] where field = 'total'"> 
+                        {"root":[##db.InvoiceList.result##]}
+                    </member>
+                </basis>
+        
+                <basis core="group" name="Delay_5">
+                    <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource" >
+                        <member method="cms"
+                        name="Paging" 
+                        query='
+                        {
+                            "name": "db",
+                            "mid": "20",
+                            "member": 
+                            [
+                                {
+                                    "name": "q",
+                                    "type": "list",
+                                    "request": "Panel_Paging",
+                                    "link": "[##cms.request.rawurl##]",
+                                    "pageindex":"[##cms.query.page|(1)##]",
+                                    "perpage":"[##cms.query.perpage|(30)##]",
+                                    "objectcount":"[##db.ResultCount.Value##]",
+                                }
+                            ]
+                        }' />
+                    </basis>
+        
+                    <basis core="group" name="Delay_6">
+                        <basis core="inlinesource" name="list"><member name="paging" format="json">{"root":[##db.Paging.result##]}</member></basis>
+        
+        
+       
+                        <div class="Panel_Box_title"><span>List of contracts and pre-contracts : ([##db.ResultCount.Value|(0)##]) </span><span class="Panel_Excel_icon"><a class="DownLoadExcel" style="cursor:pointer"><i class="fa fa-file-excel"></i></a></span></div>
+                        <div class="Panel_Box_Content">
+                            <div class="Panel_invoice_List">
+                                <table cellspacing="1">
+                                    <thead>
+                                      <tr>
+                                        <th>التسلسل</th>
+                                        <th>رقم</th>
+                                        <th>اسم الشرکة</th>
+                                        <th>الوجهة الاصلية</th>
+                                        <th>تاريخ الذهاب</th>
+                                        <th>تاريخ العودة</th>
+                                        <th>السعر</th>
+                                        <th>تاريخ العقد</th>
+                                        <th>خدمات</th>
+                                        <basis core="group" name="check_user" if="'[##db.get_account_type.result##]' = '1'">
+                                            <th>خدمة ويب</th>
+                                        </basis>
+                                        <th>refnumber</th>
+                                        <th>عدد المسافرین</th>
+                                        <th>إشعار</th>
+                                        <th>الحالة</th>
+                                        <th>رویة التفاصیل</th>
+                                      </tr>
+                                    </thead>
+        
+                                    <tbody>
+                                        <basis core="tree" datamembername="db.InvoiceList_Tree" idcol="id" parentidcol="parentid" nullvalue="null">
+                                            <face filter="Field in ('invoice')"><tr>@Child</tr></face>
+                                            <face filter="Field in ('index')"><td data-label="التسلسل">@value</td></face>
+                                            <face filter="Field in ('id')"><td data-label="رقم">@child</td></face>
+                                            <face filter="Field in ('id_0')"><span>@value</span></face>
+                                            <face filter="Field in ('id_1')"><span>@value</span></face>
+                                            
+                                            <face filter="Field in ('account')"><td data-label="اسم الشرکة">@Child</td></face>
+                                            <face filter="Field in ('accountName')"><div>@value</div></face>
+                                            <face filter="Field in ('share') and value in ('1')"><div style="color:#4894E9;font-size:12px;">( شراء الحصص )</div></face>
+        
+                                            <face filter="Field in ('city')"><td data-label="الوجهة الاصلية">@Child</td></face>
+                                            <face filter="Field in ('cityName')"><div>@value</div></face>
+                                            <face filter="Field in ('tourName')"><div>@value</div></face>
+                                             <face filter="Field in ('airport')"><div>@value</div></face>
+        
+                                            <face filter="Field in ('begindate')"><td data-label="تاريخ الذهاب">@Child</td></face>
+                                            <face filter="Field in ('mstring')"><div class="mdate">@value</div></face>
+                                          
+                                            
+                                            <face filter="Field in ('enddate')"><td data-label="تاريخ العودة">@Child</td></face>
+                                            <face filter="Field in ('mstring')"><div class="mdate">@value</div></face>
+                                         
+    
+                                            <face filter="Field in ('createdate')"><td data-label="تاريخ العقد">@Child</td></face>
+                                            <face filter="Field in ('mstring')"><div class="mdate">@value</div></face>
+                                        
+                                                
+                                            <face filter="Field in ('costinfo')"><td data-label="السعر">@Child</td></face>
+                                            <face filter="Field in ('totalwithcommision')"><div class="Panel_Seprator">@value</div></face>
+                                            <face filter="Field in ('priceunit')"><div>( @value )</div></face>
+        
+                                            <face filter="Field in ('services')"><td data-label="خدمات">@Child</td></face>
+                                            <face filter="Field in ('service')"><div>@value</div></face>
+                                            <face filter="Field in ('hotelstatus') and type in ('Array')"><div>@child</div></face>
+                                            
+                                            <face filter="Field in ('hotelstatus') and type in ('Object')">
+                                                <div class="Status_Box" style="margin: 0 1px;">@child</div>
+                                            </face>
+                                            
+                                            <face filter="Field in ('H_statusid') and value=1"><span class="Reservation_Wating">H</span></face>
+                                            <face filter="Field in ('H_statusid') and value=2"><span class="Reservation_Ok">H</span></face>
+                                            <face filter="Field in ('H_statusid') and value=3"><span class="Reservation_NOk">H</span></face>
+                                            
+                                            <face filter="Field in ('Details')"><div class="Status_Details">@Child</div></face>
+                                            <face filter="Field in ('H_countryname')"><p>اسم الدولة : @value</p></face>
+                                            <face filter="Field in ('H_cityname')"><p>اسم المدينة : @value</p></face>
+                                            <face filter="Field in ('HotelName')"><p>اسم فندق : @value</p></face>          
+                                            <face filter="Field in ('H_status') and value=1"><p>الحالة: جاري التنفيذ</p></face> 
+                                            <face filter="Field in ('H_status') and value=2"><p>الحالة: وافق الفندق</p></face> 
+                                            <face filter="Field in ('H_status') and value=3"><p>الحالة: الفندق غير معتمد</p></face> 
+        
+                                            <face filter="Field in ('visastatus') and type in ('Array')"><div>@child</div></face>
+                                            <face filter="Field in ('visastatus') and type in ('Object')">
+                                                <div class="Status_Box" style="margin: 0 1px;">@child</div>
+                                            </face>
+        
+                                            <face filter="Field in ('v_statusid') and value=1"><span class="Reservation_Wating">V</span></face>
+                                            <face filter="Field in ('v_statusid') and value=2">
+                                                <span class="Visa_GetDoc" style="background: #085BA9;">V</span>
+                                            </face>
+        
+                                            <face filter="Field in ('v_statusid') and value=3"><span class="Reservation_Ok">V</span></face>
+                                            <face filter="Field in ('v_statusid') and value=4"><span class="Reservation_NOk">V</span></face>
+                                  
+                                            <face filter="Field in ('Details')"><div class="Status_Details">@Child</div></face>
+                                            <face filter="Field in ('v_countryname')"><p>اسم الدولة : @value</p></face>
+                                            <face filter="Field in ('visaName')"><p>اسم التأشيرة: @value</face>
+                                            <face filter="Field in ('visit_log')">-@value-</face>
+                                            <face filter="Field in ('validity_duration')">@child</face> 
+                                            <face filter="Field in ('time')">@value</face>
+                                            <face filter="Field in ('months')">@value</p></face>           
+                                            <face filter="Field in ('v_status') and value=1"><p>الحالة: تحت المعالجة</p></face> 
+                                            <face filter="Field in ('v_status') and value=2"><p>الحالة: استلام الوثائق من المسافرين</p></face> 
+                                            <face filter="Field in ('v_status') and value=3"><p>الحالة: تمت الموافقة على التأشيرة</p></face>
+                                            <face filter="Field in ('v_status') and value=4"><p>الحالة: تم رفض التأشيرة</p></face> 
+                                                
+                                            <face filter="Field in ('labels') and type in ('Array')">
+                                                <td data-label="إشعار">
+                                                    <div class="Panel_invoice_Status">@Child</div>
+                                                </td>
+                                            </face>
+        
+                                            <face filter="Field in ('labels') and type in ('object')">@Child</face>
+                                            <face filter="Field in ('label') and value='0'">
+                                                <span class="nclear"><i>أمتياز</i></span>
+                                            </face>
+        
+                                            <face filter="Field in ('label') and value='1'">
+                                                <span class="clear"><i>مسح</i></span>
+                                            </face>
+        
+                                            <face filter="Field in ('label') and value='2'">
+                                                <span class="confirm"><i>غير مستقر <br> بموافقة مالية</i></span>
+                                            </face>
+        
+                                            <face filter="Field in ('label') and value='3'">
+                                                <span class="edit"><i>تم تحريره</i></span>
+                                            </face>
+        
+                                            <face filter="Field in ('label') and value='5'">
+                                                <span class="docRegister"><i>استقرت من قبل مالي</i></span>
+                                            </face>
+           
+                                          <face filter="Field in ('label') and value='6'"><span class="creditPayment"><i>دفعة ائتمانية</i></span></face>
+                                            <face filter="Field in ('label') and value='4'">
+                                                <span class="cancel"><i>ألغيت</i></span> 
+                                            </face>
+                                            
+                                            <face filter="Field in ('open') and value in ('0')"><td data-label="الحالة">عقد</td></face>
+                                            <face filter="Field in ('open') and value in ('1')"><td data-label="الحالة">عقد مسبق</td></face>
+        
+                                            <face filter="Field in ('link')">
+                                                <td data-label="رویة التفاصیل">
+                                                    <a href="@value"><i class="fa fa-eye" aria-hidden="true"></i></a>
+                                            </face>                                    
+        
+                                            <face filter="Field in ('read')">
+                                                    <input type="hidden" class="read" name="read" value="@value">
+                                                </td>
+                                            </face>
+                                            <face filter="Field in ('provider') and type in ('Array')">
+                                                <td data-label="خدمة ويب" class="provider">
+                                                   @Child
+                                                
+                                            
+                                            </face>
+                                            <face filter="Field in ('webservices') and type in ('Object')">
+                                                <div class="">@Child</div>
+                                            </face>
+                                            <face filter="Field in ('webservice') and value in ('Namayeshgah')">
+                                                بيانات ثابتة
+                                           </face>
+                                           <face filter="Field in ('webservice') and value not in ('Namayeshgah')">
+                                                @value
+                                           </face>
+                                           <face filter="Field in ('ws_refnumber') and value not in ('-','')">
+                                            <td data-label="refnumber"><div class="refnumber" style="direction: ltr;">@value</div>
+                                            </face>
+                                           <face filter="Field in ('ch_refnumber') and value not in ('-','')"><div>@value</div></td></face>
+                                           <face filter="Field in ('status') and value in ('2')"><div class="InvoiceStatus" style="display: none;"><span class="status-booking"><i>إصدار غير معروف (معلق) </i></span></div></td></face>
+                                           <face filter="Field in ('status') and value not in ('2')"></td></face> 
+                                           <face filter="Field in ('passengers')"><td data-label="عدد المسافرین">@Child</td></face>
+                                           <face filter="Field in ('infant')"><div class="passengerInfo">رضيع : @value</div></face>
+                                           <face filter="Field in ('child')"><div class="passengerInfo">طفل : @value</div></face>
+                                           <face filter="Field in ('adult')"><div class="passengerInfo">بالغ : @value</div></face>
+                                           <face filter="type in ('array','object')"> @child </face>
+                                        </basis>
+                                    </tbody>
+                                </table>  
+                                <div style="text-align:center;">
+                                    <ul class="Panel_Paging" style="margin-top:20px; padding:0;">
+                                        <basis core="tree" datamembername="list.paging" idcol="id" parentidcol="parentid" nullvalue="null">
+                                            <face filter="Field in ('title') and value='[##cms.query.page##]'">
+                                                <li>
+                                                    <a class="active_Page" data-href="/AR-Panel-InvoiceSearch.bc?page=@value" onclick="paging(this)">@value</a>
+                                                </li>
+                                            </face>
+        
+                                            <face filter="Field in ('title') and value not in ('0','prev','next')">
+                                                <li>
+                                                    <a data-href="/AR-Panel-InvoiceSearch.bc?page=@value" onclick="paging(this)">@value</a>
+                                                </li>
+                                            </face>
+        
+                                            <face filter="Field in ('title') and value='prev'">
+                                                <li>
+                                                    <a data-href="prev" onclick="paging(this)">سابق</a>
+                                                </li>
+                                            </face>
+        
+                                            <face filter="Field in ('title') and value='next'">
+                                                <li>
+                                                    <a data-href="next" onclick="paging(this)">التالي</a>
+                                                </li>
+                                            </face>
+                                              
+                                            <face filter="type in ('array','object')"> @child </face>
+                                        </basis>
+                                    </ul>
+                                </div> 
+                  
+                            </div>
+                        </div>
+                        <form action="/AR-Panel-InvoiceSearch.XLS" method="post" class="ExcelForm">
+                            <input type="hidden" name="Xdmnid" value='[##cms.cms.domainid##]'>
+                            <input type="hidden" name="Xuserid" value='[##Paneluser.login.userid ##]'>
+                            <input type="hidden" name="Xsearch" value='[##cms.json.header|(0)##]'>
+                            <input type="hidden" name="Xdeleted" value='[##cms.form.deleted|(0)##]'>
+                            <input type="hidden" name="Xaccounttype" value='[##db.get_account_type.result##]'>
+                        </form>
+                        
+        
+                        <script type="text/javascript">
+                            function paging (x) 
+                            {
+                                var page = '[##cms.query.page##]'
+        
+                                $(".penel_invoice_ResultBox").hide()
+                                $(".ajax_loading").fadeIn()
+        
+                                if ($(x).attr("data-href")=="prev")
+                                { 
+                                  page--
+                                  var href = '/AR-Panel-InvoiceSearch.bc?page='+page+''
+                                }
+                                else if ($(x).attr("data-href")=="next")
+                                { 
+                                  page++
+                                  var href = '/AR-Panel-InvoiceSearch.bc?page='+page+''
+                                }
+                                else
+                                  var href = $(x).attr("data-href")
+                               
+                                $.ajax(
+                                {
+                                    url: href,
+                                    type: "post",
+                                    data: $(".Panel_form_search").serialize(),
+                                    success: function(response) {     
+                                        $(".ajax_loading").fadeOut(); 
+                                        $(".penel_invoice_ResultBox").empty().html(response);
+                                        $(".penel_invoice_ResultBox").show()
+                                    }
+                                });
+                            }
+        
+                            $(".Panel_Seprator").each(function () 
+                            {
+                                if ($(this).text().length == 0)         
+                                    $(this).text("لا يمتلك")        
+                                else
+                                {
+                                   $(this).text(new Intl.NumberFormat().format($(this).text()))
+                                }
+                            })
+        
+                            $(".read").each(function () 
+                            {
+                                if ($(this).val() == "0" || $(this).val() == "1")
+                                {
+                                    $(this).closest("tr").addClass("unRead")
+                                    $(this).closest("td").find("i").attr("class","fa fa-eye-close")                            
+                                }
+                            })
+                            $( document ).ready(function() {
+                                $(".DownLoadExcel").click(function () {  $(".ExcelForm").submit() });
+                                $(".Total_Price").text('[##db.total.Value##]');
+                                $(".Total_Price").text(new Intl.NumberFormat().format( $(".Total_Price").text()))
+                                $(".provider").each(function(){
+                                    if ([##db.get_account_type.result##] == 1) {
+                                        $(this).show()
+                                    }else{
+                                        $(this).hide()
+                                    }
+                                })
+                            });
+                        </script>
+                    </basis>
+                </basis>
+            </basis>
+        </basis>
+    </basis>

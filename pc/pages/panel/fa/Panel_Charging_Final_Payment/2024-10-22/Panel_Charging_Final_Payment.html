@@ -1,0 +1,1023 @@
+<basis core="dbsource" source="trust_login" mid="24" name="db" lid="1" ownerid="[##cms.cms.ownerid##]">
+    <member name="dmnid" type="scalar" request="getdmnid" preview="" />
+</basis>
+<basis core="group" name="Saman" if="[##cms.form.bank_id##] = 31">
+    <basis core="inlinesource" name="db">
+        <member name="token" format="json" postsql="select  value  from [db.token] as a where ParentId = 1" preview="">
+            {"root":[##cms.form.token##]}</member>
+    </basis>
+    <basis core="group" if="[##db.token.Value##]>0">
+        <basis core="dbsource" source="accounting" name="db" bankid="1" invoicenumber="[##cms.form.ResNum##]"
+            cardno="[##cms.form.SecurePan##]" hashedcardno="[##cms.form.CID##]" merchantid="[##cms.form.MID##]"
+            paymentid="[##cms.form.RRN##]" refnumber="[##cms.form.TRACENO##]" status="[##cms.form.StateCode##]"
+            token="[##cms.form.RefNum##]" result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "31",
+                "bankName": "saman",
+                "cardno": "[##cms.form.SecurePan##]",
+                "refnumber": "[##cms.form.TRACENO##]",
+                "bank":"1"
+                }]} ' />
+            </basis>
+        </basis>
+    </basis>
+    <basis core="group" if="[##db.token.Value##]<0">
+        <basis core="dbsource" source="accounting" name="db" bankid="1" invoicenumber="[##cms.form.ResNum##]"
+            cardno="[##cms.form.SecurePan##]" hashedcardno="[##cms.form.CID##]" merchantid="[##cms.form.MID##]"
+            paymentid="[##cms.form.RRN##]" refnumber="[##cms.form.TRACENO##]" status="[##cms.form.StateCode##]"
+            token="[##cms.form.RefNum##]" result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="Mellat" if="[##cms.form.bank_id##] = 32">
+    <basis core="inlinesource" name="db">
+        <member name="token" format="json" postsql="select  value  from [db.token] as a where ParentId = 1" preview="">
+            {"root":[##cms.form.token##]}
+        </member>
+    </basis>
+    <basis core="group" if="[##db.token.Value##]=0">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="2"
+            invoicenumber="[##cms.form.SaleOrderId##]" cardno="[##cms.form.CardHolderPan##]"
+            hashedcardno="[##cms.form.CardHolderInfo##]" merchantid="" paymentid=""
+            refnumber="[##cms.form.SaleReferenceId##]" status="[##cms.form.ResCode##]" token="[##cms.form.RefId##]"
+            result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "32",
+                "bankName": "mellat",
+                "cardno": "[##cms.form.CardHolderPan##]",
+                "refnumber": "[##cms.form.SaleReferenceId##]",
+                "bank":"2"
+                }]} ' />
+            </basis>
+        </basis>
+    </basis>
+    <basis core="group" if="[##db.token.Value##]>0">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="2"
+            invoicenumber="[##cms.form.SaleOrderId##]" cardno="[##cms.form.CardHolderPan##]"
+            hashedcardno="[##cms.form.CardHolderInfo##]" merchantid="" paymentid=""
+            refnumber="[##cms.form.SaleReferenceId##]" status="[##cms.form.ResCode##]" token="[##cms.form.RefId##]"
+            result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="Pasargad" if="[##cms.form.bank_id##] = 33">
+    <basis core="external.ws.ws" service="pasargadBank" name="pasargad" source="cmsDbService"
+        procedurename="sbserviceprocedure1" preview="">
+        <member name="m1" method="pasargadVerifyPayment" merchantCode="[##cms.form.merchantID##]" sort="random">
+            <params>
+                <param name="merchantCode" value="[##cms.form.merchantID##]" />
+                <param name="terminalCode" value="[##cms.form.terminalID##]" />
+                <param name="invoiceNumber" value="[##cms.form.invoiceNumber##]" />
+                <param name="invoiceDate" value="[##cms.form.invoiceDate##]" />
+                <param name="amount" value="[##cms.form.amount##]" />
+            </params>
+        </member>
+    </basis>
+    <basis core="group" name="delay">
+        <basis core="inlinesource" name="db">
+            <member name="verify" format="json" preview="">{"root":[##pasargad.m1.result##]}</member>
+            <member name="verifypay" format="json"
+                postsql="select  Value from [db.verifypay] as a where Field is 'result'" preview="">
+                {"root":[##pasargad.m1.result##]}</member>
+        </basis>
+        <basis core="group" if="[##db.verifypay.Value##]= False">
+            <basis core="dbsource" source="accounting" name="db" bankid="3" invoicenumber="[##cms.form.invoiceNumber##]"
+                cardno="" hashedcardno="" merchantid="[##cms.form.merchantID##]" paymentid=""
+                refnumber="[##cms.form.traceNumber##]" status="0" token="[##cms.form.ReferenceID##]" result="0">
+                <member name="updatepaymentF" type="scalar" request="updatepayment" preview="" />
+            </basis>
+        </basis>
+        <basis core="group" if="[##db.verifypay.Value##]= True">
+            <basis core="dbsource" source="accounting" name="db" bankid="3" invoicenumber="[##cms.form.invoiceNumber##]"
+                cardno="" hashedcardno="" merchantid="[##cms.form.merchantID##]" paymentid=""
+                refnumber="[##cms.form.traceNumber##]" status="1" token="[##cms.form.ReferenceID##]" result="1">
+                <member name="updatepaymentT" type="scalar" request="updatepayment" preview="" />
+            </basis>
+
+            <basis core="group" name="es">
+                <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                    <member method="cms" name="save_onlineCharging" query='{ 
+                    "name": "db",
+                    "mid": "20",
+                    "member":[{ 
+                    "name": "q", 
+                    "type":"list",
+                    "request": "Save_Online_Charging", 
+                    "paymentid": "[##cms.form.paymentid##]",
+                    "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                    "supplierownerid": "[##cms.form.supplierownerid##]",
+                    "reciverdmnid": "0",
+                    "reciverownerid": "[##cms.form.reciverownerid##]",
+                    "userid": "[##cms.form.userid##]",
+                    "bankid": "33",
+                    "bankName": "pasargadBank",
+                    "cardno": "",
+                    "refnumber": "[##cms.form.traceNumber##]",
+                    "bank":"3"
+                    }]} ' />
+                </basis>
+
+            </basis>
+
+        </basis>
+    </basis>
+</basis>
+<basis core="group" name="Pay" if="[##cms.form.bank_id##] = 34">
+    <basis core="group" if="'[##cms.form.status##]' = 'true' ">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="10"
+            invoicenumber="[##cms.form.factorNumber##]" cardno="[##cms.form.cardNumber##]" hashedcardno="" merchantid=""
+            paymentid="" refnumber="[##cms.form.transId##]" status="[##cms.form.urlstatus##]"
+            token="[##cms.form.token##]" result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "34",
+                "bankName": "pay",
+                "cardno": "[##cms.form.cardNumber##]",
+                "refnumber": "[##cms.form.transId##]",
+                "bank":"10"
+                }]} ' />
+            </basis>
+
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.status##]' '= 'false' ">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="10"
+            invoicenumber="[##cms.form.factorNumber##]" cardno="[##cms.form.cardNumber##]" hashedcardno="]"
+            merchantid="" paymentid="" refnumber="[##cms.form.transId##]" status="[##cms.form.urlstatus##]"
+            token="[##cms.form.token##]" result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="zarrinpal" if="[##cms.form.bank_id##] = 35">
+    <basis core="group" if="'[##cms.form.token##]' = '100'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="11"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid="" paymentid=""
+            refnumber="[##cms.form.RefID##]" status="[##cms.form.token##]" token="" result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "35",
+                "bankName": "zarrinpal",
+                "cardno": "",
+                "refnumber": "[##cms.form.RefID##]",
+                "bank":"11"
+                }]} ' />
+            </basis>
+
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> '100'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="11"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid="" paymentid=""
+            refnumber="[##cms.form.RefID##]" status="[##cms.form.token##]" token="" result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="Asanpardakht" if="[##cms.form.bank_id##] = 38">
+    <basis core="group" if="[##cms.form.verifytoken##] = '600'">
+        <basis core="dbsource" source="accounting" name="db" bankid="8" invoicenumber="[##cms.form.paymentid##]"
+            cardno="[##cms.form.FirstSixDigitOfPAN##]" hashedcardno="[##cms.form.LastFourDigitOfPAN##]"
+            merchantid="[##cms.form.merchantID##]" paymentid="[##cms.form.RRN##]"
+            refnumber="[##cms.form.PayGateTranID##]" status="[##cms.form.ResCode##]" token="[##cms.form.RefID##]"
+            result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "38",
+                "bankName": "asanPardakht",
+                "cardno": "[##cms.form.FirstSixDigitOfPAN##]",
+                "refnumber": "[##cms.form.PayGateTranID##]",
+                "bank":"8"
+                }]} ' />
+            </basis>
+
+        </basis>
+
+
+    </basis>
+    <basis core="group" if="[##cms.form.verifytoken##]<> '600'">
+        <basis core="dbsource" source="accounting" name="db" bankid="8" invoicenumber="[##cms.form.paymentid##]"
+            cardno="[##cms.form.FirstSixDigitOfPAN##]" hashedcardno="[##cms.form.LastFourDigitOfPAN##]"
+            merchantid="[##cms.form.merchantID##]" paymentid="[##cms.form.RRN##]"
+            refnumber="[##cms.form.PayGateTranID##]" status="[##cms.form.ResCode##]" token="[##cms.form.RefID##]"
+            result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="Sekhavat" if="[##cms.form.bank_id##] = 39">
+    <basis core="inlinesource" name="db">
+        <member name="token" format="json" postsql="select  value  from [db.token] as a where Field = 'Status'"
+            preview="">{"root":[##cms.form.token##]}</member>
+        <member name="token2" format="json" postsql="select  value  from [db.token2] as a where Field = 'Approval_code'"
+            preview="">{"root":[##cms.form.token##]}</member>
+    </basis>
+    <basis core="group" if="'[##db.token.Value##]' = 'ok'">
+        <basis name="bank" core="group" if="'[##cms.form.paytype##]' = 'bank' or '[##cms.form.paytype##]' = ''">
+            <basis core="dbsource" source="accounting" name="db" bankid="9" invoicenumber="[##cms.form.paymentid##]"
+                cardno="[##cms.form.cardNum1##]" hashedcardno="[##cms.form.cardNum2##]" merchantid="27035"
+                paymentid="[##db.token2.Value##]" refnumber="" status="1" token="" result="1">
+                <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+            </basis>
+            <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+            <basis core="group" name="es">
+                <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                    <member method="cms" name="save_onlineCharging" query='{ 
+                    "name": "db",
+                    "mid": "20",
+                    "member":[{ 
+                    "name": "q", 
+                    "type":"list",
+                    "request": "Save_Online_Charging", 
+                    "paymentid": "[##cms.form.paymentid##]",
+                    "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                    "supplierownerid": "[##cms.form.supplierownerid##]",
+                    "reciverdmnid": "0",
+                    "reciverownerid": "[##cms.form.reciverownerid##]",
+                    "userid": "[##cms.form.userid##]",
+                    "bankid": "39",
+                    "bankName": "sekhavat",
+                    "cardno": "[##cms.form.cardNum1##]",
+                    "refnumber": "",
+                    "bank":"9"
+                    }]} ' />
+                </basis>
+
+            </basis>
+
+
+        </basis>
+    </basis>
+    <basis core="group" if="'[##db.token.Value##]' = 'ERROR'">
+        <basis core="dbsource" source="accounting" name="db" bankid="9" invoicenumber="[##cms.form.paymentid##]"
+            cardno="[##cms.form.cardNum1##]" hashedcardno="[##cms.form.cardNum2##]" merchantid="27035"
+            paymentid="[##db.token2.Value##]" refnumber="" status="0" token="" result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="Gardeshgari" if="[##cms.form.bank_id##] = 50">
+    <basis core="group" if="'[##cms.form.token##]' = 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="12"
+            invoicenumber="[##cms.form.invoiceNumber##]" cardno="[##cms.form.cardNumber##]"
+            hashedcardno="[##cms.form.hashedCardNumber##]" merchantid="" paymentid=""
+            refnumber="[##cms.form.refNumber##]" status="1" token="" result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "50",
+                "bankName": "Gardeshgari",
+                "cardno": "[##cms.form.cardNumber##]",
+                "refnumber": "[##cms.form.refNumber##]",
+                "bank":"12"
+                }]} ' />
+            </basis>
+
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="12"
+            invoicenumber="[##cms.form.invoiceNumber##]" cardno="[##cms.form.cardNumber##]"
+            hashedcardno="[##cms.form.hashedCardNumber##]" merchantid="" paymentid=""
+            refnumber="[##cms.form.refNumber##]" status="0" token="" result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+
+</basis>
+<basis core="group" name="kipaa" if="[##cms.form.bank_id##] = 51">
+    <basis core="group" if="'[##cms.form.token##]' = 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="13"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid="" paymentid=""
+            refnumber="[##cms.form.CallingID##]" status="1" token="" result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+            "name": "db",
+            "mid": "20",
+            "member":[{ 
+            "name": "q", 
+            "type":"list",
+            "request": "Save_Online_Charging", 
+            "paymentid": "[##cms.form.paymentid##]",
+            "supplierdmnid": "[##cms.form.supplierdmnid##]",
+            "supplierownerid": "[##cms.form.supplierownerid##]",
+            "reciverdmnid": "0",
+            "reciverownerid": "[##cms.form.reciverownerid##]",
+            "userid": "[##cms.form.userid##]",
+            "bankid": "51",
+            "bankName": "kipaa",
+            "cardno": "",
+            "refnumber": "[##cms.form.CallingID##]",
+            "bank":"13"
+            }]} ' />
+            </basis>
+
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="13"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid="" paymentid=""
+            refnumber="[##cms.form.CallingID##]" status="0" token="" result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="Sepah" if="[##cms.form.bank_id##] = 54">
+    <basis core="group" if="'[##cms.form.token##]' = 'false'">
+        <basis core="group" if="'[##cms.form.RRN##]' <> 'false' ">
+            <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="14"
+                invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.CardNumberMasked##]" hashedcardno=""
+                merchantid="" paymentid="" refnumber="[##cms.form.RRN##]" status="1" token="" result="1">
+                <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+            </basis>
+
+            <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+            <basis core="group" name="es">
+                <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                    <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "54",
+                "bankName": "Sepah",
+                "cardno": "[##cms.form.CardNumberMasked##]",
+                "refnumber": "[##cms.form.RRN##]",
+                "bank":"14"
+                }]} ' />
+                </basis>
+
+            </basis>
+
+        </basis>
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> 'false'">
+        <basis core="group" if="'[##cms.form.RRN##]' = 'false' ">
+            <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="14"
+                invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.CardNumberMasked##]" hashedcardno=""
+                merchantid="" paymentid="" refnumber="[##cms.form.RRN##]" status="0" token="" result="0">
+                <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+            </basis>
+            <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+        </basis>
+    </basis>
+</basis>
+<basis core="group" name="aghayePardakht" if="[##cms.form.bank_id##] = 55">
+    <basis core="group" if="'[##cms.form.token##]' = '1'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="15"
+            invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.cardnumber##]" hashedcardno="" merchantid=""
+            paymentid="" refnumber="[##cms.form.tracking_number##]" status="1" token="" result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+            "name": "db",
+            "mid": "20",
+            "member":[{ 
+            "name": "q", 
+            "type":"list",
+            "request": "Save_Online_Charging", 
+            "paymentid": "[##cms.form.paymentid##]",
+            "supplierdmnid": "[##cms.form.supplierdmnid##]",
+            "supplierownerid": "[##cms.form.supplierownerid##]",
+            "reciverdmnid": "0",
+            "reciverownerid": "[##cms.form.reciverownerid##]",
+            "userid": "[##cms.form.userid##]",
+            "bankid": "55",
+            "bankName": "aghayePardakht",
+            "cardno": "[##cms.form.cardnumber##]",
+            "refnumber": "[##cms.form.tracking_number##]",
+            "bank":"15"
+            }]} ' />
+            </basis>
+
+        </basis>
+
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> '1'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="15"
+            invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.cardnumber##]" hashedcardno="" merchantid=""
+            paymentid="" refnumber="[##cms.form.tracking_number##]" status="0" token="" result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+
+</basis>
+<basis core="group" name="ayandeh" if="[##cms.form.bank_id##] = 57">
+    <basis core="group" if="'[##cms.form.token##]' = '0'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="16"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid="" paymentid=""
+            refnumber="[##cms.form.traceNumber##]" status="1" token="" result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "57",
+                "bankName": "ayandeh",
+                "cardno": "",
+                "refnumber": "[##cms.form.traceNumber##]",
+                "bank":"16"
+                }]} ' />
+            </basis>
+
+        </basis>
+
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> '0'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="16"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid="" paymentid=""
+            refnumber="[##cms.form.traceNumber##]" status="0" token="" result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+
+</basis>
+<basis core="group" name="refah" if="[##cms.form.bank_id##] = 65">
+    <basis core="group" if="'[##cms.form.token##]' = 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="18"
+            invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.SecurePan##]"
+            hashedcardno="[##cms.form.HashedCardNumber##]" merchantid="" paymentid="[##cms.form.paymentid##]"
+            refnumber="[##cms.form.TraceNo##]" status="1" token="[##cms.form.TokenBank##]" result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "65",
+                "bankName": "refah",
+                "cardno": "[##cms.form.SecurePan##]",
+                "refnumber": "[##cms.form.TraceNo##]",
+                "bank":"18"
+                }]} ' />
+            </basis>
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="18"
+            invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.SecurePan##]"
+            hashedcardno="[##cms.form.HashedCardNumber##]" merchantid="" paymentid="[##cms.form.paymentid##]"
+            refnumber="[##cms.form.TraceNo##]" status="0" token="[##cms.form.TokenBank##]" result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="shahr" if="[##cms.form.bank_id##] = 66">
+    <basis core="group" if="'[##cms.form.token##]' = '200'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="19"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.PayGateTranID##]" status="1" token=""
+            result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "66",
+                "bankName": "shahr",
+                "cardno": "",
+                "refnumber": "[##cms.form.PayGateTranID##]",
+                "bank":"19"
+                }]} ' preview="" />
+            </basis>
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> '200'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="19"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.PayGateTranID##]" status="0" token=""
+            result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="fadax" if="[##cms.form.bank_id##] = 69">
+    <basis core="group" if="'[##cms.form.token##]' = 'true' and '[##cms.form.transactionId##]' <> ''">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="20"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.fadax_tracking_number##]" status="1" token=""
+            result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "69",
+                "bankName": "fadax",
+                "cardno": "",
+                "refnumber": "[##cms.form.fadax_tracking_number##]",
+                "bank":"20"
+                }]} ' preview="" />
+            </basis>
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> 'true' and '[##cms.form.transactionId##]' = ''">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="20"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.fadax_tracking_number##]" status="0" token=""
+            result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="fadaxMellat" if="[##cms.form.bank_id##] = 199">
+    <basis core="group" if="'[##cms.form.token##]' = 'true' and '[##cms.form.transactionId##]' <> ''">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="30"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.fadax_tracking_number##]" status="1" token=""
+            result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "199",
+                "bankName": "fadaxMellat",
+                "cardno": "",
+                "refnumber": "[##cms.form.fadax_tracking_number##]",
+                "bank":"30"
+                }]} ' preview="" />
+            </basis>
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> 'true' and '[##cms.form.transactionId##]' = ''">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="30"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.fadax_tracking_number##]" status="0" token=""
+            result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="pasargad2" if="[##cms.form.bank_id##] = 95">
+    <basis core="group" if="'[##cms.form.token##]' = 'success'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="25"
+            invoicenumber="[##cms.form.invoiceId##]" cardno="" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.referenceNumber##]" status="1" token=""
+            result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "95",
+                "bankName": "pasargad2",
+                "cardno": "",
+                "refnumber": "[##cms.form.referenceNumber##]",
+                "bank":"25"
+                }]} ' preview="" />
+            </basis>
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> 'success'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="25"
+            invoicenumber="[##cms.form.invoiceId##]" cardno="" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.referenceNumber##]" status="0" token=""
+            result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="Rayan" if="[##cms.form.bank_id##] = 73">
+    <basis core="group" if="'[##cms.form.token##]' = 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="22"
+            invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.SecurePan##]" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.transId##]" status="1"
+            token="[##cms.form.TokenBank##]" result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "73",
+                "bankName": "rayancard",
+                "cardno": "[##cms.form.SecurePan##]",
+                "refnumber": "[##cms.form.transId##]",
+                "bank":"22"
+                }]} ' />
+            </basis>
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="22"
+            invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.SecurePan##]" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.transId##]" status="0"
+            token="[##cms.form.TokenBank##]" result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="IranKish" if="[##cms.form.bank_id##] = 77">
+    <basis core="group" if="'[##cms.form.token##]' = 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="23"
+            invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.SecurePan##]"
+            hashedcardno="[##cms.form.SecurePan##]" merchantid="[##cms.form.merchantid##]"
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.systemTraceAuditNumber##]" status="1"
+            token="[##cms.form.TokenBank##]" result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "77",
+                "bankName": "IranKish",
+                "cardno": "[##cms.form.SecurePan##]",
+                "refnumber": "[##cms.form.systemTraceAuditNumber##]",
+                "bank":"23"
+                }]} ' />
+            </basis>
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="23"
+            invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.SecurePan##]"
+            hashedcardno="[##cms.form.SecurePan##]" merchantid="[##cms.form.merchantid##]"
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.systemTraceAuditNumber##]" status="0"
+            token="[##cms.form.TokenBank##]" result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="Basa" if="[##cms.form.bank_id##] = 85">
+    <basis core="group" if="'[##cms.form.token##]' = 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="24"
+            invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.SecurePan##]" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.transId##]" status="1"
+            token="[##cms.form.TokenBank##]" result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "85",
+                "bankName": "basa",
+                "cardno": "[##cms.form.SecurePan##]",
+                "refnumber": "[##cms.form.transId##]",
+                "bank":"24"
+                }]} ' />
+            </basis>
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="24"
+            invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.SecurePan##]" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.transId##]" status="0"
+            token="[##cms.form.TokenBank##]" result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+<basis core="group" name="siBank" if="[##cms.form.bank_id##] = 97">
+    <basis core="group" if="'[##cms.form.token##]' = 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="27"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.factorid##]" status="1" token="" result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "97",
+                "bankName": "siBank",
+                "cardno": "",
+                "refnumber": "[##cms.form.factorid##]",
+                "bank":"27"
+                }]} ' preview="" />
+            </basis>
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> 'true'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="27"
+            invoicenumber="[##cms.form.paymentid##]" cardno="" hashedcardno="" merchantid=""
+            paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.factorid##]" status="0" token="" result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>
+
+<basis core="group" name="pod" if="[##cms.form.bank_id##] = 201">
+    <basis core="group" if="'[##cms.form.token##]' = 'True'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="32"
+            invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.maskedCardNumber##]" hashedcardno=""
+            merchantid="" paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.rrn##]" status="1" token=""
+            result="1">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentT"> [##db.updatepayment.title##] </span>
+        <basis core="group" name="es">
+            <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                <member method="cms" name="save_onlineCharging" query='{ 
+                "name": "db",
+                "mid": "20",
+                "member":[{ 
+                "name": "q", 
+                "type":"list",
+                "request": "Save_Online_Charging", 
+                "paymentid": "[##cms.form.paymentid##]",
+                "supplierdmnid": "[##cms.form.supplierdmnid##]",
+                "supplierownerid": "[##cms.form.supplierownerid##]",
+                "reciverdmnid": "0",
+                "reciverownerid": "[##cms.form.reciverownerid##]",
+                "userid": "[##cms.form.userid##]",
+                "bankid": "201",
+                "bankName": "pod",
+                "cardno": "[##cms.form.maskedCardNumber##]",
+                "refnumber": "[##cms.form.rrn##]",
+                "bank":"32"
+                }]} ' />
+            </basis>
+        </basis>
+
+    </basis>
+    <basis core="group" if="'[##cms.form.token##]' <> 'True'">
+        <basis core="dbsource" source="accounting" name="db" mid="43" lid="1" bankid="32"
+            invoicenumber="[##cms.form.paymentid##]" cardno="[##cms.form.maskedCardNumber##]" hashedcardno=""
+            merchantid="" paymentid="[##cms.form.paymentid##]" refnumber="[##cms.form.rrn##]" status="0" token=""
+            result="0">
+            <member name="updatepayment" type="scalar" request="updatepayment" preview="" />
+        </basis>
+        <span class="updatepaymentF"> [##db.updatepayment.title##] </span>
+    </basis>
+</basis>

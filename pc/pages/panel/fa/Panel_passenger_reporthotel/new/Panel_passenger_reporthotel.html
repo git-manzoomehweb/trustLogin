@@ -1,0 +1,530 @@
+<basis core="call" file="Client_CheckRkey.inc"></basis> <!-- updated login -->
+
+<basis core="group" name="0" if="[##db.checkrkey.userid|(0)##]=0">
+  <p style="text-align:center;font-family:tahoma">شما مجاز به دسترسی به این صفحه نمی باشید</p>
+</basis>
+
+<basis core="group" name="1" if="[##db.checkrkey.userid|(0)##]<>0">
+  <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+    <member name="PassengerInfo-List" method="panel" query='{
+            "name": "db",
+            "mid": "20",
+            "member":[{ 
+            "type":"list",
+            "name": "q",
+            "request": "Panel_Passenger_List",
+            "id":"[##cms.query.id##]",
+            "schemaid":"[##cms.query.schemaid##]",
+            "factorlist":[##cms.form.factorlist|(0)##],
+            "roomid":"[##cms.form.roomid##]",
+            "dmnid":"[##cms.cms.domainid##]",
+            "userid":"[##db.checkrkey.userid|(0)##]",
+            "panel_user":"1",
+            "search":[##cms.json.header|(0)##]
+        }]}'
+      postsql="select replace(replace(replace(replace(replace(result,'None','null'),'nan','NaN'),'\xa0','null'),' inf','null'),' -inf' , 'null') as 'result' from [db.PassengerInfo-List]"
+      preview="" />
+  </basis>
+
+  <basis core="group" name="info">
+    <basis core="inlinesource" name="db">
+      <member name="PassengerInfo-List-Tree" format="json">{"root":[##db.PassengerInfo-List.result##]}</member>
+      <member name="ResultCount" format="json" preview=""
+        postsql="select value from [db.ResultCount] where field = 'ResultCount'">
+        {"root":[##db.PassengerInfo-List.result##]}
+      </member>
+    </basis>
+
+
+    <!doctype html>
+    <html>
+
+    <head>
+      <title>لیست مسافران هتل</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+      <style type="text/css">
+        <basis core="call" file="Panel_User_css.inc" />
+      </style>
+      <link rel="stylesheet" href="/css/Panel-master-css.css" type="text/css">
+      <script src="[##cms.cms.cdn##]/_js/jquery-1.8.0.min.js"></script>
+      <link href="https://cdn.basiscore.net/basisfly.com/css/hotelview.css" type="text/css" rel="stylesheet">
+      <style type="text/css">
+        .mstring {
+          color: #848589;
+          font-size: 11px
+        }
+
+        .mstring2 {
+          color: #848589;
+          font-size: 16px
+        }
+
+        .mstring3 {
+          font-size: 11px
+        }
+
+        .mstringinf {
+          color: red
+        }
+
+        .customer tbody>tr.odd>td,
+        .customer thead>tr>th {
+          text-align: center;
+        }
+
+        .PassengerBox li {
+          margin: 0;
+          height: 38px
+        }
+
+
+
+
+        .Panel_invoice_List .tbody_row tr:last-child {
+          display: none;
+        }
+
+        .Panel_invoice_List table tr td a:hover {
+
+          transform: none;
+        }
+
+        .PassengerBox li {
+          margin: 0;
+          height: 38px;
+          font-size: 20px;
+          float: right;
+        }
+
+        .navigation li a,
+        .navigation li {
+          color: #565656;
+        }
+
+        .navigation li {
+          float: right;
+          padding: 0 5px;
+          margin: 10px 0;
+        }
+      </style>
+    </head>
+
+    <body>
+      <div class="Panel_Container">
+        <basis core="call" file="Panel-Menu_HotelManager.inc" />
+        <div class="Panel_Wrraper_Box">
+          <basis core="call" file="Panel-Dashboard-Header.inc" />
+          <basis core="call" file="Panel-Icon.inc" />
+
+          <div class="Panel_Box">
+            <h1>
+              <div class="PassengerBox PassengerBox-hotel">
+                <div style="float:right;font-size: 20px;">لیست مسافران : </div>
+                <div style="float:right">
+                  <basis core="tree" datamembername="db.PassengerInfo-List-Tree" idcol="id" parentidcol="parentid"
+                    nullvalue="null">
+                    <face filter="ParentId in ('1')">@child</face>
+                    <face filter="Field in ('adultInfo')"></face>
+                    <face filter="Field in ('infantInfo')"></face>
+                    <face filter="Field in ('detail')">@child</face>
+                    <face filter="Field in ('info')">
+                      <ul>@child</ul>
+                    </face>
+                    <face filter="Field in ('name')">
+                      <li>@value|</li>
+                    </face>
+                    <face filter="Field in ('city')">
+                      <li>@value</li>
+                    </face>
+                    <face filter="type in ('array','object')"> @child </face>
+                  </basis>
+                </div>
+                <div class="clr"></div>
+              </div>
+            </h1>
+          </div>
+
+
+          <div class="Panel_Box">
+            <div class="ajax_loading" style="text-align:center;display:none;">
+              <div class="loader"></div>
+            </div>
+            <div class="count_resize Panel_Box_title">
+              <div class="counts"> تعداد <span class="count_number">[##db.ResultCount.Value##]</span> </div>
+              <div class="clr"></div>
+            </div>
+            <div class="user_list Panel_Box_Content Panel_invoice_List">
+
+              <table class="table customer passengertable-hotel">
+                <thead>
+                  <tr class="nodrag nodrop nodrag-1">
+                    <th class="fixed-width-xs text-center"><span class="title_box">ردیف</span></th>
+                    <th class=""> <span class="title_box">نام و نام خانوادگی</span></th>
+                    <th class=""> <span class="title_box">تاریخ تولد</span></th>
+                    <th class=""> <span class="title_box">کشور </span> </th>
+                    <th class=""> <span class="title_box">شماره پاسپورت</span></th>
+                    <th class=""> <span class="title_box">تاریخ انقضای پاسپورت</span></th>
+                    <th class=""> <span class="title_box">تاریخ ورورد به هتل</span></th>
+                    <th class=""> <span class="title_box">تاریخ خروج از هتل</span></th>
+                    <th class=""> <span class="title_box">شماره قرارداد</span></th>
+                    <th class=""> <span class="title_box">نوع مسافر</span></th>
+                    <th class=""> <span class="title_box">جنسیت</span></th>
+                    <th class=""> <span class="title_box">نوع قرارداد</span></th>
+                  </tr>
+
+
+                </thead>
+
+                <tbody>
+                  <basis core="tree" datamembername="db.PassengerInfo-List-Tree" idcol="id" parentidcol="parentid"
+                    nullvalue="null">
+
+                    <else-layout>
+                      <tr class=" odd">
+                        <td colspan="12" style="text-align:center;">هیچ قراردادی ثبت نگردیده است</td>
+                      </tr>
+                    </else-layout>
+
+                    <layout>@child</layout>
+
+                    <face filter="Field in ('detail')"></face>
+                    <face filter="Field in ('infantInfo')"></face>
+                    <face filter="Field in ('adultInfo')">@child</face>
+                    <face filter="Field in ('error') and value='1009'">
+                      <td colspan="12" style="text-align:center;">هیچ قراردادی ثبت نگردیده است</td>
+                    </face>
+                    <face filter="Field in ('adult')">
+                      <tr class=" odd">@child</tr>
+                    </face>
+                    <face filter="Field in ('lastname')">
+                      <td class="pointer fixed-width-xs row_number">1</td>
+                      <td class="pointer"> @value /
+                    </face>
+                    <face filter="Field in ('firstname')">@value</td>
+                    </face>
+                    <face filter="Field in ('birthdate')">
+                      <td class="pointer"> @value </td>
+                    </face>
+                    <face filter="Field in ('countryofresidence')">
+                      <td class="pointer"> @child </td>
+                    </face>
+                    <face filter="Field in ('ecountryname')">@value </face>
+                    <face filter="Field in ('passportcode')">
+                      <td class="pointer"> @value </td>
+                    </face>
+                    <face filter="Field in ('passportexpirationdate')">
+                      <td class="pointer"> @child </td>
+                    </face>
+                    <face filter="Field in ('mstring')">@value<br></face>
+                    <face filter="Field in ('sstring')"><span class="mstring">(@value)</span></face>
+                    <face filter="Field in ('entrace')">
+                      <td class="pointer"> @child </td>
+                    </face>
+                    <face filter="Field in ('mstring')">@value<br></face>
+                    <face filter="Field in ('sstring')"><span class="mstring">(@value)</span></face>
+                    <face filter="Field in ('exit')">
+                      <td class="pointer"> @child </td>
+                    </face>
+                    <face filter="Field in ('mstring')">@value<br></face>
+                    <face filter="Field in ('sstring')"><span class="mstring">(@value)</span></face>
+                    <face filter="Field in ('factorid')">
+                      <td class="pointer"> @value </td>
+                    </face>
+                    <face filter="Field in ('gender') and value in ('1')">
+                      <td class="pointer">M</td>
+                    </face>
+                    <face filter="Field in ('gender') and value in ('0')">
+                      <td class="pointer">F</td>
+                    </face>
+                    <face filter="Field in ('invoicetype') and value in ('4')">
+                      <td class="pointer">تور</td>
+                    </face>
+                    <face filter="Field in ('invoicetype') and value in ('10')">
+                      <td class="pointer">تور</td>
+                    </face>
+                    <face filter="Field in ('invoicetype') and value in ('3')">
+                      <td class="pointer">هتل</td>
+                    </face>
+                    <face filter="Field in ('invoicetype') and value in ('6')">
+                      <td class="pointer">پرواز+هتل</td>
+                    </face>
+                    <face filter="Field in ('type') and value='0'">
+                      <td class="pointer">-</td>
+                    </face>
+                    <face filter="Field in ('type') and value='1'">
+                      <td class="pointer">Child (WB)</td>
+                    </face>
+                    <face filter="Field in ('type') and value='2'">
+                      <td class="pointer">Adult</td>
+                    </face>
+                    <face filter="Field in ('type') and value='3'">
+                      <td class="pointer">Child (NB)</td>
+                    </face>
+                    <face filter="Field in ('type') and value='4'">
+                      <td class="pointer">Adult (Ext)</td>
+                    </face>
+                    <face filter="type in ('array','object')"> @child </face>
+                  </basis>
+
+                  <basis core="tree" datamembername="db.PassengerInfo-List-Tree" idcol="id" parentidcol="parentid"
+                    nullvalue="null">
+                    <face filter="Field in ('detail')"></face>
+                    <face filter="Field in ('adultInfo')"></face>
+                    <face filter="Field in ('infantInfo')">@child</face>
+                    <face filter="Field in ('infant')">
+                      <tr class=" odd">@child</tr>
+                    </face>
+                    <face filter="Field in ('lastname')">
+                      <td class="pointer row_number" style="color:red;"></td>
+                      <td class="pointer" style="color:red;"> @value /
+                    </face>
+                    <face filter="Field in ('firstname')">@value</td>
+                    </face>
+                    <face filter="Field in ('birthdate')">
+                      <td class="pointer" style="color:red;"> @value </td>
+                    </face>
+                    <face filter="Field in ('countryofresidence')">
+                      <td class="pointer" style="color:red;"> @child </td>
+                    </face>
+                    <face filter="Field in ('ecountryname')">@value </face>
+                    <face filter="Field in ('passportcode')">
+                      <td class="pointer" style="color:red;"> @value </td>
+                    </face>
+                    <face filter="Field in ('passportexpirationdate')">
+                      <td class="pointer" style="color:red;"> @child </td>
+                    </face>
+                    <face filter="Field in ('mstring')">@value<br></face>
+                    <face filter="Field in ('sstring')"><span class="mstring3">(@value)</span></face>
+                    <face filter="Field in ('entrace')">
+                      <td class="pointer" style="color:red;"> @child </td>
+                    </face>
+                    <face filter="Field in ('mstring')">@value<br></face>
+                    <face filter="Field in ('sstring')"><span class="mstring">(@value)</span></face>
+                    <face filter="Field in ('exit')">
+                      <td class="pointer" style="color:red;"> @child </td>
+                    </face>
+                    <face filter="Field in ('mstring')">@value<br></face>
+                    <face filter="Field in ('sstring')"><span class="mstring">(@value)</span></face>
+                    <face filter="Field in ('factorid')">
+                      <td class="pointer" style="color:red;"> @value </td>
+                    </face>
+                    <face filter="Field in ('gender') and value in ('1')">
+                      <td class="pointer" style="color:red;">M</td>
+                    </face>
+                    <face filter="Field in ('gender') and value in ('0')">
+                      <td class="pointer" style="color:red;">F</td>
+                    </face>
+                    <face filter="Field in ('invoicetype') and value in ('4')">
+                      <td class="pointer" style="color:red;">تور</td>
+                    </face>
+                    <face filter="Field in ('invoicetype') and value in ('3')">
+                      <td class="pointer" style="color:red;">هتل</td>
+                    </face>
+                    <face filter="Field in ('invoicetype') and value in ('6')">
+                      <td class="pointer">پرواز+هتل</td>
+                    </face>
+                    <face filter="Field in ('type')">
+                      <td class="pointer" style="color:red;">Infant</td>
+                    </face>
+
+                    <face filter="type in ('array','object')"> @child </face>
+                  </basis>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+          <basis core="call" file="Panel-Dashboard-Footer.inc" />
+        </div>
+        <div class="clr"></div>
+      </div>
+
+
+
+      <script src="[##cms.cms.cdn##]/_js/User_Panel.js"></script>
+      <script type="text/javascript">
+        var cyrrentpage = [##cms.query.page##]
+        if ([##cms.query.page##] == 1) {
+          $(".row_number").each(function (index, element) { $(this).text($(this).closest("tr").index() + 1) });
+        }
+        else {
+          $(".row_number").each(function (index, element) {
+            if (index == 50) { $(this).text("[##cms.query.page##]0"); }
+            else { $(this).text(50 * (cyrrentpage - 1).toString() + +($(this).closest("tr").index() + 1).toString()) }
+          });
+        }
+      </script>
+      <style type="text/css">
+        @font-face {
+          font-family: 'IRANSansWeb';
+          src: url('http://cdn.basiscore.net/_fonts/IRANSansWeb.eot');
+          src: local('?'), url('http://cdn.basiscore.net/_fonts/IRANSansWeb.woff2') format("woff"), url('http://cdn.basiscore.net/_fonts/IRANSansWeb.ttf') format("truetype"), url('http://cdn.basiscore.net/_fonts/IRANSansWeb.otf') format("otf");
+          font-weight: 400;
+          font-style: normal
+        }
+
+        @font-face {
+          font-family: 'FontAwesome';
+          src: local('FontAwesome'), url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.eot?#iefix');
+          src: local('?'), url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.woff') format("woff"), url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.ttf') format("truetype"), url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.otf') format("otf");
+          font-weight: 400;
+          font-style: normal
+        }
+
+        @font-face {
+          font-family: 'IRANSansWeb';
+          src: url('https://cdn.basiscore.net/_fonts/IRANSansWeb.eot');
+          src: local('?'), url('https://cdn.basiscore.net/_fonts/IRANSansWeb.woff2') format("woff"), url('https://cdn.basiscore.net/_fonts/IRANSansWeb.ttf') format("truetype"), url('https://cdn.basiscore.net/_fonts/IRANSansWeb.otf') format("otf");
+          font-weight: 400;
+          font-style: normal
+        }
+
+        @font-face {
+          font-family: 'FontAwesome';
+          src: local('FontAwesome'), url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.eot?#iefix');
+          src: local('?'), url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.woff') format("woff"), url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.ttf') format("truetype"), url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.otf') format("otf");
+          font-weight: 400;
+          font-style: normal
+        }
+
+        .Panel_invoice_List table tr th {
+          text-align: center;
+          font-weight: normal;
+          background: #4D586E;
+          color: #fff;
+          padding: 5px 0;
+          font-size: 13px;
+        }
+
+        .fa-times::before {
+          content: "\f00d";
+          font-family: FontAwesome;
+        }
+
+        .fa-times {
+          color: #e62929;
+        }
+
+        .fa-user-plus::before {
+          content: "\f234";
+          font-family: FontAwesome;
+        }
+
+        .new_user {
+          text-align: center;
+        }
+
+        .save_form,
+        .save_edition {
+          color: #363A41;
+          background-color: #fff;
+          border: 1px solid #DEDEDE;
+          display: inline-block;
+          font-weight: 900;
+          text-align: center;
+          font-size: 12px;
+          cursor: pointer;
+          background: #fff;
+          border: 1px solid DEDEDE;
+          padding: 6px 8px;
+          line-height: 1.42857;
+          border-radius: 3px;
+          margin-top: 15px;
+          font-family: 'IRANSansWeb';
+          height: 56px;
+          float: left;
+          margin-right: 10px;
+        }
+
+        .save_form i,
+        .save_edition i {
+          font-size: 25px;
+          display: block;
+        }
+
+        .adduser_Box {
+          width: 100%;
+          height: 100%;
+          position: fixed;
+          z-index: 1000;
+          background-color: rgba(0, 0, 0, 0.2);
+          top: 0;
+          left: 0;
+          display: none;
+        }
+
+        .adduser_Box_content {
+          border-radius: 5px;
+          background: #fff;
+          width: 20%;
+          margin: 10em auto;
+          direction: rtl;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .adduser_Box_content_Head {
+          border-bottom: 1px dashed #ccc;
+          background: #f7f7f7;
+          padding: 0.5em;
+          border-top-left-radius: 5px;
+          border-top-right-radius: 5px;
+          color: #555;
+        }
+
+        .adduser_title {
+          font-size: 12px;
+          margin-bottom: 1em;
+        }
+
+        .adduser_Form {
+          padding: 1em 1em 2em 1em;
+        }
+
+        .fa-search::before {
+          content: "\f002";
+          font-family: FontAwesome;
+        }
+
+        .add_user_email {
+          padding: 0 .6em;
+          display: inline-block;
+          border: 1px solid #C7D6DB;
+          font-size: 13px;
+          background: #F5F8F9;
+          border-radius: 4px;
+          width: 90%;
+          height: 30px;
+          font-family: IRANSansWeb;
+        }
+
+        .adduser_input {
+          position: relative;
+        }
+
+        .fa-spinner::before {
+          content: "\f110";
+          font-family: FontAwesome;
+        }
+
+        .search_btn {
+          position: absolute;
+          border: none;
+          background: no-repeat;
+          color: #555;
+          height: 30px;
+          border-right: 1px solid #C7D6DB;
+          left: 1em;
+          text-align: center;
+          width: 30px;
+          cursor: pointer;
+        }
+      </style>
+
+
+
+    </body>
+
+    </html>
+  </basis>
+</basis>

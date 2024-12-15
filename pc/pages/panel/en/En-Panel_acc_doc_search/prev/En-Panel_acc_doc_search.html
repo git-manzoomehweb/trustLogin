@@ -1,0 +1,288 @@
+<basis core="dbsource" source="trust_login8" mid="24" name="Paneluser" lid="1" rkey="[##cms.cookie.rkey##]">
+    <member name="login" type="scalar" request="userid"></member>
+</basis>
+
+<basis core="group" name="Delay_1">
+
+    <basis core="external.fly.ws" procedurename="dbsource" source="cmsDbService2" name="db">
+        <member name="debtor" method="cms" query='{
+            "name": "db",
+            "mid": "20",
+            "member": [
+                {
+                    "type": "list",
+                    "dmnid": "[##cms.cms.domainid##]",
+                    "userid": "[##Paneluser.login.userid##]",
+                    "lid": "2",
+                    "request": "get_admin_debtor"
+                }
+            ]
+        }' preview="" />
+    </basis>
+
+    <basis:1 core="group" name="Delay_2" if="'[##db.debtor.result##]' <> '0' ">
+
+
+        <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+            <member method="cms" name="accounting" query='
+                { 
+                   "name": "db", 
+                   "mid": "20",
+                   "member":
+                   [
+                        { 
+                           "name": "q",
+                           "type":"list",
+                           "request" : "get_report_accounting_agency",
+                           "debtor" : "[##db.debtor.result##]",
+                           "dmnid" : "[##cms.cms.domainid##]",
+                           "ownerid":"[##cms.cms.ownerid##]",
+                           "startdate":"[##cms.query.fdateid|cms.form.fdateid##]",
+                           "enddate":"[##cms.query.tdateid|cms.form.tdateid##]",
+                           "factorid":"[##cms.form.factorid|cms.query.factorid|()##]",
+                           "starthour": "[##cms.query.starthourid|cms.form.starthourid##]",
+                           "endhour": "[##cms.query.endhourid|cms.form.endhourid##]",
+                           "pageindex":"[##cms.query.page|(1)##]",
+                           "perpage":"[##cms.query.perpage|(30)##]",
+                        }
+                    ]
+                } ' preview=""></member>
+        </basis>
+        <basis core="group" name="Delay_4">
+            <basis core='inlinesource' name='db'>
+                <member name="accounting_Tree" format="json" preview=""> {"root":[##db.accounting.result##]}</member>
+                <member name='ResultCount' format="json"
+                    postsql="select value from [db.ResultCount] where field = 'ResultCount'">
+                    {"root":[##db.accounting.result##]}
+                </member>
+            </basis>
+            <basis core="group" name="Delay_5">
+                <basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+                    <member method="cms" name="Paging" query='
+                        {
+                            "name": "db",
+                            "mid": "20",
+                            "member": 
+                            [
+                                {
+                                    "name": "q",
+                                    "type": "list",
+                                    "request": "Panel_Paging",
+                                    "link": "[##cms.request.rawurl##]",
+                                    "pageindex":"[##cms.query.page|(1)##]",
+                                    "perpage":"[##cms.query.perpage|(30)##]",
+                                    "objectcount":"[##db.ResultCount.Value##]",
+                                }
+                            ]
+                        }' />
+                </basis>
+
+                <basis core="group" name="Delay_6">
+                    <basis core="inlinesource" name="list">
+                        <member name="paging" format="json">{"root":[##db.Paging.result##]}</member>
+                    </basis>
+
+
+
+
+
+                    <div class="Panel_Box_title"><span>accounting document </span><span class="Panel_Excel_icon"><a
+                                class="DownLoadExcel" style="cursor:pointer"><i class="fa fa-file-excel"></i></a></span>
+                    </div>
+                    <div class="Panel_Box_Content">
+                        <div class="Panel_invoice_List">
+                            <table cellspacing="1">
+                                <thead>
+                                    <tr class="nodrag nodrop nodrag-1" style="height: 40px">
+                                        <th class="center"><span class="title_box">Row</span></th>
+                                        <th class="center"><span class="title_box">docid</span></th>
+                                        <th class="center"><span class="title_box">accountingid</span></th>
+                                        <th class="center"><span class="title_box">User account</span></th>
+                                        <th class="center"><span class="title_box">factorid</span></th>
+                                        <th class="center"><span class="title_box">debtor</span></th>
+                                        <th class="center"><span class="title_box">creditorم</span></th>
+                                        <th class="center"><span class="title_box"> description </span></th>
+                                        <th class="center"><span class="title_box">Date</span></th>
+                                        <th class="center"><span class="title_box"></span></th>
+
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <basis core="tree" datamembername="db.accounting_Tree" idcol="id"
+                                        parentidcol="parentid" nullvalue="null">
+                                        <face filter="Field in ('doc')">
+                                            <tr>@Child</tr>
+                                        </face>
+                                        <face filter="Field in ('index')">
+                                            <td data-label="ردیف">@value</td>
+                                        </face>
+                                        <face filter="Field in ('docid')">
+                                            <td data-label="docid">@value</td>
+                                        </face>
+                                        <face filter="Field in ('accountid')">
+                                            <td data-label="accountid">@value</td>
+                                        </face>
+                                        <face filter="Field in ('desc_account')">
+                                            <td data-label="desc_account">@value</td>
+                                        </face>
+                                        <face filter="Field in ('factorid')">
+                                            <td data-label="factorid">@value</td>
+                                        </face>
+                                        <face filter="Field in ('debtor')">
+                                            <td data-label="debtor" class="Seprator">@value</td>
+                                        </face>
+                                        <face filter="Field in ('creditor')">
+                                            <td data-label="creditor" class="Seprator">@value</td>
+                                        </face>
+                                        <face filter="Field in ('desc_doc')">
+                                            <td data-label="desc_doc">@value</td>
+                                        </face>
+                                        <face filter="Field in ('createdate')">@child</face>
+                                        <face filter="Field in ('sstring')">
+                                            <td data-label="createdate">
+                                                <p>@value</p>
+                                        </face>
+                                        <face filter="Field in ('mstring')">
+                                            <p>(@value)</p>
+                                            </td>
+                                        </face>
+                                        <face filter="Field in ('hour')">
+                                            <td data-label="createdate">
+                                                <p>@value</p>
+                                        </face>
+                                        <face filter="Field in ('weekday')">
+                                            <p><span class="weekday">@value</span></p>
+                                            </td>
+                                        </face>
+                                        <face filter="type in ('array','object')"> @child </face>
+                                    </basis>
+                                </tbody>
+                            </table>
+                            <div style="text-align:center;">
+                                <ul class="Panel_Paging" style="margin-top:20px; padding:0;">
+                                    <basis core="tree" datamembername="list.paging" idcol="id" parentidcol="parentid"
+                                        nullvalue="null">
+                                        <face filter="Field in ('title') and value='[##cms.query.page##]'">
+                                            <li>
+                                                <a class="active_Page" data-href="/Panel_acc_doc_search.bc?page=@value"
+                                                    onclick="paging(this)">@value</a>
+                                            </li>
+                                        </face>
+
+                                        <face filter="Field in ('title') and value not in ('0','prev','next')">
+                                            <li>
+                                                <a data-href="/EN-Panel_acc_doc_search.bc?page=@value"
+                                                    onclick="paging(this)">@value</a>
+                                            </li>
+                                        </face>
+
+                                        <face filter="Field in ('title') and value='prev'">
+                                            <li>
+                                                <a data-href="prev" onclick="paging(this)">prev</a>
+                                            </li>
+                                        </face>
+
+                                        <face filter="Field in ('title') and value='next'">
+                                            <li>
+                                                <a data-href="next" onclick="paging(this)">next</a>
+                                            </li>
+                                        </face>
+
+                                        <face filter="type in ('array','object')"> @child </face>
+                                    </basis>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                    <form action="/EN-Panel-accountingExcel.XLS" method="post" class="ExcelForm">
+                        <input type="hidden" name="Xmid" value='[##cms.query.mid##]' />
+                        <input type="hidden" name="Xlid" value='[##cms.query.lid##]' />
+                        <input type="hidden" name="Xcatid" value='[##cms.form.cid|cms.query.cid##]' />
+                        <input type="hidden" name="Xownerid" value='[##cms.cms.ownerid##]' />
+                        <input type="hidden" name="Xdmnid" value='[##cms.cms.domainid##]' />
+                        <input type="hidden" name="Xcid" value='[##db.debtor.result##]' />
+                        <input type="hidden" name="Xstartdate" value='[##cms.form.fdateid##]' />
+                        <input type="hidden" name="Xenddate" value='[##cms.form.tdateid##]' />
+                        <input type="hidden" name="Xfactorid" value='[##cms.form.factorid|cms.query.factorid|()##]' />
+                        <input type="hidden" name="Xtitle" value='[##cms.form.title|cms.query.title##]' />
+                        <input type="hidden" name="Xpageno" value='[##cms.query.page##]' />
+                    </form>
+                </basis>
+            </basis>
+        </basis>
+    </basis:1>
+
+    <basis:2 core="group" name="Delay_3" if="'[##db.debtor.result##]'='0'">
+
+        <p style="text-align: center;">رکوردی یافت نشد جهت بررسی با مدیر سایت تماس بگیرید .</p>
+    </basis:2>
+
+
+
+
+
+
+    <script type="text/javascript">
+        function paging(x) {
+            var page = '[##cms.query.page##]'
+
+            $(".penel_invoice_ResultBox").hide()
+            $(".ajax_loading").fadeIn()
+
+            if ($(x).attr("data-href") == "prev") {
+                page--
+                var href = '/EN-Panel_acc_doc_search.bc?page=' + page
+            }
+            else if ($(x).attr("data-href") == "next") {
+                page++
+                var href = '/EN-Panel_acc_doc_search.bc?page=' + page
+            }
+            else
+                var href = $(x).attr("data-href")
+
+            $.ajax(
+                {
+                    url: href,
+                    type: "post",
+                    data: $(".Panel_form_search").serialize(),
+                    success: function (response) {
+                        $(".ajax_loading").fadeOut();
+                        $(".penel_invoice_ResultBox").empty().html(response);
+                        $(".penel_invoice_ResultBox").show()
+                    }
+                });
+        }
+        $(".Seprator").each(function () {
+
+            var Seprator = parseInt($(this).text())
+            $(this).text(Seprator.toLocaleString())
+
+        })
+        $(".odd").each(function (index, element) {
+
+            var rownumber = ((parseInt([##cms.query.page##]) - 1) * 100) + (index + 1)
+            $(this).find(".rownumber").text(rownumber)
+        })
+        $(".DownLoadExcel").click(function () { $(".ExcelForm").submit() })
+
+
+
+        $(".weekday").each(function () {
+            console.log($(this).text())
+            dict = {
+                "7": "Saturday",
+                "1": "Sunday",
+                "2": "Monday",
+                "3": "Tuesday",
+                "4": "Wednesday",
+                "5": "Thursday",
+                "6": "Friday"
+            }
+            $(this).text(dict[parseInt($(this).text())])
+
+
+        })
+    </script>
+</basis>

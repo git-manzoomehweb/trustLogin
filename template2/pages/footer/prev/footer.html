@@ -1,0 +1,110 @@
+<footer class="footer">
+    <section class="row-footer-top bc-main dir-rtl">
+        <div class="d-row">
+            <div class="col-footer text-right first">
+                <div class="inner-col-footer">
+                    <div><img src="[##cms.cms.cdn##]/images/M_logo.png" alt="شاهین پرواز سما" width="150" height="">
+                    </div>
+
+                    <ul class="social-icons font_14">
+                        <li class="text-center cursor-pointer background-color_3 "><a class="social-icon color_2"
+                                href="#"><i class="far fa-facebook-f"></i></a>
+                        </li>
+                        <li class="text-center cursor-pointer background-color_3"><a class="social-icon color_2"
+                                href="#"><i class="far fa-twitter"></i></a></li>
+                        <li class="text-center cursor-pointer background-color_3"><a class="social-icon color_2"
+                                href="#"><i class="far fa-linkedin-in"></i></a></li>
+                        <li class="text-center cursor-pointer background-color_3"><a class="social-icon color_2"
+                                href="#"><i class="far fa-youtube"></i></a></li>
+                        <li class="text-center cursor-pointer background-color_3"><a class="social-icon color_2"
+                                href="#"><i class="fa fa-paper-plane"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-footer text-right">
+                <div class="inner-col-footer">
+                    <h6 class="font_16">دسترسی ها</h6>
+                    <ul class="list-footer mob-display">
+                        <li class="cursor-pointer font_14" style="display: none;"><a href="تور-خارجی-و-داخلی">تورها</a>
+                        </li>
+                        <li class="cursor-pointer font_14"><a href="اطلاعات-مسیر-مقاله-گردشگری-توریستی">مجله گردشگری</a>
+                        </li>
+                        <li class="cursor-pointer font_14"><a href="news">اخبار</a></li>
+                        <li class="cursor-pointer font_14"><a href="/contact.bc">تماس با ما</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-footer text-right">
+                <div class="inner-col-footer">
+                    <h6 class="font_16">کشورهای پر طرفدار</h6>
+                    <ul class="list-footer mob-display  font_14" style="display: none;">
+                        <li class="cursor-pointer"><a class="color_grey" href="تور-ترکیه">تور ترکیه</a>
+                        </li>
+                        <li class="cursor-pointer"><a class="color_grey" href="تور-مالزی">تور
+                                مالزی</a></li>
+                        <li class="cursor-pointer"><a class="color_grey" href="تور-تایلند-پاتایا">تور
+                                تایلند</a></li>
+
+                    </ul>
+                </div>
+            </div>
+            <div class="col-footer text-right">
+                <div class="inner-col-footer">
+                    <h6 class="font_16">پشتیبانی </h6>
+                    <ul class="list-footer color_grey font_14">
+                        <basis core="view" datamembername="db.info">
+                            <face filter="prpID=7999">
+                                <li><span> @answer</span></li>
+                            </face>
+                            <face filter="prpID=8001">
+                                <li><a href="mailto:@answer"> @answer</a></li>
+                            </face>
+                            <face filter="prpID=8000" level="1">
+                                @child
+                            </face>
+                            <face filter="prpID=8000" level="2">
+                                <li><a href="tel:@answer"> @answer</a></li>
+                            </face>
+                        </basis>
+                    </ul>
+                </div>
+            </div>
+            <ol class="signs text-center width_100">
+                <li><a href="https://www.iata.org/"><img src="[##cms.cms.cdn##]/images/sign4.png" alt="sign"></a></li>
+                <li><a href="https://www.mcth.ir/"><img src="[##cms.cms.cdn##]/images/sign3.png" alt="sign"></a></li>
+                <li><a href="https://www.cao.ir/paxrights"><img src="[##cms.cms.cdn##]/images/sign2.png" alt="sign"></a>
+                </li>
+                <li><a href="https://www.cao.ir/"><img src="[##cms.cms.cdn##]/images/sign1.png" alt="sign"></a></li>
+                <li><a referrerpolicy='origin' target='_blank'
+                        href='https://trustseal.enamad.ir/?id=58327&Code=keaTkwOzAuzOzFhxhADz'><img
+                            referrerpolicy='origin'
+                            src='https://trustseal.enamad.ir/logo.aspx?id=58327&Code=keaTkwOzAuzOzFhxhADz' alt=''
+                            style='cursor:pointer' Code='keaTkwOzAuzOzFhxhADz'></a></li>
+            </ol>
+        </div>
+    </section>
+    <section class="row-footer-botton text-center font_12 dir-rtl">
+        <div class="bc-main color_grey">
+            <a href="http://www.basisfly.com/طراحی-سایت-مخصوص-آژانس-مسافرتی" class="color_grey" target="_blank">طراحی
+                سایت آژانس مسافرتی</a> و <a href="http://www.basisfly.com/" class="color_grey" target="_blank">رزرواسیون
+                آنلاین توسط بیسیس فلای </a> <img src="/images/basisfly-logo.png" alt="رزرواسیون آنلاین" width="60px"
+                height="">
+            <div class="clr"></div>
+        </div>
+    </section>
+</footer>
+<script src="https://cdn.basiscore.net/basisfly.com/js/reservation_menu-responsive.js" type="text/javascript"></script>
+<script src="[##cms.cms.cdn##]/js/core.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function (e) {
+
+        //<!---------------js login status--------------->//    
+        if ($(window).width() <= 1200) {
+            $(".col3-second-part-header").load('/M_Login_Information.bc')
+            $(".loginRegister").load("/M_Login_Register.bc")
+        }
+        else {
+            $(".Login_Information").load("/Client_Login_Information_ver.2.bc")
+        }
+    });
+</script>

@@ -1,0 +1,711 @@
+<basis core="tracking" name="tracking" source="Monitoring" collectionname="activity" dbname="tracking"
+    addcookie="true" />
+<basis core="cookie" name="trackingid" value="[##tracking.inserted.id|(0)##]" />
+<basis core="call" file="Client_CheckRkey.inc"></basis> <!-- updated login -->
+<basis core="group" name="search">
+    <basis core="external.fly.ws" source="cmsDbService2" procedurename="dbsource" name="db">
+        <member name="get_price" method="insurance" query='{
+        "name": "db",
+        "mid": "20",
+        "schemabase": "[##cms.query.schemabase|(true)##]",
+        "schema": {
+            "boxinfo": {
+                "action": "create",
+                "childs": [
+                    {
+                        "first": {
+                            "action": "create",
+                            "childs": [
+                                {
+                                    "provider": {
+                                        "action": "find",
+                                        "map": "provider.provider_id"
+                                    }
+                                },
+                                {
+                                    "mainprovider": {
+                                        "action": "find",
+                                        "map": "provider"
+                                    }
+                                },
+                                {
+                                    "duration": {
+                                        "action": "find",
+                                        "map": "duration"
+                                    }
+                                },
+                                {
+                                    "adult": {
+                                        "action": "find",
+                                        "map": "adult"
+                                    }
+                                },
+                                {
+                                    "child": {
+                                        "action": "find",
+                                        "map": "child"
+                                    }
+                                },
+                                {
+                                    "infant": {
+                                        "action": "find",
+                                        "map": "infant"
+                                    }
+                                },
+                                {
+                                    "zone": {
+                                        "action": "find",
+                                        "map": "zone"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "second": {
+                            "action": "create",
+                            "childs": [
+                                {
+                                    "total": {
+                                        "action": "find",
+                                        "map": "total"
+                                    }
+                                },
+                                {
+                                    "commissioncost": {
+                                        "action": "find",
+                                        "map": "commissioncost"
+                                    }
+                                },
+                                {
+                                    "totalcom": {
+                                        "action": "find",
+                                        "map": "totalCom"
+                                    }
+                                },
+                                {
+                                    "commissionn": {
+                                        "action": "find",
+                                        "map": "commissionn"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "third": {
+                            "action": "create",
+                            "childs": [
+                                {
+                                    "persons": {
+                                        "action": "find",
+                                        "map": "persons",
+                                        "options": {
+                                            "price": {
+                                                "action": "find",
+                                                "map": "price"
+                                            },
+                                            "tax": {
+                                                "action": "find",
+                                                "map": "tax"
+                                            },
+                                            "markups": {
+                                                "action": "find",
+                                                "map": "markups.totalprovider"
+                                            },
+                                            "markups2": {
+                                                "action": "find",
+                                                "map": "markups.totalmarkup"
+                                            },
+                                            "markupsupplier": {
+                                                "action": "find",
+                                                "map": "markupsupplier.totalmain"
+                                            },
+                                            "markupsupplier2": {
+                                                "action": "find",
+                                                "map": "markupsupplier.totalsupplier"
+                                            },
+                                            "commissioncostPerson": {
+                                                "action": "find",
+                                                "map": "commissioncost"
+                                            },
+                                            "base_price": {
+                                                "action": "find",
+                                                "map": "base_price"
+                                            },
+                                            "price_com": {
+                                                "action": "find",
+                                                "map": "price_com"
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "obligationp": {
+                                        "action": "create",
+                                        "childs": [
+                                            {
+                                                "obligation": {
+                                                    "action": "find",
+                                                    "map": "obligation",
+                                                    "options": {
+                                                        "title": {
+                                                            "action": "find",
+                                                            "map": "title"
+                                                        },
+                                                        "limit": {
+                                                            "action": "find",
+                                                            "map": "limit"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "cancelrule": {
+                                        "action": "find",
+                                        "map": "cancelrule"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+         "member":[{
+         "type":"list",
+         "name": "q",
+         "request": "get_price",
+         "IP": "[##cms.request.clientip##]",
+         "countryid" : "[##cms.form.countryid##]",
+         "fromdate":"[##cms.form.fdate##]",
+         "todate":"[##cms.form.tdate##]",
+         "birthday":[[##cms.form.birthday##]],
+         "userid":"[##db.checkrkey.userid|(0)##]",
+         "trackingNo":"[##tracking.inserted.id|(0)##]",
+         "lid":"3"
+         }]}' postsql="select replace(result,'\x',' ') as 'result' from [db.get_price]" preview="" />
+    </basis>
+    <basis core="group" name="Delay">
+        <basis core="inlinesource" name="db">
+            <member name="list-insurance" format="json"
+                postsql="select  Id , ParentId , case when trim(Field) is null  then  (select field from [db.list-insurance] where id = a.parentid ) else field end as field, value , type , path  from [db.list-insurance] as a"
+                preview="">{"root":[##db.get_price.result##]}</member>
+        </basis>
+        <!DOCTYPE html>
+        <html>
+
+        <head>
+            <title>تأمين</title>
+            <meta charset="utf-8">
+            <meta name="author" content="BasisCore">
+            <meta name="viewport"
+                content="width=device-width, minimum-scale=0.25, maximum-scale=1.0, initial-scale=1.0">
+            <!----CSS LIBRARY---->
+            <link href="https://cdn.basiscore.net/basisfly.com/css/reservation_mob_calendar_en.css" type="text/css"
+                rel="stylesheet" />
+            <link href="https://cdn.basiscore.net/basisfly.com/css/reservation_datepicker_style.css" type="text/css"
+                rel="stylesheet" />
+            <link href="https://cdn.basiscore.net/basisfly.com/css/reservation_mob_style.css" type="text/css"
+                rel="stylesheet" />
+            <link href="https://cdn.basiscore.net/basisfly.com/css/reservation_font_awesome.css" type="text/css"
+                rel="stylesheet" />
+            <!----CSS CUSTOMIZE---->
+            <link href="[##cms.cms.cdn##]/css/style_mob.css" type="text/css" rel="stylesheet" />
+            <!----JS LIBRARY---->
+            <script src="[##cms.cms.cdn##]/_js/jquery/jquery-3.6.3.min.js" type="text/javascript"></script>
+        </head>
+
+        <body onload="onloadFunc();">
+            <div id="Container" class="p-relative">
+                <div id="bg-popup" class="unvisible"></div>
+                <div class="message_box message_box_timeout unvisible font_13 p-absolute">
+                    <i class="fas fa-clock icon_message_box font-color_2 "></i>
+                    <div class="line-one font_18">
+                        <span>انتهی الوقت المحدد لك</span>
+                    </div>
+                    <div class="line-two">
+                        <div> الرجاء النقر فوق الزر أدناه للحصول على أفضل الأسعار ومراجعة السعة.</div>
+                        <button class="background-color_2 font-weight" onClick="window.location='/AR'">الصفحة
+                            الرئیسية</button>
+                        <button class="background-color_2 font-weight" onclick="location.reload()">البحث مجددا</button>
+                    </div>
+                </div>
+                <div id="Container-resize">
+                    <div class="loginRegister"></div>
+                    <basis core="call" file="M_Header_ar.inc" />
+                    <div class="clr"></div>
+                    <div id="content">
+                        <div class="section-research background-color_1 font_13">
+                            <div class="section-research-right float_right">
+                                <div>
+                                    <span>[##cms.form.insurancecountry##]</span>
+                                </div>
+                                <div>
+                                    <span>[##cms.form.fdate##]</span>
+                                    <span class="">-</span>
+                                    <span>[##cms.form.tdate##]</span>
+                                </div>
+                            </div>
+                            <div class="section-research-left float_left">
+                                <form method="post" data-read="0" action="M_Research_ar.bc" class="form_research"
+                                    data-type="1">
+                                    <input type="hidden" value="6" name="type" />
+                                    <input type="hidden" value="[##cms.form.persiancurrent##]" class="persiancurrent"
+                                        name="persiancurrent" />
+                                    <input type="hidden" value="[##cms.form.fdate##]" name="fdate"
+                                        class="departuredate" />
+                                    <input type="hidden" value="[##cms.form.tdate##]" name="tdate" class="returndate" />
+                                    <input type="hidden" value="[##cms.form.mstring_fdate##]" name="mstring_fdate"
+                                        class="departureMdate" />
+                                    <input type="hidden" value="[##cms.form.mstring_tdate##]" name="mstring_tdate"
+                                        class="returnMdate" />
+                                    <input type="hidden" value="[##cms.form.insurancecountry##]"
+                                        name="insurancecountry" />
+                                    <input type="hidden" value="[##cms.form.passengercount##]" name="passengercount" />
+                                    <input type="hidden" value="[##cms.form.countryid##]" name="countryid" />
+                                    <input type="hidden" value='[##cms.form.birthday##]' name="birthday" />
+                                    <button type="submit"><span>يتغيرون</span><i class="fa fa-search"></i></button>
+                                </form>
+                                <form method="post" action="M_Insurance_Search_ar.bc" class="form_research_date">
+                                    <input type="hidden" value="[##cms.form.persiancurrent##]" class="persiancurrent"
+                                        name="persiancurrent" />
+                                    <input type="hidden" value="[##cms.form.fdate##]" name="fdate"
+                                        class="departuredate" />
+                                    <input type="hidden" value="[##cms.form.tdate##]" name="tdate" class="returndate" />
+                                    <input type="hidden" value="[##cms.form.mstring_fdate##]" name="mstring_fdate"
+                                        class="departureMdate" />
+                                    <input type="hidden" value="[##cms.form.mstring_tdate##]" name="mstring_tdate"
+                                        class="returnMdate" />
+                                    <input type="hidden" value="[##cms.form.insurancecountry##]"
+                                        name="insurancecountry" />
+                                    <input type="hidden" value="[##cms.form.passengercount##]" name="passengercount" />
+                                    <input type="hidden" value="[##cms.form.countryid##]" name="countryid" />
+                                    <input type="hidden" value='[##cms.form.birthday##]' name="birthday" />
+                                </form>
+                            </div>
+                            <div class="clr"></div>
+                            <div class="content-research unvisible">
+                                <div class="Loading-box">
+                                    <div class="lds-spinner">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clr"></div>
+                        </div>
+                        <div class="wrapper-95">
+                            <span class="before-btn background-color_1  font_12"><i
+                                    class="fa fa-arrow-right float_right"></i>اليوم السابق</span>
+                            <span class="after-btn background-color_1   font_12">اليوم التالي<i
+                                    class="fa fa-arrow-left float_left"></i></span>
+                        </div>
+                        <div class="wating-search">
+                            <span>البحث عن أفضل التأمينات ...</span>
+                            <div class="loading-progress"></div>
+                            <img src="/images/M_Insurance.gif" alt="" width="150" height="" />
+                        </div>
+                        <div id="app" class="unvisible">
+                            <p class="section-top-info font_12"><span
+                                    class="font-color_1 font-weight list_count"></span> تم العثور على التأمينات.</p>
+                            <p class="section-top-info font_12">الوقت المتبقي لعملیة الحجز : <span id="timer"
+                                    class="font-color_2 font-weight EnNum font_20">00:00:00</span></p>
+                            <basis core="tree" datamembername="db.list-insurance" idcol="id" parentidcol="parentid"
+                                nullvalue="null">
+                                <face filter="value = '[]' and field='root'">
+                                    <div>
+                                        <div class="message_box message_box_nodata font_13 no-data">
+                                            <i class="fas fa-exclamation-triangle icon_message_box font-color_2"></i>
+                                            <div class="line-one font_18">
+                                                <span>لم نحصل علی نتيجة للبحث.</span>
+                                            </div>
+                                            <div class="line-two">
+                                                <div> الرجاء النقر فوق الزر أدناه للحصول على أفضل الأسعار ومراجعة السعة.
+                                                </div>
+                                                <button class="background-color_2 font-weight hvr-horizontal"
+                                                    onClick="window.location='/AR'">الصفحة الرئیسية</button>
+                                                <button class="background-color_2 font-weight hvr-horizontal"
+                                                    onclick="location.reload()">البحث مجددا</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </face>
+                                <face filter="field='boxinfo'">
+                                    <div class="search-item transition insurance">
+                                        <form method="post" action="" class="getInsurance">
+                                            <input type="hidden" value="[##cms.form.countryid##]" name="countryid" />
+                                            <input type="hidden" value="[##cms.form.fdate##]" name="fdate" />
+                                            <input type="hidden" value="[##cms.form.tdate##]" name="tdate" />
+                                            <input type="hidden" value='[##cms.form.birthday##]' name="birthday"
+                                                class="birthday" />
+                                            <input type="hidden" value="[##cms.form.insurancecountry##]"
+                                                name="insurancecountry" />
+                                            <input type="hidden" value="[##cms.form.passengercount##]"
+                                                name="passengercount" />
+                                            <div class="item-result"> @child</div>
+                                        </form>
+                                    </div>
+                                </face>
+
+                                <face filter="field='first'">
+                                    <div class="item-result-top insurance p-relative">
+                                        @child
+                                        <div class="clr"></div>
+                                    </div>
+                                </face>
+                                <face filter="field='provider' and value='20'">
+                                    <div class="item-result-top-right float_right p-relative">
+                                        <img src="https://cdn.basiscore.net/basisfly.com/images/reservation_Pasargad-Ins.png"
+                                            width="50" height="50" alt="باسارجاد" />
+                                    </div>
+                                    <input type="hidden" value="@value" name="provider" />
+                                </face>
+                                <face filter="field='provider' and value='21'">
+                                    <div class="item-result-top-right float_right p-relative">
+                                        <img src="https://cdn.basiscore.net/basisfly.com/images/reservation_Saman-Ins.png"
+                                            width="80" height="27" alt="سامان" />
+
+                                    </div>
+                                    <input type="hidden" value="@value" name="provider" />
+                                </face>
+                                <face filter="field='provider' and value='19'">
+                                    <div class="item-result-top-right float_right p-relative">
+                                        <img src="https://cdn.basiscore.net/basisfly.com/images/reservation_Saman-Ins.png"
+                                            width="80" height="27" alt="سامانb2c" />
+
+                                    </div>
+                                    <input type="hidden" value="@value" name="provider" />
+                                </face>
+                                <face filter="field='mainprovider'">
+                                    <input type="hidden" value='@value' name="insmainprovider" />
+                                </face>
+                                <face filter="field='duration'">
+                                    <input type="hidden" value='@value' name="duration" class="duration" />
+                                </face>
+                                <face filter="field='adult'">
+                                    <input type="hidden" value='@value' name="adult" />
+                                </face>
+                                <face filter="field='child'">
+                                    <input type="hidden" value='@value' name="child" />
+                                </face>
+                                <face filter="field='infant'">
+                                    <input type="hidden" value='@value' name="infant" />
+                                </face>
+                                <face filter="field='zone'">
+                                    <div class="item-result-top-left float_left font_13">
+                                        <input type="hidden" value='@value' name="zone" />
+                                        <p class="width_100"> @child </p>
+                                    </div>
+                                </face>
+                                <face filter="field='en_name'">
+                                    <input type="hidden" value="@value" name="en_name" />
+                                    <span>@value </span>
+                                </face>
+                                <face filter="field='fa_name'">
+                                    <input type="hidden" value="@value" name="fa_name" />
+                                </face>
+                                <face filter="field='zone_code'">
+                                    <input type="hidden" value="@value" name="zone_code" />
+                                </face>
+                                <face filter="field='second'">
+                                    <div class="item-result-bottom">
+                                        <div class="item-result-bottom-right float_right">
+                                            @child
+                                        </div>
+                                        <div class="item-result-bottom-left float_left font_13">
+                                            <button type="submit"
+                                                class="reserve-button font_13 background-color_1"><span>إختيار
+                                                    التأمين</span></button>
+                                            <button type="button"
+                                                class="details-button more-link  font_13 background-color_2"><span>تفاصيل</span></button>
+                                        </div>
+
+                                        <div class="clr"></div>
+                                    </div>
+                                </face>
+                                <face filter="field='totalcom'">
+                                    <div class="col-price">
+                                        <input type="hidden" value="@value" class="totalcom_table" name="Maintotal" />
+                                        <div>سعر :</div>
+                                        <div><span class="total-cost font_15 seprator">@value</span><span
+                                                class="money-type font_10">ريال</span>
+                                        </div>
+                                    </div>
+                                </face>
+                                <face filter="field='commissionn'">
+                                    <input type="hidden" value='@value' name="commissionn" />
+                                </face>
+                                <face filter="field='third'">
+                                    <div class="item-result-details unvisible">
+                                        <div class="close-details-box  float_left font_11">قريب</div>
+                                        <div class="clr"></div>
+                                        <div class="section-details">
+                                            @child
+                                            <div class="clr"></div>
+                                        </div>
+                                    </div>
+                                </face>
+                                <face filter="field='total'">
+                                    <input type="hidden" class="total_table" value="@value" />
+                                </face>
+
+                                <face filter="field='commissioncost'">
+                                    <input type="hidden" class="commissioncost_table" value="@value" />
+                                </face>
+                                <face filter="field='persons' and type='array'">
+                                    <div class="section-cost-table">
+                                        <table class="font_12">
+                                            <thead>
+                                                <th class="font-color_1">تاريخ الميلاد</th>
+                                                <th class="font-color_1">عمولة</th>
+                                                <th class="font-color_1">خصم العمولة</th>
+                                            </thead>
+                                            <tbody class="tbody_tbl">@child</tbody>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <div class="cost-table-item font_12">
+                                                        <span class="cost-title">خصم العمولة : </span>
+                                                        <span class="total_val seprator"></span>
+                                                        <span class="money-type font_10">ريال</span>
+                                                    </div>
+                                                    <div class="cost-table-item font_12">
+                                                        <span class="cost-title">عمولة : </span>
+                                                        <span class="com_val seprator"> </span>
+                                                        <span class="money-type font_10">ريال</span>
+                                                    </div>
+                                                    <div class="cost-table-item font_12">
+                                                        <span class="cost-title">السعر الكلي : </span>
+                                                        <span class="total-cost  font_15 totalcom_val seprator"> </span>
+                                                        <span class="money-type font_10">ريال</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </face>
+                                <face filter="field='persons' and type='object'">
+                                    <tr class="row_tbl">
+                                        <td><span class="index_row"></span><span class="date_row"></span></td>
+                                        @child
+                                    </tr>
+                                </face>
+                                <face filter="field='base_price' ">
+                                    <input type="hidden" value="@value" class="base_price" />
+                                </face>
+                                <face filter="field='price_com' ">
+                                    <td><span class="seprator">@value</span>
+                                        <span class="font_11 money-type seprator">ريال</span>
+                                    </td>
+                                    <input type="hidden" value="@value" class="price_com" />
+                                </face>
+                                <face filter="field='tax' ">
+                                    <input type="hidden" value="@value" class="tax" />
+                                </face>
+                                <face filter="field='markups' ">
+                                    <input type="hidden" value="@value" class="mtotalprovider" />
+                                </face>
+                                <face filter="field='markups2' ">
+                                    <input type="hidden" value="@value" class="mtotalmarkup" />
+                                </face>
+                                <face filter="field='markupsupplier' ">
+                                    <input type="hidden" value="@value" class="mtotalmain" />
+                                </face>
+                                <face filter="field='markupsupplier2' ">
+                                    <input type="hidden" value="@value" class="mtotalsupplier" />
+                                </face>
+                                <face filter="field='commissioncostPerson'">
+                                    <td><span class="seprator">@value</span>
+                                        <span calss="font_11 money-type seprator">ريال</span>
+                                        <input type="hidden" value="@value" class="commission" />
+                                        <input type="hidden" value="@value" class="commissioncost" />
+                                    </td>
+                                </face>
+                                <face filter="field='obligationp'">
+                                    <div class="section-details-item font_12 obligationp">
+                                        <div class="font-color_1">قوانين الإلغاء:</div>
+                                        @child
+                                    </div>
+                                </face>
+                                <face filter="field='obligation' and type = 'array'">
+                                    <div class="text-justify max-height">@child</div>
+                                </face>
+                                <face filter="field='obligation' and type = 'object'">
+                                    <div class="obligation_obj">@child</div>
+                                </face>
+                                <face filter="field='title'">
+                                    <div>@value :</div>
+                                </face>
+                                <face filter="field='limit'">
+                                    <div> @value </div>
+                                </face>
+                                <face filter="field='cancelrule'">
+                                    <div class="section-details-item font_12">
+                                        <div class="font-color_1">التزامات شرکة التأمين :</div>
+                                        <div class="text-justify max-height">@value</div>
+                                    </div>
+                                </face>
+                                <face filter="type in ('array','object')">@child</face>
+                            </basis>
+                        </div>
+
+                    </div>
+                    <basis core="call" file="M_Footer_ar.inc" />
+                </div>
+            </div>
+
+            <!----JS LIBRARY---->
+
+            <script src="https://cdn.basiscore.net/basisfly.com/js/reservation_progress_bar.js"
+                type="text/javascript"></script>
+            <script src="https://cdn.basiscore.net/basisfly.com/js/reservation_mob_calendar.js"
+                type="text/javascript"></script>
+            <script type="text/javascript">
+                <basis core="call" file="Client_Basis_Calendar_EN_js.inc" />
+            </script>
+            <!----JS LIBRARY---->
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $(".list_count").text($(".search-item").length)
+                });
+                $(".seprator").each(function () {
+                    $(this).text(function (index, value) {
+                        return value
+                            .replace(/\D/g, "")
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    })
+                })
+                $(".more-link").click(function () {
+                    $(this).closest(".search-item").find(".item-result-details").show()
+                })
+                $(".close-details-box").click(function () {
+                    $(this).closest(".search-item").find(".item-result-details").hide()
+                })
+                $(".search-item").each(function (index, element) {
+                    $(this).find('.total_val').text($(this).find('.total_table').val())
+                    $(this).find('.com_val').text($(this).find('.commissioncost_table').val())
+                    $(this).find('.totalcom_val').text($(this).find('.totalcom_table').val())
+                    $(this).find(".seprator").each(function () {
+                        $(this).text(function (index, value) {
+                            return value
+                                .replace(/\D/g, "")
+                                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        })
+                    })
+
+
+
+                    var brth = $(this).find('.birthday').val()
+                    var sp = brth.split(",")
+                    for (var i = 0; i < sp.length; i++) {
+                        var j = i + 1
+                        $(this).find(".tbody_tbl").children(".row_tbl:nth-child(" + j + ")").find(".date_row").text(sp[i])
+                    }
+                    $(this).find(".row_tbl").each(function (index, element) {
+                        var m = $(this).index()
+                        var n = m + 1
+                        $(this).find(".index_row").text(n + '- ')
+                        $(this).find(".date_row").each(function (index, element) {
+                            $(this).text($(this).text().replace('"', ' '));
+                            $(this).text($(this).text().replace('"', ' '));
+                        });
+                    });
+                });
+
+                $(".row_tbl").each(function (index, element) {
+                    var index = $(this).index()
+                    $(this).find(".base_price").attr("name", "_root.person__" + index + ".base_price")
+                    $(this).find(".price").attr("name", "_root.person__" + index + ".price")
+                    $(this).find(".price_com").attr("name", "_root.person__" + index + ".price_com")
+                    $(this).find(".tax").attr("name", "_root.person__" + index + ".tax")
+                    $(this).find(".commission").attr("name", "_root.person__" + index + ".commission")
+                    $(this).find(".commissioncost").attr("name", "_root.person__" + index + ".commissioncost")
+                    $(this).find(".mtotalprovider").attr("name", "_root.person__" + index + ".markups.totalprovider")
+                    $(this).find(".mtotalmarkup").attr("name", "_root.person__" + index + ".markups.totalmarkup")
+                    $(this).find(".mtotalmain").attr("name", "_root.person__" + index + ".markupsupplier.totalmain")
+                    $(this).find(".mtotalsupplier").attr("name", "_root.person__" + index +
+                        ".markupsupplier.totalsupplier")
+                });
+
+                var progress = $(".loading-progress").progressTimer({
+                    timeLimit: 10,
+                    onFinish: function () {
+                        $(".wating-search").hide()
+                        $("#app").show()
+                    }
+                });
+                $.ajax({
+                    url: "/AR"
+                });
+                $(".form_research").each(function () {
+                    $(this).submit(function (e) {
+                        e.preventDefault()
+                        if ($(this).attr('data-read') == 0) {
+                            $(".content-research").show()
+                            $.ajax({
+                                url: $(this).attr("action"),
+                                type: $(this).attr("method"),
+                                data: $($(this)).serialize(),
+                                success: function (response) {
+                                    $('.content-research').empty().show().html(response);
+                                    $(this).attr('data-read', '1')
+                                }
+                            });
+                        } else {
+                            $(".content-research").show()
+                        }
+
+                    });
+                });
+
+                function onloadFunc() {
+                    var counter = 600;
+                    setInterval(function () {
+                        counter--;
+                        var m = parseInt(counter / 60);
+                        var s = counter % 60;
+                        if (counter >= 0) {
+                            var timer = document.getElementById("timer");
+                            if (s < 10) {
+                                s = "0" + s;
+                            }
+                            if (m < 10) {
+                                m = "0" + m;
+                            }
+                            if (m < 2) {
+                                document.getElementById("timer").classList.add("blink_me")
+                            }
+                            timer.innerHTML = "00:" + m + ":" + s;
+                        }
+                        if (counter === 0) {
+                            $(".message_box,#bg-popup").fadeIn();
+                            $(".message_box").css("top", "200px")
+                            clearInterval(counter)
+                        }
+                    }, 1000)
+                }
+
+                $(".search-item form").each(function () {
+                    if ('[##cms.cms.ownerid##]' == '9252') {
+                        $(this).attr("action", "")
+                    } else {
+                        $(this).attr("action", "/InsuranceView_AR.bc")
+                    }
+                })
+            </script>
+        </body>
+
+        </html>

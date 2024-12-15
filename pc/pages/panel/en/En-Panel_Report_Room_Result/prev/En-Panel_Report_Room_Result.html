@@ -1,0 +1,403 @@
+<basis core="dbsource" source="trust_login8" mid="24" name="Paneluser" lid="1" rkey="[##cms.cookie.rkey##]" > 
+    <member name="login" type="scalar"  request="userid"></member>
+</basis>
+
+
+
+<basis core="group" name="DelayOne">
+<basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource" >
+    <member 
+        name="reportroom_list"
+        method="panel"
+        query='{ 
+            "name":"db",
+            "mid":"20",
+            "member":[{ 
+            "type":"scalar",
+            "name":"q", 
+            "request":"Panel_Report_Room_Sold",
+            "dmnid":"[##cms.cms.domainid##]",
+             "Hid" : "[##cms.form.hotelid|cms.query.id##]",
+            "roomid" :"[##cms.form.roomid|cms.query.roomid##]",
+            "manager":"[##Paneluser.login.userid##]",
+            "from_date" : "[##cms.form.fdate##]",
+            "to_date" :"[##cms.form.tdate##]"
+
+        }]} '
+  postsql="select replace(replace(replace(replace(replace(result,'None','null'),'nan','NaN'),'\xa0','null'),' inf','null'),' -inf' , 'null') as 'result' from [db.reportroom_list]"
+    preview="" />
+</basis>
+<basis core="group" name="DelayTwo">
+<basis core="inlinesource" name="db">
+    <member 
+        name="reportroom_list-Tree"
+        format="json" postsql="select Id,ParentId,case when trim(Field) is null then (select field from [db.reportroom_list-Tree] where id= b.parentid) else Field end as Field,Value,Type,Path from 
+    [db.reportroom_list-Tree] as b">
+        {"root":[##db.reportroom_list.result##]}
+    </member>
+   
+</basis>
+                    
+            
+        <div class="Panel_Box_Content" style="overflow: scroll;direction: ltr;">
+            <div class="Panel_invoice_List">
+             <basis core="tree" datamembername="db.reportroom_list-Tree" idcol="id" parentidcol="parentid" nullvalue="null">
+        <layout><table class="table customer coupon-result" style="direction: ltr">@child</table></layout>
+        <face filter="field in ('msg') and Value in ('no data')">
+            <p style="text-align: center;padding: 90px 0px;font-size: 17px;color: red;">در این تاریخ اتاقی برای نمایش وجود ندارد</p>
+        </face>
+        <face filter="field in ('date_names') and type='Object'">
+            <thead>@child</thead>
+        </face>
+        <face filter="field in ('room')">
+            <th class="" style="padding: 0 20px;">RoomName</th>
+        </face>
+        <face filter="field in ('_id')">
+            <th class=""><input type="hidden" class="dateid" value="@value"><br>
+        </face>
+        <face filter="field in ('sstring')">
+            <p> @value</p>
+        </face>
+        <face filter="field in ('mstring')">
+           <p style="color: #f3f4f7;font-size: 11px;">(@value)</p></th>
+        </face>
+
+        <face filter="field in ('rooms') and type='Array'">
+            <tbody>@child</tbody>
+        </face>
+        <face filter="field in ('rooms') and type in ('Object') ">
+            <tr class="odd">@child</tr>
+        </face>
+                
+        <face filter="field in ('room_name') and type in ('Scalar.String') ">
+            <td><span>@value</span>
+        </face>
+        <face filter="field in ('room_number') and type in ('Scalar.Numeric') ">
+            -<span>@value</span>
+            <input type="hidden" class="room_number" value="@value">
+        </face>
+        <face filter="field in ('sold') and type in ('Array') ">
+            <div class="date_sold" style="display: none;">@value</div> </td>
+        </face>
+        <face filter="type in ('array','object')">@child</face>
+    </basis>
+    
+            </div>
+        </div>
+
+
+<div class="delete_Wrapper unvisible" onclick="Closedelete_Info(this)"></div>
+<div class="delete_Content unvisible">
+<div class="title">
+<span style="float:left;">Edit roomNumber</span>
+
+<div class="clr"></div>
+</div>
+<div class="delete_Container">
+ 
+</div>
+</div>
+
+<script>
+
+          var len=$(".table").find('thead').find('th').length
+    $(".table").find("tbody").find("tr").each(function() {
+          for (var i=0;i<len-1;i++) {
+            $(this).append('<td></td>')
+          }
+    })
+
+
+    $(".table").find("tbody").find("tr").each(function(trindex) {
+        var tr_index=trindex+1
+      
+        $(this).find(".date_sold").each(function(soldindex,elm) {
+            var sold=$(elm).text()
+            var json = JSON.parse(sold)
+           
+
+          
+           $.each(json, function (key, data) {
+               
+                $(".table").find("th").each(function(index,element) {
+                    th_index=index+1
+                    if ($(element).find(".dateid").val()){
+                        if (parseInt($(element).find(".dateid").val())>=parseInt(data.from)  && parseInt(data.to)>=parseInt($(element).find(".dateid").val())){
+                           
+                            if (parseInt($(element).find(".dateid").val())==parseInt(data.from))
+                            {
+                                if(data.stopSale && data.stopSale==1)
+                                {
+                                
+                                    $(".table").find("tbody").find("tr:nth-child("+tr_index+")").find("td:nth-child("+th_index+")").append('<div class="period rightclass stopsale" ><div class="boxcont">stopSale</div></div>')
+                                }
+                                else{
+                                    $(".table").find("tbody").find("tr:nth-child("+tr_index+")").find("td:nth-child("+th_index+")").append('<div class="period rightclass" ></div>')
+                                }
+                            }
+                            else if (parseInt($(element).find(".dateid").val())==parseInt(data.to))
+                            {
+                                
+                                if(data.stopSale && data.stopSale==1)
+                                {
+                                
+                                 $(".table").find("tbody").find("tr:nth-child("+tr_index+")").find("td:nth-child("+th_index+")").append('<div class="period leftclass stopsale" ><div class="boxcont">stopSale</div></div>')
+                                }
+                                else{
+                                    $(".table").find("tbody").find("tr:nth-child("+tr_index+")").find("td:nth-child("+th_index+")").append('<div class="period leftclass" ></div>')
+                                }
+                         
+                            }
+                            else
+                            {
+                                
+                                if(data.stopSale && data.stopSale==1)
+                                {
+                                    $(".table").find("tbody").find("tr:nth-child("+tr_index+")").find("td:nth-child("+th_index+")").append('<div class="period divclass stopsale" ><div class="boxcont">stopSale</div></div>')
+
+                                }
+                                else{
+                                     $(".table").find("tbody").find("tr:nth-child("+tr_index+")").find("td:nth-child("+th_index+")").append('<div class="period divclass" ></div>')
+
+                                }
+                            }
+                           
+                            if(data.factorid){
+                                $(".table").find("tbody").find("tr:nth-child("+tr_index+")").find("td:nth-child("+th_index+")").find(".period").append('<div class="boxcont">'+data.factorid+'</div>')
+                                $(".table").find("tbody").find("tr:nth-child("+tr_index+")").find("td:nth-child("+th_index+")").find(".period").attr("onclick","Edit_RoomNumber(this)")
+
+                            } 
+        
+                            
+                        }
+                    }
+                   
+
+                })
+               
+            })
+
+
+        })
+    })
+
+
+
+    function Edit_RoomNumber(a) {
+        var factorid=$(a).find(".boxcont").text()
+        $(".delete_Container").html("")
+        $(".delete_Wrapper").removeClass('unvisible');
+        $(".delete_Content").removeClass('unvisible');
+        $.ajax({
+            url: "/EN-Panel_roomnumber_edit.bc",
+            type: "post",
+            data: {
+                hid : "[##cms.form.hotelid##]",
+                roomid : "[##cms.form.roomid##]",
+                factorid:factorid,
+                room_number:$(a).closest("tr").find(".room_number").val(),
+                from:"[##cms.form.fdate##]",
+                to:"[##cms.form.tdate##]",
+                groupname:"[##cms.form.groupname##]",
+                roomname:"[##cms.form.roomname##]",
+            },
+            success: function (response) {
+               
+                $(".delete_Container").empty().html(response)
+
+           },
+
+        });
+
+    }
+
+    function Closedelete_Info(element) {
+          $(element).addClass('unvisible');
+        
+          $(".delete_Content").addClass('unvisible');
+    }
+
+</script>
+
+
+
+<style type="text/css">
+    .customer thead > tr > th {
+         background: #4D586E;
+        border-bottom: 1px solid #a0d0eb !important;
+        border-top: 1px solid #a0d0eb !important;
+        white-space: nowrap;
+        padding: 0 10px;
+border-left: solid 1px #EAEDEF;
+    }
+    .customer tbody > tr > td {
+        font-size: 11px;
+        white-space: nowrap;
+border-left: solid 1px #EAEDEF;
+    }
+    .boxcont{
+        z-index: 999;
+        background-color: #fff;
+        line-height: 14px;
+        width: 100%;
+        padding: 10px  0;
+        border-radius: 5px;
+        display: none;
+        position: absolute;
+        border: 1px solid #eee;
+        box-shadow: 0 0 3px 1px #f1f1f1;
+        top: 3px;
+    }
+ 
+    .divclass,.leftclass,.rightclass{
+        position: relative;
+        border: 1px solid #131212;
+
+    }
+    .leftclass{
+        width: 50%;
+        float: left;
+
+    }
+    .rightclass{
+        width: 50%;
+        float: right;
+    }
+    .divclass:before{
+        content: '';
+        background-color: #131212;
+        position: absolute;
+        right: -1px;
+        top: -5px;
+    }
+    .divclass:after{
+        content: '';
+        background-color: #131212;
+        position: absolute;
+        left: -1px;
+        top: -5px;
+    }
+
+    .leftclass:after{
+        content: '';
+        width: 2px;
+        height: 10px;
+        background-color: #131212;
+        position: absolute;
+        right: -1px;
+        top: -5px;
+    }
+    .rightclass:before{
+        content: '';
+        width: 2px;
+        height: 10px;
+
+        background-color: #131212;
+        position: absolute;
+        left: -1px;
+        top: -5px;
+    }
+    .panel_list .customer thead > tr > th, .customer tbody > tr.odd > td {
+     
+      padding: 10px 0px;
+    }
+    .customer thead > tr > th {
+      padding: 0 10px;
+    }
+    .period:hover .boxcont{display: block;}
+   
+    .stopsale:before{
+      
+
+        background-color: red;
+      
+    }
+    .stopsale:after{
+      
+
+        background-color: red;
+      
+    }
+
+    .period.stopsale {
+  border-color: red;
+}
+.Panel_invoice_List table tr th {
+  text-align: center;
+  font-weight: normal;
+  background: #4D586E;
+  color: #fff;
+  padding: 5px 0;
+  font-size: 13px;
+}
+p {
+  text-align: center;
+}
+ .delete_Container{
+  padding: 20px;
+}
+.unvisible {
+  display: none;
+}
+.delete_Content .title {
+  border-bottom: 1px dashed #ccc;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  background: #f7f7f7;
+  font-size: 15px;
+  font-family: inherit;
+  padding: 10px 15px 5px;
+  direction: rtl;
+  text-align: right;
+}
+.delete_Content {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  background: #fff;
+  position: fixed;
+  z-index: 99;
+  direction: rtl;
+  width: 65%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  top: 100px;
+}
+.delete_Wrapper {
+  background-color: rgba(0, 0, 0, 0.2);
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  z-index: 99;
+}
+
+
+.reservtion_text  {
+  display: inline-block;
+  width: 120px;
+  color: #5b5959;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  font-family: 'IRANSansWeb';
+  font-size: 12px;
+  border: 1px solid #C7D6DB;
+  background: #f7f9fb;
+  border-radius: 4px;
+  padding: 2px;
+  margin: 2px;
+    margin-right: 2px;
+  margin-right: 0px;
+}
+</style>  
+
+
+    </basis>
+
+</basis>

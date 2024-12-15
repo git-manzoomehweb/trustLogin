@@ -1,0 +1,106 @@
+<basis core="call" file="Client_CheckRkey.inc"></basis> <!-- updated login -->
+
+<basis core="group" name="0" if="[##db.checkrkey.userid|(0)##]=0">
+    <p style="text-align:center;font-family:tahoma">لا يسمح لك للوصول إلى هذه الصفحة</p>
+</basis>
+
+<basis core="group" name="1" if="[##db.checkrkey.userid|(0)##]<>0">
+    <basis core="group" name="Delay_1">
+        <!doctype html>
+        <html>
+
+        <head>
+            <title>الملف الشخصي</title>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+            <style type="text/css">
+                <basis core="call" file="Panel_User_css.inc" />
+            </style>
+            <link rel="stylesheet" href="/css/Panel-master-css.css" type="text/css">
+            <script src="[##cms.cms.cdn##]/_js/jquery-1.8.0.min.js"></script>
+        </head>
+
+        <body>
+            <div class="Panel_Container">
+                <basis core="call" file="AR-Panel-Menu.inc" />
+                <div class="Panel_Wrraper_Box">
+                    <basis core="call" file="AR-Panel-Dashboard-Header.inc" />
+                    <basis core="call" file="AR-Panel-Icon.inc" />
+
+                    <div class="Panel_Box">
+                        <div class="Panel_Box_title">
+                            <span>معلومات شخصية حقيقية</span>
+                            <a href="/AR-Panel-ChangePassword.bc" title="Change password"
+                                class="Panel_Edit_icon Password"></a>
+                            <a href="/AR-Panel-DashboardEdit.bc" title="Editing information"
+                                class="Panel_Edit_icon Edit"></a>
+                        </div>
+
+                        <div class="Panel_UserInfo">
+                            <table>
+                                <tr>
+                                    <td>الإسم : <span class="profile-info-1"></span></td>
+                                    <td>اللقب : <span class="profile-info-2"></span></td>
+                                    <td>هاتف : <span class="profile-info-4"></span></td>
+                                </tr>
+                                <tr>
+                                    <td>الهاتف الخلوي :<span class="profile-info-5"></span></td>
+                                    <td>الجنس :<span class="profile-info-7"></span></td>
+                                    <td>تاریخ الولادة : <span class="profile-info-8"></span></td>
+                                </tr>
+                                <tr>
+                                    <td>رقم البرید : <span class="profile-info-9"></span></td>
+                                    <td colspan="2">البرید الإلکتروني : <span class="profile-info-3"></span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">العنوان : <span class="profile-info-6"></span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <basis core="call" file="AR-Panel-Dashboard-Footer.inc" />
+                </div>
+
+                <div class="clr"></div>
+            </div>
+
+            <script src="[##cms.cms.cdn##]/_js/User_Panel.js"></script>
+            <style type="text/css">
+                @font-face {
+                    font-family: 'IRANSansWeb';
+                    src: url('http://cdn.basiscore.net/_fonts/IRANSansWeb.eot');
+                    src: local('?'), url('http://cdn.basiscore.net/_fonts/IRANSansWeb.woff2') format("woff"), url('http://cdn.basiscore.net/_fonts/IRANSansWeb.ttf') format("truetype"), url('http://cdn.basiscore.net/_fonts/IRANSansWeb.otf') format("otf");
+                    font-weight: 400;
+                    font-style: normal
+                }
+
+                @font-face {
+                    font-family: 'FontAwesome';
+                    src: local('FontAwesome'), url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.eot?#iefix');
+                    src: local('?'), url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.woff') format("woff"), url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.ttf') format("truetype"), url('http://cdn.basiscore.net/_fonts/fontawesome-webfont.otf') format("otf");
+                    font-weight: 400;
+                    font-style: normal
+                }
+
+                @font-face {
+                    font-family: 'IRANSansWeb';
+                    src: url('https://cdn.basiscore.net/_fonts/IRANSansWeb.eot');
+                    src: local('?'), url('https://cdn.basiscore.net/_fonts/IRANSansWeb.woff2') format("woff"), url('https://cdn.basiscore.net/_fonts/IRANSansWeb.ttf') format("truetype"), url('https://cdn.basiscore.net/_fonts/IRANSansWeb.otf') format("otf");
+                    font-weight: 400;
+                    font-style: normal
+                }
+
+                @font-face {
+                    font-family: 'FontAwesome';
+                    src: local('FontAwesome'), url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.eot?#iefix');
+                    src: local('?'), url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.woff') format("woff"), url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.ttf') format("truetype"), url('https://cdn.basiscore.net/_fonts/fontawesome-webfont.otf') format("otf");
+                    font-weight: 400;
+                    font-style: normal
+                }
+            </style>
+        </body>
+
+        </html>
+    </basis>
+</basis>

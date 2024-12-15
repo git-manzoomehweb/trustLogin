@@ -1,0 +1,56 @@
+<basis core="group" name="hasNot-rkey" if="'[##cms.cookie.rkey##]' = ''">
+    <basis core="external.fly.ws" source="cmsDbService2" procedurename="dbsource" name="db">
+        <member name="hotel_services" method="service" postsql="select replace(replace(replace(replace(replace(replace(replace(replace(result,'None','null'),'undefined','null'),'\xa0',' '),'/x',' '),'\x',' '),'nan','null'),' inf','null'),' -inf' , 'null') as 'result' from [db.hotel_services]" query='{
+           "name": "db",
+           "mid": "20",
+           "member": [{
+                "type" : "list",
+                "name" : "q",
+                "request" : "hotel_services",
+                "dmnid" : [##cms.cms.domainid##],
+                "userid":"0",
+                "fromdate" : "[##cms.form.fdate##]",
+                "basiscoreid":"[##cms.form.basiscoreid##]",
+                "passenger" :
+                {
+                    "adultcount" : "[##cms.form.adult##]",
+                    "childcountandage" : "[##cms.form.child##][##cms.form.select-age##]"
+                },
+                "trackingNo" : "[##cms.cookie.trackingid##]",
+                     "lid" : "[##cms.form.lid##]",
+                "unit" : "10"
+            }]}' preview="" />
+    </basis>
+    [[##db.hotel_services.result##]]
+                                
+
+</basis>
+<basis core="group" name="has-rkey" if="'[##cms.cookie.rkey##]' <> ''">
+    <basis core="dbsource" source="trust_login8" mid="24" name="db" lid="1" rkey="[##cms.cookie.rkey##]">
+        <member name="checkrkey" type="scalar" request="userid" preview="" />
+    </basis>
+    <basis core="external.fly.ws" source="cmsDbService2" procedurename="dbsource" name="db">
+        <member name="hotel_services" method="service" postsql="select replace(replace(replace(replace(replace(replace(replace(replace(result,'None','null'),'undefined','null'),'\xa0',' '),'/x',' '),'\x',' '),'nan','null'),' inf','null'),' -inf' , 'null') as 'result' from [db.hotel_services]" query='{
+           "name": "db",
+           "mid": "20",
+           "member": [{
+                "type" : "list",
+                "name" : "q",
+                "request" : "hotel_services",
+                "dmnid" : [##cms.cms.domainid##],
+                "userid":"[##db.checkrkey.userid##]",
+                "fromdate" : "[##cms.form.fdate##]",
+                "basiscoreid":"[##cms.form.basiscoreid##]",
+                "passenger" :
+                {
+                    "adultcount" : "[##cms.form.adult##]",
+                    "childcountandage" : "[##cms.form.child##][##cms.form.select-age##]"
+                },
+                "trackingNo" : "[##cms.cookie.trackingid##]",
+                     "lid" : "[##cms.form.lid##]",
+                "unit" : "10"
+            }]}' preview="" />
+    </basis>
+    [[##db.hotel_services.result##]]
+                                
+</basis>

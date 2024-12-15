@@ -1,0 +1,276 @@
+<basis core="dbsource" source="basiscore" lid="1" mid="20" name="tour">
+    <member name="cat" type="tree" request="cat" parentid="0" order="ord"></member>
+</basis>
+<basis core="dbsource" source="basiscore" lid="1" mid="1" name="article">
+    <member name="cat" type="tree" request="cat" parentid="0" />
+</basis>
+<basis core="dbsource" source="basiscore" name="db" mid="5" lid="1" usedforid="[##cms.cms.ownerid##]">
+    <member name="info" type="view"></member>
+</basis>
+<header class="header color_white font_14">
+    <div class="header-bottom">
+        <div class="bc-main">
+            <div class="default-header">
+                <div class="width_70 float-right p-relative text-right">
+                    <div class="Login_Information p-relative color_white background-color_1 border-radius">
+                        <basis core="call" file="authentication/modal"></basis>
+                    </div>
+                    <nav class="menu font_15">
+                        <ul class="nav-bar dir-rtl">
+                            <li class="menu-item"><a href="/" class="color_white">صفحه اصلی</a></li>
+                            <!--<li class="menu-item"><a href="تورها"  class="color_white" >تورها</a></li>-->
+                            <basis core="tree" datamembername="tour.cat" idcol="catid" parentidcol="parentid"
+                                nullvalue="154758">
+                                <layout>
+                                    <li class="menu-item menu-item-has-children p-relative">
+                                        <a class="color_white" href="/tour-list.bc?catid=154758">خدمات
+                                            <i class="fa fa-angle-down"></i></a>
+                                        <ul class="sub-menu">
+                                            @child
+                                        </ul>
+                                    </li>
+                                </layout>
+                                <face level="end" filter="link is null">
+                                    <li><a href="/tour-list.bc?catid=@catid"> @title</a></li>
+                                </face>
+                                <face level="end">
+                                    <li><a href="/@link"> @title</a></li>
+                                </face>
+                                <face level="1" filter="link is null">
+                                    <li><a href="/tour-list.bc?catid=@catid"> @title <small
+                                                class="icon-arrow"></small></a>
+                                        <ul class="sub-menu">
+                                            @child
+                                        </ul>
+                                    </li>
+                                </face>
+                                <face level="1">
+                                    <li><a href="/@link"> @title <small class="icon-arrow"></small></a>
+                                        <ul class="sub-menu">
+                                            @child
+                                        </ul>
+                                    </li>
+                                </face>
+                                <face level="2" filter="link is null">
+                                    <li><a href="/tour-list.bc?catid=@catid"> @title <small
+                                                class="icon-arrow"></small></a>
+                                        <ul class="sub-menu">
+                                            @child
+                                        </ul>
+                                    </li>
+                                </face>
+                                <face level="2">
+                                    <li><a href="/@link"> @title <small class="icon-arrow"></small></a>
+                                        <ul class="sub-menu">
+                                            @child
+                                        </ul>
+                                    </li>
+                                </face>
+                            </basis>
+
+                            <!-- <li class="menu-item"><a href="مجله-گردشگری" class="color_white">مجله گردشگری</a></li> -->
+                            <basis core="tree" datamembername="article.cat" idcol="catid" parentidcol="parentid"
+                                nullvalue="154826">
+                                <layout>
+                                    <li class="menu-item menu-item-has-children p-relative">
+                                        <a class="color_white" href="/article-list.bc?catid=154826">مجله گردشگری<i
+                                                class="fa fa-angle-down"></i></a>
+                                        <ul class="sub-menu">
+                                            @child
+                                        </ul>
+                                    </li>
+                                </layout>
+                                <face level="end" filter="link is null">
+                                    <li><a href="/article-list.bc?catid=@catid"> @title</a></li>
+                                </face>
+                                <face level="end">
+                                    <li><a href="/@link"> @title</a></li>
+                                </face>
+                                <face level="1" filter="link is null">
+                                    <li><a href="/article-list.bc?catid=@catid"> @title <small
+                                                class="icon-arrow"></small></a>
+                                        <ul class="sub-menu">
+                                            @child
+                                        </ul>
+                                    </li>
+                                </face>
+                                <face level="1">
+                                    <li><a href="/@link"> @title <small class="icon-arrow"></small></a>
+                                        <ul class="sub-menu">
+                                            @child
+                                        </ul>
+                                    </li>
+                                </face>
+                                <face level="2" filter="link is null">
+                                    <li><a href="/article-list.bc?catid=@catid"> @title <small
+                                                class="icon-arrow"></small></a>
+                                        <ul class="sub-menu">
+                                            @child
+                                        </ul>
+                                    </li>
+                                </face>
+                                <face level="2">
+                                    <li><a href="/@link"> @title <small class="icon-arrow"></small></a>
+                                        <ul class="sub-menu">
+                                            @child
+                                        </ul>
+                                    </li>
+                                </face>
+                            </basis>
+                            <li class="menu-item"><a href="/Tem3_Tour_List_Search.bc" class="color_white">ویژه کارکنان
+                                    بانک</a></li>
+                            <li class="menu-item"><a href="/فرم-رفاه-کالا" class="color_white">فرم رفاه کالا</a></li>
+                            <li class="menu-item"><a href="تماس-با-ما" class="color_white">ارتباط با ما</a></li>
+
+                        </ul>
+                    </nav>
+                    <div class="mobile-header p-relative unvisible">
+                        <div class="col1-mobile-header float-right">
+                            <a href="#menu" class="menu_link float-right"><span></span></a>
+                        </div>
+                        <nav id="menu" class="unvisible">
+                            <div class="top-menu background-color_1">
+                                <img src="[##cms.cms.cdn##]/images/M_logo.png" alt="رفاهت سیر ایرانیان" width="110"
+                                    height="75" />
+                                <div class="clr"></div>
+                            </div>
+                            <ul>
+                                <li><a href="/"><i class="fa fa-home"></i>صفحه اصلی</a>
+                                </li>
+                                <basis core="tree" datamembername="tour.cat" idcol="catid" parentidcol="parentid"
+                                    nullvalue="154758">
+                                    <layout>
+                                        <li class="menu-item menu-item-has-children p-relative">
+                                            <a class="color_white" href="/tour-list.bc?catid=154758">خدمات
+                                                <i class="fa fa-angle-down"></i></a>
+                                            <ul class="sub-menu">
+                                                @child
+                                            </ul>
+                                        </li>
+                                    </layout>
+                                    <face level="end" filter="link is null">
+                                        <li><a href="/tour-list.bc?catid=@catid"> @title</a></li>
+                                    </face>
+                                    <face level="end">
+                                        <li><a href="/@link"> @title</a></li>
+                                    </face>
+                                    <face level="1" filter="link is null">
+                                        <li><a href="/tour-list.bc?catid=@catid"> @title <small
+                                                    class="icon-arrow"></small></a>
+                                            <ul class="sub-menu">
+                                                @child
+                                            </ul>
+                                        </li>
+                                    </face>
+                                    <face level="1">
+                                        <li><a href="/@link"> @title <small class="icon-arrow"></small></a>
+                                            <ul class="sub-menu">
+                                                @child
+                                            </ul>
+                                        </li>
+                                    </face>
+                                    <face level="2" filter="link is null">
+                                        <li><a href="/tour-list.bc?catid=@catid"> @title <small
+                                                    class="icon-arrow"></small></a>
+                                            <ul class="sub-menu">
+                                                @child
+                                            </ul>
+                                        </li>
+                                    </face>
+                                    <face level="2">
+                                        <li><a href="/@link"> @title <small class="icon-arrow"></small></a>
+                                            <ul class="sub-menu">
+                                                @child
+                                            </ul>
+                                        </li>
+                                    </face>
+                                </basis>
+                                <!-- <li class="menu-item"><a href="مجله-گردشگری" class="color_white">مجله گردشگری</a></li> -->
+                                <basis core="tree" datamembername="article.cat" idcol="catid" parentidcol="parentid"
+                                    nullvalue="154826">
+                                    <layout>
+                                        <li class="menu-item menu-item-has-children p-relative">
+                                            <a class="color_white" href="/article-list.bc?catid=154758">مجله گردشگری
+                                                <i class="fa fa-angle-down"></i></a>
+                                            <ul class="sub-menu">
+                                                @child
+                                            </ul>
+                                        </li>
+                                    </layout>
+                                    <face level="end" filter="link is null">
+                                        <li><a href="/article-list.bc?catid=@catid"> @title</a></li>
+                                    </face>
+                                    <face level="end">
+                                        <li><a href="/@link"> @title</a></li>
+                                    </face>
+                                    <face level="1" filter="link is null">
+                                        <li><a href="/article-list.bc?catid=@catid"> @title <small
+                                                    class="icon-arrow"></small></a>
+                                            <ul class="sub-menu">
+                                                @child
+                                            </ul>
+                                        </li>
+                                    </face>
+                                    <face level="1">
+                                        <li><a href="/@link"> @title <small class="icon-arrow"></small></a>
+                                            <ul class="sub-menu">
+                                                @child
+                                            </ul>
+                                        </li>
+                                    </face>
+                                    <face level="2" filter="link is null">
+                                        <li><a href="/article-list.bc?catid=@catid"> @title <small
+                                                    class="icon-arrow"></small></a>
+                                            <ul class="sub-menu">
+                                                @child
+                                            </ul>
+                                        </li>
+                                    </face>
+                                    <face level="2">
+                                        <li><a href="/@link"> @title <small class="icon-arrow"></small></a>
+                                            <ul class="sub-menu">
+                                                @child
+                                            </ul>
+                                        </li>
+                                    </face>
+                                </basis>
+                                <li class="menu-item"><a href="/Tem3_Tour_List_Search.bc" class="color_white">ویژه
+                                        کارکنان
+                                        بانک</a></li>
+                                <li class="menu-item"><a href="/فرم-رفاه-کالا" class="color_white">فرم رفاه کالا</a>
+                                </li>
+                                <li><a href="تماس-با-ما"><i class="fa fa-link"></i>ارتباط با ما</a>
+                                </li>
+                                <li><i class="fa fa-user"></i><span>حساب کاربری</span>
+                                    <ul>
+                                        <li class="Login-statusAllowed"><a class="Login-options" data-type="2"><i
+                                                    class="fa fa-sign-in-alt"></i>ورود به حساب کاربری</a></li>
+                                        <li><a class="Login-options" data-type="3"><i class="fa fa-user"></i>ثبت نام</a>
+                                        </li>
+                                        <li><a class="Login-options" data-type="4"><i class="fa fa-unlock"></i>بازیابی
+                                                کلمه
+                                                عبور</a></li>
+                                        <li><a class="Login-options" data-type="5"><i class="fa fa-user"></i>ارسال مجدد
+                                                ایمیل</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+
+                            </ul>
+                        </nav>
+                        <div class="clr"></div>
+                    </div>
+                </div>
+                <div class="width_30 float-left p-relative text-left">
+                    <a class="float_left " href="/"> <img src="[##cms.cms.cdn##]/images/logo.png" width="110"
+                            height="75" alt="رفاهت سیر ایرانیان" /></a>
+                    <div class="info-tel float_left font_15"><span class="tel"><i class="fas fa-phone font-color_1"></i>
+                            <a class="color_white" href="tel:021-52708000"> 021-52708000</a> </span></div>
+                </div>
+                <div class="clr"></div>
+            </div>
+
+        </div>
+    </div>
+</header>

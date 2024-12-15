@@ -1,0 +1,76 @@
+<basis core="group" name="hasNot-rkey" if="'[##cms.cookie.rkey##]' = ''">
+    <basis core="external.fly.ws" source="cmsDbService2" procedurename="dbsource" name="db">
+        <member name="FlightHotel" method="flighthotel"
+        postsql="select replace(replace(replace(replace(replace(replace(replace(replace(result,'None','null'),'undefined','null'),'\xa0',' '),'/x',' '),'\x',' '),' nan','null'),' inf','null'),' -inf' , 'null') as 'result' from [db.FlightHotel]"   query='{
+            "name": "db",
+            "mid": "20",
+            "member": [
+                {
+                    "type": "list",
+                    "name": "q",
+                    "request": "search",
+                    "IP": "[##cms.request.clientip##]",
+                    "userAgent": "[##cms.request.user-agent##]",
+                    "fromcity": "[##cms.form.from##]",
+                    "tocity": "[##cms.form.to##]",
+                    "departuredate": "[##cms.form.fdate##]",
+                    "returndate": "[##cms.form.tdate##]",
+                    "hotelname": "",
+                    "checkin": "[##cms.form.checkin##]",
+                    "checkout": "[##cms.form.checkout##]",
+                    "rooms": [##cms.form.rooms##],
+                    "trackingNo": "[##cms.cookie.trackingid##]",
+                    "userid": "0",
+                    "classname": ["[##cms.form.FlightClass##]"],
+                    "dmnid":"[##cms.cms.domainid##]",
+                    "lid": "[##cms.form.clid|(1)##]",
+                    "share": "0",
+                    "flexible": "0",
+                    "unit": "10"
+        
+                }
+            ]
+        } ' preview="" />
+    </basis>
+    [##db.FlightHotel.result##]
+
+</basis>
+<basis core="group" name="has-rkey" if="'[##cms.cookie.rkey##]' <> ''">
+    <basis core="dbsource" source="trust_login8" mid="24" name="db" lid="1" rkey="[##cms.cookie.rkey##]">
+        <member name="checkrkey" type="scalar" request="userid" preview="" />
+    </basis>
+    <basis core="external.fly.ws" source="cmsDbService2" procedurename="dbsource" name="db">
+        <member name="FlightHotel" method="flighthotel"
+        postsql="select replace(replace(replace(replace(replace(replace(replace(replace(result,'None','null'),'undefined','null'),'\xa0',' '),'/x',' '),'\x',' '),' nan','null'),' inf','null'),' -inf' , 'null') as 'result' from [db.FlightHotel]"   query='{
+            "name": "db",
+            "mid": "20",
+            "member": [
+                {
+                    "type": "list",
+                    "name": "q",
+                    "request": "search",
+                    "IP": "[##cms.request.clientip##]",
+                    "userAgent": "[##cms.request.user-agent##]",
+                    "fromcity": "[##cms.form.from##]",
+                    "tocity": "[##cms.form.to##]",
+                    "departuredate": "[##cms.form.fdate##]",
+                    "returndate": "[##cms.form.tdate##]",
+                    "hotelname": "",
+                    "checkin": "[##cms.form.checkin##]",
+                    "checkout": "[##cms.form.checkout##]",
+                    "rooms": [##cms.form.rooms##],
+                    "trackingNo": "[##cms.cookie.trackingid##]",
+                    "userid": "[##db.checkrkey.userid##]",
+                    "classname": ["[##cms.form.FlightClass##]"],
+                    "dmnid":"[##cms.cms.domainid##]",
+                    "lid": "[##cms.form.clid|(1)##]",
+                    "share": "0",
+                    "flexible": "0",
+                    "unit": "10"
+        
+                }
+            ]
+        } ' preview="" />
+    </basis>
+    [##db.FlightHotel.result##]
+</basis>

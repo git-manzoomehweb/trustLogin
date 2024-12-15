@@ -1,0 +1,203 @@
+<style>
+    .panel_Menu_ul li a {
+        color: #25213b;
+        line-height: 40px;
+    }
+
+    .panel_Menu_icon span {
+        color: #25213b;
+  
+    }
+
+    .panel_Menu_icon .logoutConfirm::before {
+  content: "\f08b";
+  font-family: FontAwesome;
+  color: #25213b;
+  line-height: 29px;
+}
+
+.panel_Menu_icon .panelConfirm::before {
+  content: "\f007";
+  font-family: FontAwesome;
+  color: #25213b;
+  line-height: 29px;
+}
+
+.panel_Menu_Box {
+
+  background: #f7f9fb;}
+
+  .panel_Menu_ul li  {
+    border-bottom: 1px solid #e1e1e1;
+    }
+  .panel_Menu_icon div {
+
+  margin: 25px auto;
+}
+
+.fa-home:before{content:"\f015"; font-family: FontAwesome;}
+.fa-dashboard:before,.fa-tachometer:before{content:"\f0e4" ; font-family: FontAwesome;}
+.fa-user:before{content:"\f007" ; font-family: FontAwesome;}
+.fa-envelope:before{content:"\f0e0" ; font-family: FontAwesome;}
+.fa-file-invoice:before{content:"\f570" ; font-family: FontAwesome;}
+.fa-file:before{content:"\f15b" ; font-family: FontAwesome;}
+.fa-shopping-bag:before{content:"\f290" ; font-family: FontAwesome;}
+.fa-user-plus:before{content:"\f234" ; font-family: FontAwesome;}
+.fa-user-circle-o:before{content:"\f2be" ; font-family: FontAwesome;}
+.fa-hotel:before{content:"\f594" ; font-family: FontAwesome;}
+.fa-black-tie:before{
+        content: "\f27e";
+        font-family: FontAwesome;
+
+    }
+    .fa-money:before{content:"\f0d6";font-family: FontAwesome;}
+    .fa-user-times:before{content:"\f235";font-family: FontAwesome;}
+    .fa-file-text-o:before{content:"\f0f6";font-family: FontAwesome;}
+.fa {
+  margin-left: 10px;
+}
+.panel_Menu_ul li a:hover {
+    border-bottom: none;
+    color: #3498db; /* رنگ آبی روشن در حالت هاور */
+}
+
+</style>
+
+<basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource">
+    <member method="cms" name="get_account_type" query='{
+        "name": "db",
+        "mid": "20",
+        "member": [
+            {
+                "type": "list",
+                "name": "credit",
+                "request": "get_account_type",
+                "userid": "[##Paneluser.login.userid|(0)##]",
+                "dmnid": "[##cms.cms.domainid##]"
+            }
+        ]
+    } ' />
+</basis>
+
+<basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource" >
+    <member method="cms"
+    name="UnreadCount" 
+    query= '
+    { 
+       "name": "db", 
+       "mid": "20",
+       "member":
+       [
+            { 
+               "name": "q",
+               "type":"list",
+               "request":"UnreadCount", 
+               "userid" : "[##Paneluser.login.userid##]"               
+            }
+        ]
+    } ' 
+    preview="" />
+</basis>
+
+<basis core="external.fly.ws" source="cmsDbService2" name="db" procedurename="dbsource" >
+    <member method="cms"
+    name="checkPointSetting" 
+    query= '
+    { 
+       "name": "db", 
+       "member":
+       [
+            { 
+               "name": "check_point_setting",
+               "type":"list",
+               "request":"checkPointSetting", 
+               "userid" : "[##Paneluser.login.userid##]",  
+               "dmnid" : "[##cms.cms.domainid##]",  
+               "ownerid" : "[##cms.cms.ownerid##]"           
+            }
+        ]
+    } ' 
+    preview="" />
+</basis>
+  
+<basis core="inlinesource" name="db">
+    <member name="prp" preview="">
+        <row prpid="1"  />
+        <row prpid="2"  />
+        <row prpid="3"  />
+        <row prpid="4"  />
+        <row prpid="5"  />
+        <row prpid="6"  />
+        <row prpid="7"  />
+        <row prpid="8"  />
+        <row prpid="9"  />
+        <row prpid="10" />
+    </member>
+</basis>
+
+<basis core="dbsource" source="trust_login8" mid="24" name="db" lid="1" request="information" rkey="[##cms.cookie.rkey##]">
+<member name="user" type="view" /></basis>
+
+<basis core="inlinesource" name="db">
+    <member 
+    name="Userinformation" 
+    lefttblcol="db.prp.Prpid" 
+    righttblcol="db.user.Prpid" 
+    format="join" 
+    jointype="leftjoin" />
+</basis>
+<div class="menu-btn" style="display: none;"><i class="fa fa-bars"></i></div>
+<div class="panel_Menu_Box">
+    <i class="fa fa-times close-box"></i>
+	<div class="panel_Menu">
+		<div class="panel_Menu_icon">
+			<div>
+                <basis core="print" datamembername="db.Userinformation">
+                    <layout><span>الملف الشخصي @Child</span></layout>                        
+                    <face filter="db.prp.prpID in ('1','2') and db.user.Answer='null'">-</face>
+                    <face filter="db.prp.prpID in ('1','2')"> @db.user.Answer </face>
+                </basis>
+				<a href="/Client_Logout_ar.bc" title="مخرج"><span></span></a>
+                <a href="/AR-Panel-Dashboard.bc" title="لوحة التحکم"><span></span></a>
+				<div class="clr"></div>
+			</div>
+		</div>
+
+	    <ul class="panel_Menu_ul">
+            <li> <a href="/"><i class="fa fa-home" aria-hidden="true"></i>
+               الصفحه الرئیسیه</a> </li>
+		    <li> <a href="/AR-Panel-Dashboard.bc"> <i class="fa fa-tachometer"></i>
+                لوحة التحکم
+
+            </a> </li>
+		    <li> <a href="/AR-Panel-Profile.bc"><i class="fa fa-user"></i>
+                ملفي</a> </li>
+		    <li> <a><i class="fa fa-envelope"></i>
+                قائمة الرسائل </a> </li>
+		    <li><a href="/AR-Panel-InvoiceList.bc"><i class="fa fa-file" aria-hidden="true"></i>
+                قائمة الحجوزات([##db.UnreadCount.result##])</a></li>
+            <basis core="group" name="Checkagencyuser_exist"  if="'[##db.get_account_type.result##]' = '2'">
+                <li><a href="/AR-Panel-Chargingonline.bc"><i class="fa fa-money" aria-hidden="true"></i>
+                    الدفع عبر الإنترنت</a></li>
+                    <li><a href="/AR-Panel-userlist.bc"> <i class="fa fa-user-times"></i>
+                        قائمة العملاء</a></li>
+             </basis>
+
+             <basis core="group" name="LoyaltyClub_exist"  if="'[##db.checkPointSetting.result##]' = '1'">
+                <li><a href="/AR-Panel-LoyaltyClub.bc"><i class="fa fa-users"></i>
+                    نادي العملاء</a></li>
+             </basis>
+        
+            
+	    </ul>
+	</div>
+</div>
+<script type="text/javascript">
+$(".menu-btn").click(function () {
+    $(".panel_Menu_Box").addClass("active-menu");
+})
+
+$(".close-box").click(function () {
+    $(".panel_Menu_Box").removeClass("active-menu");
+})
+</script>

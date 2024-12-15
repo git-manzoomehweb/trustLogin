@@ -1,0 +1,65 @@
+<basis core="group" name="hasNot-rkey" if="'[##cms.cookie.rkey##]' = ''">
+    <basis core="external.fly.ws" source="cmsDbService2" procedurename="dbsource" name="db">
+        <member name="oneway" method="flight"
+            postsql="select replace(replace(replace(replace(replace(replace(replace(replace(result,'None','null'),'undefined','null'),'\xa0',' '),'/x',' '),'\x',' '),'nan','null'),' inf','null'),' -inf' , 'null') as 'result' from [db.oneway]"
+            query='{
+            "name": "db",
+            "mid": "20",
+            "member": [
+                {
+                    "type": "list",
+                    "name": "q",
+                    "request": "onewaysearch",
+                    "IP": "[##cms.request.clientip##]",
+                    "userAgent": "[##cms.request.user-agent##]",
+                    "fromcity": "[##cms.query.from##]",
+                    "tocity": "[##cms.query.to##]",
+                    "date": "[##cms.query.fdate##]",
+                    "adultcount": "[##cms.query.adult##]",
+                    "userid": "0",
+                    "trackingNo": "[##cms.cookie.trackingid##]",
+                    "share": "[##cms.query.share##]",
+                    "childcountandage": "[##cms.query.child##][##cms.query.select-age##]",
+                    "classname": ["[##cms.query.FlightClass##]"],
+                    "lid": "[##cms.query.clid|(1)##]",
+                    "unit": "10"
+                }
+            ]
+        } ' preview="" />
+    </basis>
+    [##db.oneway.result##]
+</basis>
+<basis core="group" name="has-rkey" if="'[##cms.cookie.rkey##]' <> ''">
+    <basis core="dbsource" source="trust_login8" mid="24" name="db" lid="1" rkey="[##cms.cookie.rkey##]">
+        <member name="checkrkey" type="scalar" request="userid" preview="" />
+    </basis>
+    <basis core="external.fly.ws" source="cmsDbService2" procedurename="dbsource" name="db">
+        <member name="oneway" method="flight"
+            postsql="select replace(replace(replace(replace(replace(replace(replace(replace(result,'None','null'),'undefined','null'),'\xa0',' '),'/x',' '),'\x',' '),'nan','null'),' inf','null'),' -inf' , 'null') as 'result' from [db.oneway]"
+            query='{
+            "name": "db",
+            "mid": "20",
+            "member": [
+                {
+                    "type": "list",
+                    "name": "q",
+                    "request": "onewaysearch",
+                    "IP": "[##cms.request.clientip##]",
+                    "userAgent": "[##cms.request.user-agent##]",
+                    "fromcity": "[##cms.query.from##]",
+                    "tocity": "[##cms.query.to##]",
+                    "date": "[##cms.query.fdate##]",
+                    "adultcount": "[##cms.query.adult##]",
+                    "userid": "[##db.checkrkey.userid##]",
+                    "trackingNo": "[##cms.cookie.trackingid##]",
+                    "share": "[##cms.query.share##]",
+                    "childcountandage": "[##cms.query.child##][##cms.query.select-age##]",
+                    "classname": ["[##cms.query.FlightClass##]"],
+                    "lid": "[##cms.query.clid|(1)##]",
+                    "unit": "10"
+                }
+            ]
+        } ' preview="" />
+    </basis>
+    [##db.oneway.result##]
+</basis>
