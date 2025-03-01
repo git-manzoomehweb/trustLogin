@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -95,7 +96,7 @@
                     } else if (responseJson.errorid == '25') {
                         document.querySelector(".main-operationUser-container").querySelector(".login-btn").classList.remove("hidden");
                         document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
-    <div class="error">Your registration was successful</div>`;
+    <div class="success">Your registration was successful</div>`;
                         $bc.setSource("complete.registration", {
                             rkey: responseJson.rkey,
                             run: true
@@ -114,7 +115,7 @@
                     } else if (responseJson.errorid == '59') {
                         document.querySelector(".main-operationUser-container").querySelector(".login-btn").classList.remove("hidden");
                         document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
-    <div class="error"> Your registration was successful</div>`;
+    <div class="success"> Your registration was successful</div>`;
                         $bc.setSource("complete.registration", {
                             rkey: responseJson.rkey,
                             run: true

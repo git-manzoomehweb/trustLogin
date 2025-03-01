@@ -59,7 +59,7 @@ function eraseCookie(name) {
 
 // Hide Auth DropDown when click outside
 document.addEventListener("click", function (event) {
-    if (!event.target.closest(".Login_Information") && !event.target.classList.contains("Login_Information")) {
+    if (!event.target.closest(".user-profile-container") && !event.target.classList.contains("user-profile-container")) {
         const profileContent = document.querySelector(".user-profile-content");
         const arrowElement = document.querySelector(".user-profile-arrow");
         profileContent.classList.add("hidden");
@@ -72,9 +72,7 @@ document.addEventListener("click", function (event) {
 
 // // Function to show or hide the profile container and toggle the arrow direction
 function showProfileContainer() {
-    
-
-    const LoginBtn = document.querySelector(".Login_Information");
+    const LoginBtn = document.querySelector(".user-profile-container");
     const profileContent = document.querySelector(".user-profile-content");
     const arrowElement = document.querySelector(".user-profile-arrow");
     
@@ -129,5 +127,7 @@ async function onProcessedLogOut(args) {
         window.location = '/';
     }
 }
+
+
 
 

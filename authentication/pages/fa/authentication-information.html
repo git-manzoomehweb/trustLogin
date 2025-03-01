@@ -1,69 +1,258 @@
-<basis core="api" name="api.schema" run="AtClient" url="https://api.trust-login.com/schema/[##cms.cookie.rkey##]/fa"
-    method="get" onprocessed="onProcessedUserinformation"></basis>
-<basis core="call" if="{##db.runLogout.value|(false)##}" run="AtClient" file="/authentication/dmntoken"
-    triggers="db.runLogout" onrendered="setDmnTokenForLogout"></basis>
-<basis core="api" name="api.logout" if="{##db.logout.run|(false)##}" run="AtClient"
-    url='https://api.trust-login.com/logout/{##db.logout.value##}' method="post"
-    body='{"dmntoken": "{##db.logout.dmntoken##}"}' triggers="db.logout" onprocessed="onProcessedLogOut"></basis>
-<div class="user-profile-container rtl-lang">
-    <button class="user-profile-btn" aria-label="بخش کاربری" onclick="showProfileContainer()">
-        <span class="user-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke-width="1.5" stroke="currentColor" width="24" height="24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-            </svg>
-        </span>
-        <span><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="user-profile-arrow"
-                data-v-f825ebe0="">
-                <path
-                    d="M21.266 7.302a.75.75 0 0 1 1.037 1.08l-.069.066-9.75 8.25a.75.75 0 0 1-.89.058l-.078-.058-9.75-8.25a.75.75 0 0 1 .893-1.202l.075.056L12 15.142l9.266-7.84Z">
-                </path>
-            </svg></span>
-    </button>
-    <div class="user-profile-content hidden">
-        <div class="user-profile-header">
-            <span class="default-name"></span><span class="default-family"></span>
-        </div>
-        <div class="clr"></div>
-        <ul class="user-profile-body">
-            <li>
-                <a href="/Panel-Dashboard.bc" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                    </svg> اطلاعات حساب کاربری </a>
-            </li>
-            <li>
-                <span class="logoutConfirm" onclick="logoutConfirm()">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" data-v-53687d56="">
-                        <path
-                            d="M10.5 2.25a2.25 2.25 0 0 1 2.25 2.25v2.25a.75.75 0 0 1-1.5 0V4.5a.75.75 0 0 0-.75-.75H3.75A.75.75 0 0 0 3 4.5v15c0 .414.336.75.75.75h6.75a.75.75 0 0 0 .75-.75v-2.25a.75.75 0 0 1 1.5 0v2.25a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 19.5v-15a2.25 2.25 0 0 1 2.25-2.25h6.75Zm11.825 9.27.01.01.003.004-.004-.004.019.024a.807.807 0 0 1 .037.056l.017.027.023.046.017.039A.747.747 0 0 1 22.5 12v.014l-.001.026-.001.016-.006.056a.688.688 0 0 1-.045.166l-.017.04a.68.68 0 0 1-.077.128l-.01.014a.777.777 0 0 1-.063.07l-3.75 3.75a.75.75 0 0 1-1.123-.99l.063-.07 2.47-2.47H6a.75.75 0 0 1 0-1.5h13.94l-2.47-2.47a.75.75 0 0 1-.063-.99l.063-.07a.75.75 0 0 1 .99-.063l.07.063 3.75 3.75.051.057-.006-.008Z"
-                            fill-rule="evenodd"></path>
-                    </svg> خروج از حساب کاربری
-                </span>
-            </li>
-        </ul>
-    </div>
-</div>
-<script type="text/javascript"
-    src="[##cms.cms.cdn##]/authentication/js/authentication-information.function.js"></script>
-<script type="text/javascript">async function onProcessedUserinformation(args) {
-        const response = args.response;
-        const responseJson = await response.json();
-        if (!responseJson.errorMessage) {
-            if (responseJson.sources) {
-                const properties = responseJson.sources[0].data[0].properties;
-                properties?.forEach((e) => {
-                    if (e.prpId == 1) {
-                        document.querySelector(".default-name").textContent = e.answers[0].parts[0].values[0].value;
-                    } else if (e.prpId == 2) {
-                        document.querySelector(".default-family").textContent = e.answers[0].parts[0].values[0].value;
-                    }
+<basis core="group" name="hasNot-rkey" if="'[##cms.cookie.rkey##]' = ''">
+    <span class="btnstyle" onclick="showLoginContainer()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            width="24" height="24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z">
+            </path>
+        </svg>
+        <span>ورود یا ثبت نام</span>
+    </span>
+    <basis core="call" if="{##db.runLogin.value|(false)##}" run="AtClient" file="/authentication/dmntoken"
+        triggers="db.runLogin" onrendered="setDmnToken"></basis>
+    <basis core="api" name="api.selectuser" if="{##authentication.hashid##} && {##form.selectuser##}" run="AtClient"
+        url="https://api.trust-login.com/selectuser" method="post"
+        body='{"hashid": "{##authentication.hashid.value##}", "userid": {##form.selectuser.userid|(null)##}}'
+        onprocessed="onProcessedSelectUser" triggers="form.selectuser"></basis>
+    <basis core="api" name="api.forgetpassword" if="{##token.token##} && {##form.forgetPassword##}" run="AtClient"
+        url="https://api.trust-login.com/forgetpassword?culture=fa" method="post"
+        body='{"token":"{##token.token.value##}", "username":"{##form.forgetPassword.username##}"}'
+        onprocessed="onProcessedForgetPassword" triggers="form.forgetPassword"></basis>
+    <basis core="api" name="api.selectchangepassmethod" if='{##token.token##} && {##form.selectchangepassmethod##}'
+        run="AtClient" url="https://api.trust-login.com/selectchangepassmethod" method="post"
+        body='{"token":"{##token.token.value##}","userid":{##forgetpassword.userid.value##},"ismobile":{##form.selectchangepassmethod.ismobile##},"culture":"fa"}'
+        onprocessed="onProcessedSelectChangePassMethod" triggers="form.selectchangepassmethod"></basis>
+    <basis core="api" name="api.token" if='{##db.runTokenCommand.value|(false)##}' run="AtClient"
+        url="https://api.trust-login.com/token?recaptcha={##token.recaptcha.value|()##}" method="post"
+        body='{"dmntoken": "{##db.runTokenCommand.dmntoken##}"}' triggers="run.token db.runTokenCommand token.recaptcha"
+        onprocessed="onProcessedToken"></basis>
+    <basis core="api" name="api.authentication" if='{##token.token##} && {##form.authentication##}' run="AtClient"
+        url="https://api.trust-login.com/authentication?culture=fa" method="post"
+        body='{"token": "{##token.token.value##}", "username": "{##form.authentication.username##}", "captcha": "{##form.authentication.captchaid##}"}'
+        onprocessed="onProcessedAuthentication" triggers="form.authentication"></basis>
+    <basis core="api" name="api.login" if='{##authentication.hashid##} && {##form.login##}' run="AtClient"
+        url="https://api.trust-login.com/login?culture=fa" method="post"
+        body='{"hashid": "{##authentication.hashid.value##}", "code": "{##form.login.code##}", "recode": "{##form.login.recode##}", "email": "{##form.login.email##}", "mobile": "{##form.login.mobile##}"}'
+        onprocessed="onProcessedLogin" triggers="form.login"></basis>
+    <basis core="cookie" name="rkey" run="AtClient" if="{##user.rkey##}" value="{##user.rkey.value##}" path='/'
+        triggers="user.rkey" max-age="1800">
+    </basis>
 
-                });
-                if (properties.length < 3) {
-                    document.querySelector(".default-name").textContent = 'بدون نام';
-                }
-            }
-        }
-    }</script>
+    <basis core="api" name="api.checkrkey" run="AtClient" if="{##user.checkrkey##}"
+        url="https://api.trust-login.com/checkrkey/{##user.checkrkey.value##}" method="get"
+        onprocessed="onProcessedCheckrkey" triggers="user.checkrkey">
+    </basis>
+    <basis core="call" if="{##user.profile.value|(false)##}" run="AtClient" file="/authentication/information"
+        triggers="user.profile"></basis>
+    <section class="user-entrance-body" style="display: none;" data-dmnid="[##cms.cms.domainid##]">
+        <section class="bg-login-container" onclick="closeLoginContainer(this)">
+        </section>
+        <section class="main-login-container rtl-lang" data-culture="fa">
+            <div class="login-closed" onclick="closeLoginContainer(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            </div>
+            <div class="login-right-part">
+                <div class="login-mob-img"><img src="[##cms.cms.cdn##]/authentication/images/authentication.png"
+                        width="130" height="105" alt="login" /></div>
+                <div class="login-title">
+                    <div id="login-title"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            width="24" height="24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                        </svg>
+                        <div>
+                            <div class="title">ورود یا ثبت نام</div>
+                            <div class="sub-title">در صورت داشتن حساب کاربری, می
+                                توانید وارد شوید</div>
+                        </div>
+                    </div>
+                    <div class="hidden" id="selectUser-title">نام کاربری را
+                        انتخاب کنید :</div>
+                </div>
+                <div class="login-section-container">
+                    <form class="loginForm" name="form.authentication" bc-triggers="submit" bc-value="true">
+                        <input type="hidden" name="passengerList-key" class="passengerList-key" />
+                        <input type="hidden" name="dmnid-key" class="dmnid-key" />
+                        <input type="hidden" name="internal-key" class="internal-key" />
+                        <input type="hidden" name="index-key" class="index-key" />
+                        <input type="hidden" name="index-room-key" class="index-room-key" />
+                        <input type="hidden" value="[##cms.cookie.rkey##]" name="rkeyValue">
+                        <input type="hidden" value="[##cms.cms.ownerid##]" name="Ownerid" class="company-ownerid" />
+                        <div id="countDownContainer"></div>
+                        <div id="firstUsernameContainer">
+                            <div id="firstUsername">
+                                <input type="text" class="itemInput" name="username"
+                                    placeholder="نام کاربری،ایمیل یا شماره موبایل " id="firstUsernameInput" />
+                            </div>
+                            <div class="clr"></div>
+                        </div>
+                    </form>
+                    <div class="bottom-content">
+                        <div class="login-btn-content"><button type="submit" id="showCaptcha"
+                                class="login-btn background-color_1 bg-primary" onclick="getToken()" name="run.token"
+                                bc-value="true" bc-triggers="click">مرحله
+                                بعدی</button></div>
+                        <div class="action-loading background-color_1 bg-primary hidden">
+                            <div id="ballsWaveG">
+                                <div id="ballsWaveG_1" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_2" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_3" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_4" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_5" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_6" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_7" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_8" class="ballsWaveG"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="api-message"></div>
+                </div>
+            </div>
+            <div class="login-left-part">
+                <img src="https://cdn.basiscore.net/basisfly.com/images/login-img.png" width="250" height="250"
+                    alt="login" />
+            </div>
+            <div class="clr"></div>
+        </section>
+    </section>
+    <script type="text/javascript" src="[##cms.cms.cdn##]/authentication/js/authentication.function.js"></script>
+</basis>
+<basis core="group" name="has-rkey" if="'[##cms.cookie.rkey##]' <> ''">
+    <basis core="call" file="Client_CheckRkey.inc"></basis>
+    <basis core="group" name="inValid-rkey" if="'[##db.checkrkey.checked##]'='false'">
+        <span class="btnstyle" onclick="showLoginContainer()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" width="24" height="24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z">
+                </path>
+            </svg>
+            <span>ورود یا ثبت نام</span>
+        </span>
+        <basis core="call" if="{##db.runLogin.value|(false)##}" run="AtClient" file="/authentication/dmntoken"
+            triggers="db.runLogin" onrendered="setDmnToken"></basis>
+        <basis core="api" name="api.selectuser" if="{##authentication.hashid##} && {##form.selectuser##}" run="AtClient"
+            url="https://api.trust-login.com/selectuser" method="post"
+            body='{"hashid": "{##authentication.hashid.value##}", "userid": {##form.selectuser.userid|(null)##}}'
+            onprocessed="onProcessedSelectUser" triggers="form.selectuser"></basis>
+        <basis core="api" name="api.forgetpassword" if="{##token.token##} && {##form.forgetPassword##}" run="AtClient"
+            url="https://api.trust-login.com/forgetpassword?culture=fa" method="post"
+            body='{"token":"{##token.token.value##}", "username":"{##form.forgetPassword.username##}"}'
+            onprocessed="onProcessedForgetPassword" triggers="form.forgetPassword"></basis>
+        <basis core="api" name="api.selectchangepassmethod" if='{##token.token##} && {##form.selectchangepassmethod##}'
+            run="AtClient" url="https://api.trust-login.com/selectchangepassmethod" method="post"
+            body='{"token":"{##token.token.value##}","userid":{##forgetpassword.userid.value##},"ismobile":{##form.selectchangepassmethod.ismobile##},"culture":"fa"}'
+            onprocessed="onProcessedSelectChangePassMethod" triggers="form.selectchangepassmethod"></basis>
+        <basis core="api" name="api.token" if='{##db.runTokenCommand.value|(false)##}' run="AtClient"
+            url="https://api.trust-login.com/token?recaptcha={##token.recaptcha.value|()##}" method="post"
+            body='{"dmntoken": "{##db.runTokenCommand.dmntoken##}"}'
+            triggers="run.token db.runTokenCommand token.recaptcha" onprocessed="onProcessedToken"></basis>
+        <basis core="api" name="api.authentication" if='{##token.token##} && {##form.authentication##}' run="AtClient"
+            url="https://api.trust-login.com/authentication?culture=fa" method="post"
+            body='{"token": "{##token.token.value##}", "username": "{##form.authentication.username##}", "captcha": "{##form.authentication.captchaid##}"}'
+            onprocessed="onProcessedAuthentication" triggers="form.authentication"></basis>
+        <basis core="api" name="api.login" if='{##authentication.hashid##} && {##form.login##}' run="AtClient"
+            url="https://api.trust-login.com/login?culture=fa" method="post"
+            body='{"hashid": "{##authentication.hashid.value##}", "code": "{##form.login.code##}", "recode": "{##form.login.recode##}", "email": "{##form.login.email##}", "mobile": "{##form.login.mobile##}"}'
+            onprocessed="onProcessedLogin" triggers="form.login"></basis>
+        <basis core="cookie" name="rkey" run="AtClient" if="{##user.rkey##}" value="{##user.rkey.value##}" path='/'
+            max-age="1800" triggers="user.rkey">
+        </basis>
+
+        <basis core="api" name="api.checkrkey" run="AtClient" if="{##user.checkrkey##}"
+            url="https://api.trust-login.com/checkrkey/{##user.checkrkey.value##}" method="get"
+            onprocessed="onProcessedCheckrkey" triggers="user.checkrkey">
+        </basis>
+        <basis core="call" if="{##user.profile.value|(false)##}" run="AtClient" file="/authentication/information"
+            triggers="user.profile"></basis>
+        <section class="user-entrance-body" style="display: none;" data-dmnid="[##cms.cms.domainid##]">
+            <section class="bg-login-container" onclick="closeLoginContainer(this)">
+            </section>
+            <section class="main-login-container rtl-lang" data-culture="fa">
+                <div class="login-closed" onclick="closeLoginContainer(this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </div>
+                <div class="login-right-part">
+                    <div class="login-mob-img"><img src="[##cms.cms.cdn##]/authentication/images/authentication.png"
+                            width="130" height="105" alt="login" /></div>
+                    <div class="login-title">
+                        <div id="login-title"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                width="24" height="24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                            </svg>
+                            <div>
+                                <div class="title">ورود یا ثبت نام</div>
+                                <div class="sub-title">در صورت داشتن حساب کاربری, می
+                                    توانید وارد شوید</div>
+                            </div>
+                        </div>
+                        <div class="hidden" id="selectUser-title">نام کاربری را
+                            انتخاب کنید :</div>
+                    </div>
+                    <div class="login-section-container">
+                        <form class="loginForm" name="form.authentication" bc-triggers="submit" bc-value="true">
+                            <input type="hidden" name="passengerList-key" class="passengerList-key" />
+                            <input type="hidden" name="dmnid-key" class="dmnid-key" />
+                            <input type="hidden" name="internal-key" class="internal-key" />
+                            <input type="hidden" name="index-key" class="index-key" />
+                            <input type="hidden" name="index-room-key" class="index-room-key" />
+                            <input type="hidden" value="[##cms.cookie.rkey##]" name="rkeyValue">
+                            <input type="hidden" value="[##cms.cms.ownerid##]" name="Ownerid" class="company-ownerid" />
+                            <div id="countDownContainer"></div>
+                            <div id="firstUsernameContainer">
+                                <div id="firstUsername">
+                                    <input type="text" class="itemInput" name="username"
+                                        placeholder="نام کاربری،ایمیل یا شماره موبایل " id="firstUsernameInput" />
+                                </div>
+                                <div class="clr"></div>
+                            </div>
+                        </form>
+                        <div class="bottom-content">
+                            <div class="login-btn-content"><button type="submit" id="showCaptcha"
+                                    class="login-btn background-color_1 bg-primary" onclick="getToken()"
+                                    name="run.token" bc-value="true" bc-triggers="click">مرحله
+                                    بعدی</button></div>
+                            <div class="action-loading background-color_1 bg-primary hidden">
+                                <div id="ballsWaveG">
+                                    <div id="ballsWaveG_1" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_2" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_3" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_4" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_5" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_6" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_7" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_8" class="ballsWaveG"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="api-message"></div>
+                    </div>
+                </div>
+                <div class="login-left-part">
+                    <img src="[##cms.cms.cdn##]/authentication/images/authentication.png" width="250" height="250"
+                        alt="login" />
+                </div>
+                <div class="clr"></div>
+            </section>
+        </section>
+        <script type="text/javascript" src="[##cms.cms.cdn##]/authentication/js/authentication.function.js"></script>
+
+
+    </basis>
+    <basis core="group" name="valid-rkey" if="'[##db.checkrkey.checked##]'='true'">
+        <basis core="call" run="AtClient" file="/authentication/information"></basis>
+        <basis core="cookie" name="rkey" value="[##cms.cookie.rkey##]" path='/' max-age="1800">
+        </basis>
+        <script>var apiSearchUserid;apiSearchUserid = '[##db.checkrkey.userid##]'</script>
+    </basis>
+</basis>
+<link href="[##cms.cms.cdn##]/authentication/css/authentication.ui.min.css" type="text/css" rel="stylesheet" />

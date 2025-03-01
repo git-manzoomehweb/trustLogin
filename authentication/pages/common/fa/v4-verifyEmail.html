@@ -108,7 +108,7 @@
 
                     } else if (responseJson.errorid == '11') {
                         document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
-    <div class="error"> ${'[##cms.query.lid|(1)##]' == '1' ? ` فعال سازی ایمیل با موفقیت انجام شد` :
+    <div class="success"> ${'[##cms.query.lid|(1)##]' == '1' ? ` فعال سازی ایمیل با موفقیت انجام شد` :
                                 '[##cms.query.lid|(1)##]' == '3' ? `تم تفعيل البريد الإلكتروني بنجاح` :
                                     `Email activation was successful`
                             }</div>`;

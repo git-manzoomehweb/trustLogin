@@ -71,7 +71,7 @@
             </div>
             <div class="clr"></div>
         </section>
-        <script src="[##cms.cms.cdn##]/_js/jquery/jquery-3.6.3.min.js" type="text/javascript"></script>
+        <script src="[##cms.cms.cdn##]/_js/jquery/jquery-3.7.1.min.js" type="text/javascript"></script>
         <basis core="call" file="footer.inc" lid="3"></basis>
     </main>
 
@@ -94,7 +94,7 @@
                     } else if (responseJson.errorid == '25') {
                         document.querySelector(".main-operationUser-container").querySelector(".login-btn").classList.remove("hidden");
                         document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
-    <div class="error"> تم تسجيلك بنجاح، يرجى إدخال المعلومات أدناه لإكمال عملية التسجيل</div>`;
+    <div class="success"> تم تسجيلك بنجاح، يرجى إدخال المعلومات أدناه لإكمال عملية التسجيل</div>`;
                         $bc.setSource("complete.registration", {
                             rkey: responseJson.rkey,
                             run: true
@@ -113,7 +113,7 @@
                     } else if (responseJson.errorid == '59') {
                         document.querySelector(".main-operationUser-container").querySelector(".login-btn").classList.remove("hidden");
                         document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
-    <div class="error">تم تسجيلك بنجاح، يرجى إدخال المعلومات أدناه لإكمال عملية التسجيل</div>`;
+    <div class="success">تم تسجيلك بنجاح، يرجى إدخال المعلومات أدناه لإكمال عملية التسجيل</div>`;
                         $bc.setSource("complete.registration", {
                             rkey: responseJson.rkey,
                             run: true
@@ -146,7 +146,7 @@
                 if (!responseJson.errorMessage) {
                     if (responseJson.errorid == 102) {
                         document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
-    <div class="error"> تم تسجيل معلوماتك بنجاح</div>`;
+    <div class="success"> تم تسجيل معلوماتك بنجاح</div>`;
                     } else {
                         document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
     <div class="error"> خطأ في العملية</div>`;
