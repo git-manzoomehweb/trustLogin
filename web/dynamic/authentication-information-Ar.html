@@ -1,0 +1,70 @@
+<basis core="api" name="api.schema" run="AtClient" url="https://api.trust-login.com/schema/[##cms.cookie.rkey##]/ar"
+    method="get" onprocessed="onProcessedUserinformation"></basis>
+<basis core="call" if="{##db.runLogout.value|(false)##}" run="AtClient" file="/authentication/dmntoken"
+    triggers="db.runLogout" onrendered="setDmnTokenForLogout"></basis>
+<basis core="api" name="api.logout" if="{##db.logout.run|(false)##}" run="AtClient"
+    url='https://api.trust-login.com/logout/{##db.logout.value##}' method="post"
+    body='{"dmntoken": "{##db.logout.dmntoken##}"}' triggers="db.logout" onprocessed="onProcessedLogOut"></basis>
+<div class="user-profile-container rtl-lang">
+    <button class="user-profile-btn" aria-label="قسم المستخدم" onclick="showProfileContainer()">
+        <span class="user-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" width="24" height="24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+            </svg>
+        </span>
+        <span><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="user-profile-arrow"
+                data-v-f825ebe0="">
+                <path
+                    d="M21.266 7.302a.75.75 0 0 1 1.037 1.08l-.069.066-9.75 8.25a.75.75 0 0 1-.89.058l-.078-.058-9.75-8.25a.75.75 0 0 1 .893-1.202l.075.056L12 15.142l9.266-7.84Z">
+                </path>
+            </svg></span>
+    </button>
+    <div class="user-profile-content hidden">
+        <div class="user-profile-header">
+            <span class="default-name"></span><span class="default-family"></span>
+        </div>
+        <div class="clr"></div>
+        <ul class="user-profile-body">
+            <li>
+                <a href="/AR-Panel-Dashboard.bc" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                    </svg> معلومات حساب المستخدم </a>
+            </li>
+            <li>
+                <span class="logoutConfirm" onclick="logoutConfirm()">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" data-v-53687d56="">
+                        <path
+                            d="M10.5 2.25a2.25 2.25 0 0 1 2.25 2.25v2.25a.75.75 0 0 1-1.5 0V4.5a.75.75 0 0 0-.75-.75H3.75A.75.75 0 0 0 3 4.5v15c0 .414.336.75.75.75h6.75a.75.75 0 0 0 .75-.75v-2.25a.75.75 0 0 1 1.5 0v2.25a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 19.5v-15a2.25 2.25 0 0 1 2.25-2.25h6.75Zm11.825 9.27.01.01.003.004-.004-.004.019.024a.807.807 0 0 1 .037.056l.017.027.023.046.017.039A.747.747 0 0 1 22.5 12v.014l-.001.026-.001.016-.006.056a.688.688 0 0 1-.045.166l-.017.04a.68.68 0 0 1-.077.128l-.01.014a.777.777 0 0 1-.063.07l-3.75 3.75a.75.75 0 0 1-1.123-.99l.063-.07 2.47-2.47H6a.75.75 0 0 1 0-1.5h13.94l-2.47-2.47a.75.75 0 0 1-.063-.99l.063-.07a.75.75 0 0 1 .99-.063l.07.063 3.75 3.75.051.057-.006-.008Z"
+                            fill-rule="evenodd"></path>
+                    </svg> تسجيل الخروج من حساب المستخدم
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>
+<script type="text/javascript"
+    src="[##cms.cms.cdn##]/authentication/js/authentication-information.function.js"></script>
+<script type="text/javascript">async function onProcessedUserinformation(args) {
+        const response = args.response;
+        const responseJson = await response.json();
+        if (!responseJson.errorMessage) {
+            if (responseJson.sources) {
+                const properties = responseJson.sources[0].data[0].properties;
+                properties?.forEach((e) => {
+                    if (e.prpId == 1) {
+                        document.querySelector(".default-name").textContent = e.answers[0].parts[0].values[0].value;
+                    } else if (e.prpId == 2) {
+                        document.querySelector(".default-family").textContent = e.answers[0].parts[0].values[0].value;
+                    }
+
+                });
+                if (properties.length < 3) {
+                    document.querySelector(".default-name").textContent = 'لا اسم';
+                }
+            }
+        }
+    }</script>
