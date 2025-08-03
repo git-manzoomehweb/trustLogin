@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="[##cms.seo.description##]">
+    <basis core="dbsource" source="hosting" name="tag" urlid="[##cms.seo.urlid##]">
+        <member type="list" name="list" request="taglist" preview=""></member>
+    </basis>
+    <basis core="print" datamembername="tag.list">
+        <face filter="key='canonical'">
+            <link rel="canonical" href="@value" />
+        </face>
+        <face>
+            <meta property="@key" content="@value" />
+        </face>
+    </basis>
+    <title>[##cms.seo.title|(تفعيل البريد الإلكتروني)##]</title>
+    <link href="[##cms.cms.cdn##]/css/style_tem_ar.css" type="text/css" rel="stylesheet" />
+</head>
+
+<body>
+    <main class="main-container">
+       <basis core="call" file="header.inc" lid="3"></basis>
+        <div class="clr"></div>
+        <section class="content">
+            <div class="main-operationUser-container rtl-lang">
+                <h1> تفعيل البريد الإلكتروني </h1>
+                <div class="api-message"></div>
+                <div class="clr"></div>
+            </div>
+            <div class="clr"></div>
+        </section>
+        <script src="[##cms.cms.cdn##]/_js/jquery/jquery-3.7.1.min.js" type="text/javascript"></script>
+        <basis core="call" file="footer.inc" lid="3"></basis>
+    </main>
+    <script type="text/javascript">
+        async function onProcessedEmailVerify(args) {
+            const response = args.response;
+            if (response.status == 200) {
+                const responseJson = await response.json();
+                if (!responseJson.errorMessage) {
+                    if (responseJson.errorid == '1') {
+                        console.log('emailverify' + responseJson.message)
+                    } else if (responseJson.errorid == '10') {
+                        document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
+    <div class="error">المدخلات المقدمة غير صالحة</div>`;
+
+                    } else if (responseJson.errorid == '3') {
+                        document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
+    <div class="error"> تبقى ${responseJson.remain_time} ثانية من صلاحية المفتاح السابق</div>`;
+
+                    } else if (responseJson.errorid == '11') {
+                        document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
+    <div class="success"> تم تفعيل البريد الإلكتروني بنجاح</div>`;
+
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
