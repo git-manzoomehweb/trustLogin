@@ -1,0 +1,265 @@
+<basis core="group" name="hasNot-rkey" if="'[##cms.cookie.rkey##]' = ''">
+    <span class="btnstyle" onclick="showLoginContainer()">
+        <i class="hasNot-login-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="currentColor" width="24" height="24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z">
+                </path>
+            </svg></i>
+        <span>ورود یا ثبت نام</span>
+    </span>
+    <basis core="call" if="{##db.runLogin.value|(false)##}" run="AtClient" file="/authentication/dmntoken"
+        triggers="db.runLogin" onrendered="setDmnToken"></basis>
+    <basis core="api" name="api.selectuser" if="{##authentication.hashid##} && {##form.selectuser##}" run="AtClient"
+        url="https://api.trust-login.com/selectuser" method="post"
+        body='{"hashid": "{##authentication.hashid.value##}", "userid": {##form.selectuser.userid|(null)##}}'
+        onprocessed="onProcessedSelectUser" triggers="form.selectuser"></basis>
+    <basis core="api" name="api.forgetpassword" if="{##token.token##} && {##form.forgetPassword##}" run="AtClient"
+        url="https://api.trust-login.com/forgetpassword?culture=fa" method="post"
+        body='{"token":"{##token.token.value##}", "username":"{##form.forgetPassword.username##}"}'
+        onprocessed="onProcessedForgetPassword" triggers="form.forgetPassword"></basis>
+    <basis core="api" name="api.selectchangepassmethod" if='{##token.token##} && {##form.selectchangepassmethod##}'
+        run="AtClient" url="https://api.trust-login.com/selectchangepassmethod" method="post"
+        body='{"token":"{##token.token.value##}","userid":{##forgetpassword.userid.value##},"ismobile":{##form.selectchangepassmethod.ismobile##},"culture":"fa"}'
+        onprocessed="onProcessedSelectChangePassMethod" triggers="form.selectchangepassmethod"></basis>
+    <basis core="api" name="api.token" if='{##db.runTokenCommand.value|(false)##}' run="AtClient"
+        url="https://api.trust-login.com/token?recaptcha={##token.recaptcha.value|()##}" method="post"
+        body='{"dmntoken": "{##db.runTokenCommand.dmntoken##}"}' triggers="run.token db.runTokenCommand token.recaptcha"
+        onprocessed="onProcessedToken"></basis>
+    <basis core="api" name="api.authentication" if='{##token.token##} && {##form.authentication##}' run="AtClient"
+        url="https://api.trust-login.com/authentication?culture=fa" method="post"
+        body='{"token": "{##token.token.value##}", "username": "{##form.authentication.username##}", "captcha": "{##form.authentication.captchaid##}"}'
+        onprocessed="onProcessedAuthentication" triggers="form.authentication"></basis>
+    <basis core="api" name="api.login" if='{##authentication.hashid##} && {##form.login##}' run="AtClient"
+        url="https://api.trust-login.com/login?culture=fa" method="post"
+        body='{"hashid": "{##authentication.hashid.value##}", "code": "{##form.login.code##}", "recode": "{##form.login.recode##}", "email": "{##form.login.email##}", "mobile": "{##form.login.mobile##}"}'
+        onprocessed="onProcessedLogin" triggers="form.login"></basis>
+    <basis core="cookie" name="rkey" run="AtClient" if="{##user.rkey##}" value="{##user.rkey.value##}" path='/'
+        triggers="user.rkey" max-age="1800">
+    </basis>
+
+    <basis core="api" name="api.checkrkey" run="AtClient" if="{##user.checkrkey##}"
+        url="https://api.trust-login.com/checkrkey/{##user.checkrkey.value##}" method="get"
+        onprocessed="onProcessedCheckrkey" triggers="user.checkrkey">
+    </basis>
+    <basis core="call" if="{##user.profile.value|(false)##}" run="AtClient" file="/authentication/information?lid=1"
+        triggers="user.profile"></basis>
+    <section class="user-entrance-body" style="display: none;" data-dmnid="[##cms.cms.domainid##]">
+        <section class="bg-login-container" onclick="closeLoginContainer(this)">
+        </section>
+        <section class="main-login-container rtl-lang" data-culture="fa"
+            data-agency-signup="[##cms.host.agency-signUp##]">
+            <div class="login-closed" onclick="closeLoginContainer(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            </div>
+            <div class="login-right-part">
+                <div class="login-mob-img"><img src="[##cms.cms.cdn##]/authentication/images/authentication-mob.png"
+                        width="130" height="105" alt="login" /></div>
+                <div class="login-title">
+                    <div id="login-title">
+                        <div class="login-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                width="24" height="24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                            </svg></div>
+                        <div>
+                            <div class="title">ورود یا ثبت نام</div>
+                            <div class="sub-title">در صورت داشتن حساب کاربری, می
+                                توانید وارد شوید</div>
+                        </div>
+                    </div>
+                    <div class="hidden" id="selectUser-title">نام کاربری را
+                        انتخاب کنید :</div>
+                </div>
+                <div class="login-section-container">
+                    <form class="loginForm" name="form.authentication" bc-triggers="submit" bc-value="true"
+                        autocomplete="off">
+                        <input type="hidden" name="passengerList-key" class="passengerList-key" />
+                        <input type="hidden" name="dmnid-key" class="dmnid-key" />
+                        <input type="hidden" name="internal-key" class="internal-key" />
+                        <input type="hidden" name="index-key" class="index-key" />
+                        <input type="hidden" name="index-room-key" class="index-room-key" />
+                        <input type="hidden" value="[##cms.cookie.rkey##]" name="rkeyValue">
+                        <input type="hidden" value="[##cms.cms.ownerid##]" name="Ownerid" class="company-ownerid" />
+                        <div id="firstUsernameContainer">
+                            <div id="firstUsername">
+                                <input type="text" class="itemInput" name="username" placeholder=" "
+                                    id="firstUsernameInput" />
+                            </div>
+                            <div class="clr"></div>
+                        </div>
+                    </form>
+                    <div class="bottom-content">
+                        <div class="login-btn-content"><button type="submit" id="showCaptcha"
+                                class="login-btn background-color_1 bg-primary" onclick="getToken()" name="run.token"
+                                bc-value="true" bc-triggers="click">مرحله
+                                بعدی</button></div>
+                        <div class="action-loading background-color_1 bg-primary hidden">
+                            <div id="ballsWaveG">
+                                <div id="ballsWaveG_1" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_2" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_3" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_4" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_5" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_6" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_7" class="ballsWaveG"></div>
+                                <div id="ballsWaveG_8" class="ballsWaveG"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="api-message"></div>
+                </div>
+            </div>
+            <div class="login-left-part">
+                <img src="[##cms.cms.cdn##]/authentication/images/authentication.png" width="250" height="250"
+                    alt="login" />
+            </div>
+            <div class="clr"></div>
+        </section>
+    </section>
+    <script type="text/javascript"
+        src="[##cms.cms.cdn##]/authentication/js/authentication.function.js?ver=[##cms.cms.date2##][##cms.cms.time2##]"></script>
+</basis>
+<basis core="group" name="has-rkey" if="'[##cms.cookie.rkey##]' <> ''">
+    <basis core="call" lid="1" file="Client_CheckRkey.inc"></basis>
+    <basis core="group" name="inValid-rkey" if="'[##db.checkrkey.checked##]'='false'">
+        <span class="btnstyle" onclick="showLoginContainer()">
+            <i class="hasNot-login-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor" width="24" height="24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z">
+                    </path>
+                </svg></i>
+            <span>ورود یا ثبت نام</span>
+        </span>
+        <basis core="call" if="{##db.runLogin.value|(false)##}" run="AtClient" file="/authentication/dmntoken"
+            triggers="db.runLogin" onrendered="setDmnToken"></basis>
+        <basis core="api" name="api.selectuser" if="{##authentication.hashid##} && {##form.selectuser##}" run="AtClient"
+            url="https://api.trust-login.com/selectuser" method="post"
+            body='{"hashid": "{##authentication.hashid.value##}", "userid": {##form.selectuser.userid|(null)##}}'
+            onprocessed="onProcessedSelectUser" triggers="form.selectuser"></basis>
+        <basis core="api" name="api.forgetpassword" if="{##token.token##} && {##form.forgetPassword##}" run="AtClient"
+            url="https://api.trust-login.com/forgetpassword?culture=fa" method="post"
+            body='{"token":"{##token.token.value##}", "username":"{##form.forgetPassword.username##}"}'
+            onprocessed="onProcessedForgetPassword" triggers="form.forgetPassword"></basis>
+        <basis core="api" name="api.selectchangepassmethod" if='{##token.token##} && {##form.selectchangepassmethod##}'
+            run="AtClient" url="https://api.trust-login.com/selectchangepassmethod" method="post"
+            body='{"token":"{##token.token.value##}","userid":{##forgetpassword.userid.value##},"ismobile":{##form.selectchangepassmethod.ismobile##},"culture":"fa"}'
+            onprocessed="onProcessedSelectChangePassMethod" triggers="form.selectchangepassmethod"></basis>
+        <basis core="api" name="api.token" if='{##db.runTokenCommand.value|(false)##}' run="AtClient"
+            url="https://api.trust-login.com/token?recaptcha={##token.recaptcha.value|()##}" method="post"
+            body='{"dmntoken": "{##db.runTokenCommand.dmntoken##}"}'
+            triggers="run.token db.runTokenCommand token.recaptcha" onprocessed="onProcessedToken"></basis>
+        <basis core="api" name="api.authentication" if='{##token.token##} && {##form.authentication##}' run="AtClient"
+            url="https://api.trust-login.com/authentication?culture=fa" method="post"
+            body='{"token": "{##token.token.value##}", "username": "{##form.authentication.username##}", "captcha": "{##form.authentication.captchaid##}"}'
+            onprocessed="onProcessedAuthentication" triggers="form.authentication"></basis>
+        <basis core="api" name="api.login" if='{##authentication.hashid##} && {##form.login##}' run="AtClient"
+            url="https://api.trust-login.com/login?culture=fa" method="post"
+            body='{"hashid": "{##authentication.hashid.value##}", "code": "{##form.login.code##}", "recode": "{##form.login.recode##}", "email": "{##form.login.email##}", "mobile": "{##form.login.mobile##}"}'
+            onprocessed="onProcessedLogin" triggers="form.login"></basis>
+        <basis core="cookie" name="rkey" run="AtClient" if="{##user.rkey##}" value="{##user.rkey.value##}" path='/'
+            max-age="1800" triggers="user.rkey">
+        </basis>
+
+        <basis core="api" name="api.checkrkey" run="AtClient" if="{##user.checkrkey##}"
+            url="https://api.trust-login.com/checkrkey/{##user.checkrkey.value##}" method="get"
+            onprocessed="onProcessedCheckrkey" triggers="user.checkrkey">
+        </basis>
+        <basis core="call" if="{##user.profile.value|(false)##}" run="AtClient" file="/authentication/information?lid=1"
+            triggers="user.profile"></basis>
+        <section class="user-entrance-body" style="display: none;" data-dmnid="[##cms.cms.domainid##]">
+            <section class="bg-login-container" onclick="closeLoginContainer(this)">
+            </section>
+            <section class="main-login-container rtl-lang" data-culture="fa">
+                <div class="login-closed" onclick="closeLoginContainer(this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </div>
+                <div class="login-right-part">
+                    <div class="login-mob-img"><img src="[##cms.cms.cdn##]/authentication/images/authentication-mob.png"
+                            width="130" height="105" alt="login" /></div>
+                    <div class="login-title">
+                        <div id="login-title">
+                            <div class="login-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="24"
+                                    height="24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="title">ورود یا ثبت نام</div>
+                                <div class="sub-title">در صورت داشتن حساب کاربری, می
+                                    توانید وارد شوید</div>
+                            </div>
+                        </div>
+                        <div class="hidden" id="selectUser-title">نام کاربری را
+                            انتخاب کنید :</div>
+                    </div>
+                    <div class="login-section-container">
+                        <form class="loginForm" name="form.authentication" bc-triggers="submit" bc-value="true"
+                            autocomplete="off">
+                            <input type="hidden" name="passengerList-key" class="passengerList-key" />
+                            <input type="hidden" name="dmnid-key" class="dmnid-key" />
+                            <input type="hidden" name="internal-key" class="internal-key" />
+                            <input type="hidden" name="index-key" class="index-key" />
+                            <input type="hidden" name="index-room-key" class="index-room-key" />
+                            <input type="hidden" value="[##cms.cookie.rkey##]" name="rkeyValue">
+                            <input type="hidden" value="[##cms.cms.ownerid##]" name="Ownerid" class="company-ownerid" />
+                            <div id="firstUsernameContainer">
+                                <div id="firstUsername">
+                                    <input type="text" class="itemInput" name="username" placeholder=" "
+                                        id="firstUsernameInput" />
+                                </div>
+                                <div class="clr"></div>
+                            </div>
+                        </form>
+                        <div class="bottom-content">
+                            <div class="login-btn-content"><button type="submit" id="showCaptcha"
+                                    class="login-btn background-color_1 bg-primary" onclick="getToken()"
+                                    name="run.token" bc-value="true" bc-triggers="click">مرحله
+                                    بعدی</button></div>
+                            <div class="action-loading background-color_1 bg-primary hidden">
+                                <div id="ballsWaveG">
+                                    <div id="ballsWaveG_1" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_2" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_3" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_4" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_5" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_6" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_7" class="ballsWaveG"></div>
+                                    <div id="ballsWaveG_8" class="ballsWaveG"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="api-message"></div>
+                    </div>
+                </div>
+                <div class="login-left-part">
+                    <img src="[##cms.cms.cdn##]/authentication/images/authentication.png" width="250" height="250"
+                        alt="login" />
+                </div>
+                <div class="clr"></div>
+            </section>
+        </section>
+        <script type="text/javascript"
+            src="[##cms.cms.cdn##]/authentication/js/authentication.function.js?ver=[##cms.cms.date2##][##cms.cms.time2##]"></script>
+
+
+    </basis>
+    <basis core="group" name="valid-rkey" if="'[##db.checkrkey.checked##]'='true'">
+        <basis core="call" run="AtClient" file="/authentication/information?lid=1"></basis>
+        <basis core="cookie" name="rkey" value="[##cms.cookie.rkey##]" path='/' max-age="1800">
+        </basis>
+    </basis>
+</basis>
+<link href="[##cms.cms.cdn##]/authentication/css/authentication.ui.min.css?ver=[##cms.cms.date2##][##cms.cms.time2##]"
+    type="text/css" rel="stylesheet" />
