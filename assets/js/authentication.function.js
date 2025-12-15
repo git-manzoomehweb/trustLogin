@@ -1467,6 +1467,10 @@ async function onProcessedCheckrkey(args) {
                             .then(data => {
                                 element.innerHTML = data;
                                 document.body.classList.add("searchbox-load-success");
+                                if (document.getElementById('search-box').classList.contains("flighttypedropdown")) {
+                                    const r = document.querySelector('.flighttype-field');
+                                    r.classList.add('flighttype-dropDown');
+                                };
                                 var scripts = element.getElementsByTagName("script");
                                 for (var i = 0; i < scripts.length; i++) {
                                     var scriptTag = document.createElement("script");
