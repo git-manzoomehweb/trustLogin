@@ -53,7 +53,7 @@ const ala_json = [{
 const ownerIdValue = parseInt(document.querySelector(".company-ownerid").value);
 const matchedCompany = ala_json.find(element => element.ownerid === ownerIdValue);
 const defaultInputValue = "";
-
+let checkFnctionality;
 if (matchedCompany) {
     document.querySelector("#firstUsernameInput").setAttribute("placeholder", `${culture === 'fa'
         ? 'ایمیل یا شماره موبایل'
@@ -224,8 +224,8 @@ function turnBack() {
     });
 
 }
-function showLoginContainer() {
-
+function showLoginContainer(functionality) {
+    checkFnctionality = functionality;
     // Check if the element with the class 'user-entrance-body' is hidden, and if so, make it visible
     document.querySelector(".user-entrance-body").style.display = "block";
     // Check if the element with the class 'login-section-container' exists
@@ -1505,6 +1505,21 @@ async function onProcessedCheckrkey(args) {
                 document.querySelector(".btnstyle").remove();
             }
             $bc.setSource("user.profile", true);
+        }
+
+        if (checkFnctionality == 'priceAlert') {
+            const priceAlertContainer = document.querySelector(".book-price__alert__container");
+            if (priceAlertContainer) {
+                priceAlertContainer.onclick = () => {
+                    try {
+                        const modalWrapContainer = document.querySelector(".book-price__alert__modal__container");
+                        if (!modalWrapContainer) return;
+                        modalWrapContainer.classList.remove("book-hidden");
+                    } catch (err) {
+                        console.error("priceAlert onclick:", err.message);
+                    }
+                };
+            }
         }
 
 
