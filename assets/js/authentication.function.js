@@ -2118,3 +2118,28 @@ document.addEventListener('input', function (e) {
         }
     }
 });
+const panelLoginTitleObserver = new MutationObserver(() => {
+    const loginTitle = document.getElementById('login-title')
+
+    const validDmnIds = [4889];
+
+    const userEntranceBody = document.querySelectorAll('.user-entrance-body');
+
+    userEntranceBody.forEach((section) => {
+        const dmnid = section.getAttribute('data-dmnid');
+
+        if (validDmnIds.includes(parseInt(dmnid))) {
+            if (loginTitle) {
+                loginTitle.insertAdjacentHTML('afterend', `
+            <div class="commission-info">
+              <p>همکاران گرامی، برای دریافت کمیسیون و محاسبه امتیازات، حتماً با ایمیل وارد سایت شوید.</p>
+              <p>در صورت ورود با شماره موبایل، کمیسیون به شما تعلق نمی گیرد و امتیازات شما محاسبه نمی گردد.</p>
+            </div>
+          `);
+            }
+            panelLoginTitleObserver.disconnect();
+        }
+    });
+});
+
+panelLoginTitleObserver.observe(document.body, { childList: true, subtree: true });
