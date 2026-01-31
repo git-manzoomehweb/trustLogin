@@ -2132,8 +2132,8 @@ const panelLoginTitleObserver = new MutationObserver(() => {
             if (loginTitle) {
                 loginTitle.insertAdjacentHTML('afterend', `
             <div class="commission-info">
-              <p>همکاران گرامی، برای دریافت کمیسیون و محاسبه امتیازات، حتماً با ایمیل وارد سایت شوید.</p>
-              <p>در صورت ورود با شماره موبایل، کمیسیون به شما تعلق نمی گیرد و امتیازات شما محاسبه نمی گردد.</p>
+              <p class="group-hover:text-red-600 text-red-600">همکاران گرامی، برای دریافت کمیسیون و محاسبه امتیازات، حتماً با ایمیل وارد سایت شوید.</p>
+              <p class="group-hover:text-red-600 text-red-600">در صورت ورود با شماره موبایل، کمیسیون به شما تعلق نمی گیرد و امتیازات شما محاسبه نمی گردد.</p>
             </div>
           `);
             }
