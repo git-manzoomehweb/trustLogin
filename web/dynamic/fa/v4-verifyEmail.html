@@ -41,7 +41,7 @@
 <body>
     <main class="main-container">
         <basis core="group" name="lid" if="'[##cms.query.lid|(1)##]' = '1'">
-            <basis core="call" lid="1" file="header.inc"></basis>
+            <basis core="call" lid="1" file="header.inc" pageindex="[##cms.cms.pageindex##]"></basis>
             <div class="clr"></div>
             <section class="content">
                 <div class="main-operationUser-container rtl-lang">
@@ -51,7 +51,7 @@
                 </div>
                 <div class="clr"></div>
             </section>
-            <basis core="call" lid="1" file="footer.inc"></basis>
+            <basis core="call" lid="1" file="footer.inc" pageindex="[##cms.cms.pageindex##]"></basis>
         </basis>
         <basis core="group" name="lid" if="'[##cms.query.lid|(1)##]' = '2'">
             <basis core="call" file="header-en.inc"></basis>
