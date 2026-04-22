@@ -47,8 +47,7 @@
     <section class="user-entrance-body" style="display: none;" data-dmnid="[##cms.cms.domainid##]">
         <section class="bg-login-container" onclick="closeLoginContainer(this)">
         </section>
-        <section class="main-login-container rtl-lang" data-culture="fa"
-            data-agency-signup="[##cms.host.agency-signUp##]">
+        <section class="main-login-container rtl-lang" data-culture="fa" data-agency-signup="[##cms.host.agency-signUp##]"> 
             <div class="login-closed" onclick="closeLoginContainer(this)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
                     stroke-width="1.5" stroke="currentColor">
@@ -56,7 +55,7 @@
                 </svg>
             </div>
             <div class="login-right-part">
-                <div class="login-mob-img"><img src="[##cms.cms.cdn##]/authentication/images/authentication-mob.png"
+                <div class="login-mob-img"><img src=""
                         width="130" height="105" alt="login" /></div>
                 <div class="login-title">
                     <div id="login-title">
@@ -115,14 +114,13 @@
                 </div>
             </div>
             <div class="login-left-part">
-                <img src="[##cms.cms.cdn##]/authentication/images/authentication.png" width="250" height="250"
+                <img src="" width="250" height="250"
                     alt="login" />
             </div>
             <div class="clr"></div>
         </section>
     </section>
-    <script type="text/javascript"
-        src="[##cms.cms.cdn##]/authentication/js/authentication.function.js?ver=[##cms.cms.date2##][##cms.cms.time2##]"></script>
+    <script type="text/javascript" src="[##cms.cms.cdn##]/authentication/js/authentication.function.js?ver=[##cms.cms.date2##][##cms.cms.time2##]"></script>
 </basis>
 <basis core="group" name="has-rkey" if="'[##cms.cookie.rkey##]' <> ''">
     <basis core="call" lid="1" file="Client_CheckRkey.inc"></basis>
@@ -183,7 +181,7 @@
                     </svg>
                 </div>
                 <div class="login-right-part">
-                    <div class="login-mob-img"><img src="[##cms.cms.cdn##]/authentication/images/authentication-mob.png"
+                    <div class="login-mob-img"><img src=""
                             width="130" height="105" alt="login" /></div>
                     <div class="login-title">
                         <div id="login-title">
@@ -244,7 +242,7 @@
                     </div>
                 </div>
                 <div class="login-left-part">
-                    <img src="[##cms.cms.cdn##]/authentication/images/authentication.png" width="250" height="250"
+                    <img src="" width="250" height="250"
                         alt="login" />
                 </div>
                 <div class="clr"></div>
@@ -261,5 +259,4 @@
         </basis>
     </basis>
 </basis>
-<link href="[##cms.cms.cdn##]/authentication/css/authentication.ui.min.css?ver=[##cms.cms.date2##][##cms.cms.time2##]"
-    type="text/css" rel="stylesheet" />
+<link href="[##cms.cms.cdn##]/authentication/css/authentication.ui.min.css?ver=[##cms.cms.date2##][##cms.cms.time2##]" type="text/css" rel="stylesheet" />

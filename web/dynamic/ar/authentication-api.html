@@ -51,8 +51,7 @@
     <section class="user-entrance-body" style="display: none;" data-dmnid="[##cms.cms.domainid##]">
         <section class="bg-login-container" onclick="closeLoginContainer(this)">
         </section>
-        <section class="main-login-container rtl-lang" data-culture="ar"
-            data-agency-signup="[##cms.host.agency-signUp##]">
+        <section class="main-login-container rtl-lang" data-culture="ar" data-agency-signup="[##cms.host.agency-signUp##]">
             <div class="login-closed" onclick="closeLoginContainer(this)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
                     stroke-width="1.5" stroke="currentColor">
@@ -60,7 +59,7 @@
                 </svg>
             </div>
             <div class="login-right-part">
-                <div class="login-mob-img"><img src="[##cms.cms.cdn##]/authentication/images/authentication-mob.png"
+                <div class="login-mob-img"><img src=""
                         width="130" height="105" alt="login" /></div>
                 <div class="login-title">
                     <div id="login-title">
@@ -119,14 +118,13 @@
                 </div>
             </div>
             <div class="login-left-part">
-                <img src="[##cms.cms.cdn##]/authentication/images/authentication.png" width="250" height="250"
+                <img src="" width="250" height="250"
                     alt="login" />
             </div>
             <div class="clr"></div>
         </section>
     </section>
-    <script type="text/javascript"
-        src="[##cms.cms.cdn##]/authentication/js/authentication.function.js?ver=[##cms.cms.date2##][##cms.cms.time2##]"></script>
+    <script type="text/javascript" src="[##cms.cms.cdn##]/authentication/js/authentication.function.js?ver=[##cms.cms.date2##][##cms.cms.time2##]"></script>
 
 </basis>
 <basis core="group" name="has-rkey" if="'[##cms.cookie.rkey##]' <> ''">
@@ -177,7 +175,7 @@
             onprocessed="onProcessedCheckrkey" triggers="user.checkrkey">
         </basis>
         <basis core="call" if="{##user.profile.value|(false)##}" run="AtClient" file="/authentication/information?lid=3"
-            triggers="user.profile"></basis>
+             triggers="user.profile"></basis>
         <basis core="api" name="api.countrycodes" if='{##db.countryCodes##}' run="AtClient"
             url="https://api.trust-login.com/countrycodes?culture=ar" method="get" onprocessed="onProcessedCountryCodes"
             triggers="db.countryCodes"></basis>
@@ -192,7 +190,7 @@
                     </svg>
                 </div>
                 <div class="login-right-part">
-                    <div class="login-mob-img"><img src="[##cms.cms.cdn##]/authentication/images/authentication-mob.png"
+                    <div class="login-mob-img"><img src=""
                             width="130" height="105" alt="login" /></div>
                     <div class="login-title">
                         <div id="login-title">
@@ -222,8 +220,8 @@
                                 <div id="firstUsername">
                                     <input type="text" class="itemInput" name="username" placeholder=""
                                         id="firstUsernameInput" oninput="detectInputType(this)"
-                                        onkeyup="this.setAttribute('data-value', this.value)"
-                                        onclick="this.setAttribute('data-value', '')" />
+                                    onkeyup="this.setAttribute('data-value', this.value)"
+                                    onclick="this.setAttribute('data-value', '')" />
                                 </div>
                                 <div class="clr"></div>
                             </div>
@@ -251,7 +249,7 @@
                     </div>
                 </div>
                 <div class="login-left-part">
-                    <img src="[##cms.cms.cdn##]/authentication/images/authentication.png" width="250" height="250"
+                    <img src="" width="250" height="250"
                         alt="login" />
                 </div>
                 <div class="clr"></div>
@@ -263,10 +261,9 @@
 
     </basis>
     <basis core="group" name="valid-rkey" if="'[##db.checkrkey.checked##]'='true'">
-        <basis core="call" run="AtClient" file="/authentication/information?lid=3"></basis>
+        <basis core="call" run="AtClient" file="/authentication/information?lid=3" ></basis>
         <basis core="cookie" name="rkey" value="[##cms.cookie.rkey##]" path='/' max-age="1800">
         </basis>
     </basis>
 </basis>
-<link href="[##cms.cms.cdn##]/authentication/css/authentication.ui.min.css?ver=[##cms.cms.date2##][##cms.cms.time2##]"
-    type="text/css" rel="stylesheet" />
+<link href="[##cms.cms.cdn##]/authentication/css/authentication.ui.min.css?ver=[##cms.cms.date2##][##cms.cms.time2##]" type="text/css" rel="stylesheet" />
