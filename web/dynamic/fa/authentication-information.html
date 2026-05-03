@@ -1,10 +1,10 @@
-<basis core="api" name="api.schema" run="AtClient" url="https://api.trust-login.com/schema/[##cms.cookie.rkey##]/fa"
+<basis core="api" name="api.schema" run="AtClient" url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/[##cms.cookie.rkey##]/fa"
     method="get"></basis>
 <basis core="callback" run="atclient" triggers="answer.data" method="onProcessedUserinformation"></basis>
 <basis core="call" lid="2" if="{##db.runLogout.value|(false)##}" run="AtClient" file="/authentication/dmntoken"
     triggers="db.runLogout" onrendered="setDmnTokenForLogout"></basis>
 <basis core="api" name="api.logout" if="{##db.logout.run|(false)##}" run="AtClient"
-    url='https://api.trust-login.com/logout/{##db.logout.value##}' method="post"
+    url='[##cms.host.trust_login_api|(https://api.trust-login.com)##]/logout/{##db.logout.value##}' method="post"
     body='{"dmntoken": "{##db.logout.dmntoken##}"}' triggers="db.logout" onprocessed="onProcessedLogOut"></basis>
 <div class="user-profile-container rtl-lang">
     <button class="user-profile-btn" aria-label="بخش کاربری" onclick="showProfileContainer()">
@@ -59,6 +59,7 @@
             const isUserPanelProfile = /\/userPanel\/profile\/?$/.test(
                 window.location.pathname
             );
+
             // If we are on /userPanel/profile, refresh/update the source
             if (isUserPanelProfile) {
                 $bc?.setSource?.("cms.userSchema");

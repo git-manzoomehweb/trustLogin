@@ -1,9 +1,10 @@
-<basis core="api" name="api.schema" run="AtClient" url="https://api.trust-login.com/schema/[##cms.cookie.rkey##]/en"
-    method="get" onprocessed="onProcessedUserinformation"></basis>
+<basis core="api" name="api.schema" run="AtClient" url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/[##cms.cookie.rkey##]/en"
+    method="get"></basis>
+<basis core="callback" run="atclient" triggers="answer.data" method="onProcessedUserinformation"></basis>
 <basis core="call" if="{##db.runLogout.value|(false)##}" run="AtClient" file="/authentication/dmntoken"
     triggers="db.runLogout" onrendered="setDmnTokenForLogout"></basis>
 <basis core="api" name="api.logout" if="{##db.logout.run|(false)##}" run="AtClient"
-    url='https://api.trust-login.com/logout/{##db.logout.value##}' method="post"
+    url='[##cms.host.trust_login_api|(https://api.trust-login.com)##]/logout/{##db.logout.value##}' method="post"
     body='{"dmntoken": "{##db.logout.dmntoken##}"}' triggers="db.logout" onprocessed="onProcessedLogOut"></basis>
 <div class="user-profile-container ltr-lang">
     <button class="user-profile-btn" aria-label="User section" onclick="showProfileContainer()">
@@ -50,24 +51,60 @@
     </div>
 </div>
 <script type="text/javascript"
-    src="[##cms.cms.cdn##]/authentication/js/authentication-information.function.js?ver=[##cms.cms.date2##][##cms.cms.time2##]"></script>
+    src="[##cms.cms.cdn##]/authentication/js/authentication-information.function.js"></script>
 <script type="text/javascript">async function onProcessedUserinformation(args) {
-        const response = args.response;
-        const responseJson = await response.json();
-        if (!responseJson.errorMessage) {
-            if (responseJson.sources) {
-                const properties = responseJson.sources[0].data[0].properties;
-                properties?.forEach((e) => {
-                    if (e.prpId == 1) {
-                        document.querySelector(".default-name").textContent = e.answers[0].parts[0].values[0].value;
-                    } else if (e.prpId == 2) {
-                        document.querySelector(".default-family").textContent = e.answers[0].parts[0].values[0].value;
-                    }
+        try {
+            // Check current path (domain can change; only pathname matters)
+            const isUserPanelProfile = /\/userPanel\/profile\/?$/.test(
+                window.location.pathname
+            );
 
-                });
-                if (properties.length < 3) {
-                    document.querySelector(".default-name").textContent = 'no name';
-                }
+            // If we are on /userPanel/profile, refresh/update the source
+            if (isUserPanelProfile) {
+                $bc?.setSource?.("cms.userSchema");
             }
+            // Safely access response data
+            const row = args?.source?.rows?.[0];
+            const properties = row?.properties;
+            if (!Array.isArray(properties) || properties.length === 0) return;
+            // Cache headers to avoid querying DOM multiple times
+            const headers = document.querySelectorAll(".user-profile-header");
+            if (!headers.length) return;
+            // Helper: extract the first value safely from property object
+            const getPropValue = (prop) =>
+                prop?.answers?.[0]?.parts?.[0]?.values?.[0]?.value ?? "";
+
+            let firstName = "";
+            let lastName = "";
+
+            // Read needed values once
+            for (const p of properties) {
+                if (p?.prpId == 1) firstName = getPropValue(p);
+                else if (p?.prpId == 2) lastName = getPropValue(p);
+            }
+
+            // Apply values to all headers
+            headers.forEach((header) => {
+                const nameEl = header.querySelector(".default-name");
+                const familyEl = header.querySelector(".default-family");
+
+                // Set first name if the element exists
+                if (nameEl) nameEl.textContent = firstName;
+
+                // Set last name if the element exists
+                if (familyEl) familyEl.textContent = lastName;
+            });
+
+            // Fallback: if properties are not complete, set default name
+            if (properties.length < 3) {
+                headers.forEach((header) => {
+                    const nameEl = header.querySelector(".default-name");
+                    if (nameEl) nameEl.textContent = "no name";
+                });
+            }
+        } catch (err) {
+            // Log unexpected errors to help debugging without breaking the page
+            console.error("onProcessedUserinformation error:", err);
         }
-    }</script>
+    }
+</script>

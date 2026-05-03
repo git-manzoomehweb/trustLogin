@@ -31,21 +31,21 @@
                 <form>
                     <h1> complete registration </h1>
                     <basis core="api" name="api.useractivation" run="AtClient"
-                        url="https://api.trust-login.com/useractivation" method="post"
+                        url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/useractivation" method="post"
                         body='{"rkey": "[##cms.query.rkey##]"}' onprocessed="onProcessedUserActivation">
                     </basis>
                     <basis core='api' if='{##complete.registration.run|(false)##}' run='AtClient'
-                        url='https://api.trust-login.com/schema/{##complete.registration.rkey##}/en' method='get'
+                        url='[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/{##complete.registration.rkey##}/en' method='get'
                         triggers='complete.registration'></basis>
                     <basis core="schema" run="AtClient" datamembername="answer.data"
-                        if='{##complete.registration.run|(false)##}' schemaurl="https://api.trust-login.com/schema"
+                        if='{##complete.registration.run|(false)##}' schemaurl="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema"
                         displaymode="edit" triggers='complete.registration' button="[data-btn-editUser]"
                         resultsourceid="editUser.data"></basis>
                     <basis core="cookie" name="rkey" if="{##complete.registration.run|(false)##}" run="AtClient"
                         value="{##complete.registration.rkey##}" triggers="complete.registration"></basis>
                     <basis core="callback" run="AtClient" method="editUser" triggers="editUser.data"></basis>
                     <basis core="api" name="api.edituser" if="{##page.editUser.run|(false)##}" run="AtClient"
-                        url="https://api.trust-login.com/schema/{##complete.registration.rkey##}/editobject"
+                        url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/{##complete.registration.rkey##}/editobject"
                         method="post" body='{"data": {##page.editUser.value##}}' onprocessed="onProcessedEditUser"
                         triggers="page.editUser">
                     </basis>

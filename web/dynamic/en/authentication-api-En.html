@@ -13,27 +13,27 @@
     <basis core="call" if="{##db.runLogin.value|(false)##}" run="AtClient" file="/authentication/dmntoken"
         triggers="db.runLogin" onrendered="setDmnToken"></basis>
     <basis core="api" name="api.selectuser" if="{##authentication.hashid##} && {##form.selectuser##}" run="AtClient"
-        url="https://api.trust-login.com/selectuser" method="post"
+        url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/selectuser" method="post"
         body='{"hashid": "{##authentication.hashid.value##}", "userid": {##form.selectuser.userid|(null)##}}'
         onprocessed="onProcessedSelectUser" triggers="form.selectuser"></basis>
     <basis core="api" name="api.forgetpassword" if="{##token.token##} && {##form.forgetPassword##}" run="AtClient"
-        url="https://api.trust-login.com/forgetpassword?culture=en" method="post"
+        url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/forgetpassword?culture=en" method="post"
         body='{"token":"{##token.token.value##}", "username":"{##form.forgetPassword.username##}"}'
         onprocessed="onProcessedForgetPassword" triggers="form.forgetPassword"></basis>
     <basis core="api" name="api.selectchangepassmethod" if='{##token.token##} && {##form.selectchangepassmethod##}'
-        run="AtClient" url="https://api.trust-login.com/selectchangepassmethod" method="post"
+        run="AtClient" url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/selectchangepassmethod" method="post"
         body='{"token":"{##token.token.value##}","userid":{##forgetpassword.userid.value##},"ismobile":{##form.selectchangepassmethod.ismobile##},"culture":"en"}'
         onprocessed="onProcessedSelectChangePassMethod" triggers="form.selectchangepassmethod"></basis>
     <basis core="api" name="api.token" if='{##db.runTokenCommand.value|(false)##}' run="AtClient"
-        url="https://api.trust-login.com/token?recaptcha={##token.recaptcha.value|()##}" method="post"
+        url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/token?recaptcha={##token.recaptcha.value|()##}" method="post"
         body='{"dmntoken": "{##db.runTokenCommand.dmntoken##}"}' triggers="run.token db.runTokenCommand token.recaptcha"
         onprocessed="onProcessedToken"></basis>
     <basis core="api" name="api.authentication" if='{##token.token##} && {##form.authentication##}' run="AtClient"
-        url="https://api.trust-login.com/authentication?culture=en" method="post"
+        url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/authentication?culture=en" method="post"
         body='{"token": "{##token.token.value##}", "username": "{##form.authentication.username##}", "captcha": "{##form.authentication.captchaid##}"}'
         onprocessed="onProcessedAuthentication" triggers="form.authentication"></basis>
     <basis core="api" name="api.login" if='{##authentication.hashid##} && {##form.login##}' run="AtClient"
-        url="https://api.trust-login.com/login?culture=en" method="post"
+        url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/login?culture=en" method="post"
         body='{"hashid": "{##authentication.hashid.value##}", "code": "{##form.login.code##}", "recode": "{##form.login.recode##}", "email": "{##form.login.email##}", "mobile": "{##form.login.mobile##}"}'
         onprocessed="onProcessedLogin" triggers="form.login"></basis>
     <basis core="cookie" name="rkey" run="AtClient" if="{##user.rkey##}" value="{##user.rkey.value##}" path='/'
@@ -41,13 +41,13 @@
     </basis>
 
     <basis core="api" name="api.checkrkey" run="AtClient" if="{##user.checkrkey##}"
-        url="https://api.trust-login.com/checkrkey/{##user.checkrkey.value##}" method="get"
+        url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/checkrkey/{##user.checkrkey.value##}" method="get"
         onprocessed="onProcessedCheckrkey" triggers="user.checkrkey">
     </basis>
     <basis core="call" if="{##user.profile.value|(false)##}" run="AtClient" file="/authentication/information/En"
         triggers="user.profile"></basis>
     <basis core="api" name="api.countrycodes" if='{##db.countryCodes##}' run="AtClient"
-        url="https://api.trust-login.com/countrycodes?culture=en" method="get" onprocessed="onProcessedCountryCodes"
+        url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/countrycodes?culture=en" method="get" onprocessed="onProcessedCountryCodes"
         triggers="db.countryCodes"></basis>
     <section class="user-entrance-body" style="display: none;" data-dmnid="[##cms.cms.domainid##]">
         <section class="bg-login-container" onclick="closeLoginContainer(this)">
@@ -147,27 +147,27 @@
         <basis core="call" if="{##db.runLogin.value|(false)##}" run="AtClient" file="/authentication/dmntoken"
             triggers="db.runLogin" onrendered="setDmnToken"></basis>
         <basis core="api" name="api.selectuser" if="{##authentication.hashid##} && {##form.selectuser##}" run="AtClient"
-            url="https://api.trust-login.com/selectuser" method="post"
+            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/selectuser" method="post"
             body='{"hashid": "{##authentication.hashid.value##}", "userid": {##form.selectuser.userid|(null)##}}'
             onprocessed="onProcessedSelectUser" triggers="form.selectuser"></basis>
         <basis core="api" name="api.forgetpassword" if="{##token.token##} && {##form.forgetPassword##}" run="AtClient"
-            url="https://api.trust-login.com/forgetpassword?culture=en" method="post"
+            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/forgetpassword?culture=en" method="post"
             body='{"token":"{##token.token.value##}", "username":"{##form.forgetPassword.username##}"}'
             onprocessed="onProcessedForgetPassword" triggers="form.forgetPassword"></basis>
         <basis core="api" name="api.selectchangepassmethod" if='{##token.token##} && {##form.selectchangepassmethod##}'
-            run="AtClient" url="https://api.trust-login.com/selectchangepassmethod" method="post"
+            run="AtClient" url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/selectchangepassmethod" method="post"
             body='{"token":"{##token.token.value##}","userid":{##forgetpassword.userid.value##},"ismobile":{##form.selectchangepassmethod.ismobile##},"culture":"en"}'
             onprocessed="onProcessedSelectChangePassMethod" triggers="form.selectchangepassmethod"></basis>
         <basis core="api" name="api.token" if='{##db.runTokenCommand.value|(false)##}' run="AtClient"
-            url="https://api.trust-login.com/token?recaptcha={##token.recaptcha.value|()##}" method="post"
+            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/token?recaptcha={##token.recaptcha.value|()##}" method="post"
             body='{"dmntoken": "{##db.runTokenCommand.dmntoken##}"}'
             triggers="run.token db.runTokenCommand token.recaptcha" onprocessed="onProcessedToken"></basis>
         <basis core="api" name="api.authentication" if='{##token.token##} && {##form.authentication##}' run="AtClient"
-            url="https://api.trust-login.com/authentication?culture=en" method="post"
+            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/authentication?culture=en" method="post"
             body='{"token": "{##token.token.value##}", "username": "{##form.authentication.username##}", "captcha": "{##form.authentication.captchaid##}"}'
             onprocessed="onProcessedAuthentication" triggers="form.authentication"></basis>
         <basis core="api" name="api.login" if='{##authentication.hashid##} && {##form.login##}' run="AtClient"
-            url="https://api.trust-login.com/login?culture=en" method="post"
+            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/login?culture=en" method="post"
             body='{"hashid": "{##authentication.hashid.value##}", "code": "{##form.login.code##}", "recode": "{##form.login.recode##}", "email": "{##form.login.email##}", "mobile": "{##form.login.mobile##}"}'
             onprocessed="onProcessedLogin" triggers="form.login"></basis>
         <basis core="cookie" name="rkey" run="AtClient" if="{##user.rkey##}" value="{##user.rkey.value##}" path='/'
@@ -175,13 +175,13 @@
         </basis>
 
         <basis core="api" name="api.checkrkey" run="AtClient" if="{##user.checkrkey##}"
-            url="https://api.trust-login.com/checkrkey/{##user.checkrkey.value##}" method="get"
+            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/checkrkey/{##user.checkrkey.value##}" method="get"
             onprocessed="onProcessedCheckrkey" triggers="user.checkrkey">
         </basis>
         <basis core="call" if="{##user.profile.value|(false)##}" run="AtClient" file="/authentication/information/En"
             triggers="user.profile"></basis>
         <basis core="api" name="api.countrycodes" if='{##db.countryCodes##}' run="AtClient"
-            url="https://api.trust-login.com/countrycodes?culture=en" method="get" onprocessed="onProcessedCountryCodes"
+            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/countrycodes?culture=en" method="get" onprocessed="onProcessedCountryCodes"
             triggers="db.countryCodes"></basis>
         <section class="user-entrance-body" style="display: none;" data-dmnid="[##cms.cms.domainid##]">
             <section class="bg-login-container" onclick="closeLoginContainer(this)">
