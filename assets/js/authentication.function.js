@@ -66,7 +66,7 @@ if (matchedCompany) {
         ? 'ایمیل یا شماره موبایل'
         : culture === 'ar'
             ? 'البريد الالكتروني'
-            : 'Email'
+            : 'Mobile number or email'
         }`);
 }
 function getToken() {
@@ -2132,8 +2132,10 @@ const panelLoginTitleObserver = new MutationObserver(() => {
             if (loginTitle) {
                 loginTitle.insertAdjacentHTML('afterend', `
             <div class="commission-info">
-              <p class="group-hover:text-red-600 text-red-600">همکاران گرامی، برای دریافت کمیسیون و محاسبه امتیازات، حتماً با ایمیل وارد سایت شوید.</p>
-              <p class="group-hover:text-red-600 text-red-600">در صورت ورود با شماره موبایل، کمیسیون به شما تعلق نمی گیرد و امتیازات شما محاسبه نمی گردد.</p>
+              <p class="group-hover:text-red-600 text-red-600">همکاران گرامی</p>
+              <p class="group-hover:text-red-600 text-red-600">امکان ورود به سیستم با شماره موبایل برای شما فراهم شده است</p>
+              <p class="group-hover:text-blue-600 text-blue-600">لطفاً پیش از استفاده از این روش، شماره موبایل خود را جهت ثبت در سیستم از طریق چت آنلاین به ما اطلاع دهید تا کمیسیون و محاسبه امتیازات برای شما فعال گردد</p>
+              <p class="group-hover:text-blue-600 text-blue-600">توجه داشته باشید که ایمیل‌های قبلی همچنان قابل استفاده خواهند بود</p>
             </div>
           `);
             }
