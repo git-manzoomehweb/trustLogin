@@ -1,5 +1,6 @@
-<basis core="api" name="api.schema" run="AtClient" url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/[##cms.cookie.rkey##]/en"
-    method="get"></basis>
+<basis core="api" name="api.schema" run="AtClient"
+    url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/[##cms.cookie.rkey##]/en" method="get">
+</basis>
 <basis core="callback" run="atclient" triggers="answer.data" method="onProcessedUserinformation"></basis>
 <basis core="call" if="{##db.runLogout.value|(false)##}" run="AtClient" file="/authentication/dmntoken"
     triggers="db.runLogout" onrendered="setDmnTokenForLogout"></basis>
@@ -32,11 +33,12 @@
         <div class="clr"></div>
         <ul class="user-profile-body">
             <li>
-                <a href="/En-Panel-Dashboard.bc" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24">
+                <span onclick="openUserPanelPage()" class="user-panel-link"><svg xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                    </svg> User Information</a>
+                    </svg>User Information</span>
+
             </li>
             <li>
                 <span class="logoutConfirm" onclick="logoutConfirm()">
@@ -106,5 +108,11 @@
             // Log unexpected errors to help debugging without breaking the page
             console.error("onProcessedUserinformation error:", err);
         }
+    }
+    function openUserPanelPage() {
+        const baseUrl = "/userpanel/booking/list?lid=2";
+        const separator = baseUrl.includes("?") ? "&" : "?";
+        const url = baseUrl + separator + "_reload=" + Date.now();
+        window.open(url, "_blank");
     }
 </script>
