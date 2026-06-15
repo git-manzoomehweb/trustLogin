@@ -1993,7 +1993,10 @@ function detectInputType(element) {
                 };
                 loginForm?.querySelector("#firstUsername").insertAdjacentHTML('beforeend', `<span class="countryCodes__loader"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" style="width: 20px;height: 20px;"><radialGradient id="a9" cx=".66" fx=".66" cy=".3125" fy=".3125" gradientTransform="scale(1.5)"><stop offset="0" stop-color="#000000"/><stop offset=".3" stop-color="#000000" stop-opacity=".9"/><stop offset=".6" stop-color="#000000" stop-opacity=".6"/><stop offset=".8" stop-color="#000000" stop-opacity=".3"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></radialGradient><circle transform-origin="center" fill="none" stroke="url(#a9)" stroke-width="15" stroke-linecap="round" stroke-dasharray="200 1000" stroke-dashoffset="0" cx="100" cy="100" r="70"><animateTransform type="rotate" attributeName="transform" calcMode="spline" dur="2" values="360;0" keyTimes="0;1" keySplines="0 0 1 1" repeatCount="indefinite"/></circle><circle transform-origin="center" fill="none" opacity=".2" stroke="#000000" stroke-width="15" stroke-linecap="round" cx="100" cy="100" r="70"/></svg>
 </span>`);
+
+
                 if (element.ownerid == document.querySelector(".company-ownerid").value) {
+
                     $bc.setSource("db.countryCodes", true);
                     tellCode = element.code;
                 }
@@ -2019,9 +2022,11 @@ async function onProcessedCountryCodes(args) {
     output += `</ul>`;
     ownerEl.setAttribute("data-country", '1');
     firstUsername.insertAdjacentHTML('beforeend', output);
+    firstUsername.style.paddingLeft = "110px"
 
 }
 function selectCountryLoginCode(element) {
+
     const form = element.closest("form");
     if (!form) return;
 
@@ -2029,12 +2034,15 @@ function selectCountryLoginCode(element) {
     const usernameInput = form.querySelector("#firstUsernameInput");
 
     if (codeInput) {
+
         codeInput.value = element.dataset.id || "";
     }
 
     if (usernameInput) {
-        usernameInput.value = ''
-        usernameInput.setAttribute("data-value", '');
+
+        const usernameValue = usernameInput.getAttribute("data-value") || usernameInput.value || "";
+        usernameInput.value = usernameValue;
+        usernameInput.setAttribute("data-value", usernameValue);
     }
 }
 
@@ -2083,7 +2091,12 @@ document.addEventListener('click', function (event) {
 function checkUsername() {
     if (loginForm?.querySelector(".id-loginCode")) {
         const loginCode = convertToEnglishNumbers(loginForm?.querySelector(".id-loginCode")?.value) || "";
-        const usernameInput = convertToEnglishNumbers(loginForm?.querySelector("input[name='username']")?.getAttribute("data-value"));
+        const usernameField = loginForm?.querySelector("input[name='username']");
+        let usernameInputValue = usernameField?.getAttribute("data-value") || usernameField?.value || "";
+        if (loginCode && usernameInputValue.startsWith(loginCode)) {
+            usernameInputValue = usernameInputValue.slice(loginCode.length);
+        }
+        const usernameInput = convertToEnglishNumbers(usernameInputValue);
         username = loginCode + usernameInput;
     } else {
         const usernameInput = convertToEnglishNumbers(loginForm?.querySelector("input[name='username']")?.value) || "";
