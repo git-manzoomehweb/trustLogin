@@ -47,23 +47,26 @@
 <body>
     <main class="main-container">
         <basis core="group" name="lid" if="'[##cms.query.lid|(1)##]' = '1'">
-            <basis core="call" file="header.inc" lid="[##cms.query.lid|(1)##]"  pageindex="[##cms.cms.pageindex##]"></basis>
+            <basis core="call" file="header.inc" lid="[##cms.query.lid|(1)##]" pageindex="[##cms.cms.pageindex##]">
+            </basis>
             <div class="clr"></div>
             <section class="content">
                 <div class="main-operationUser-container rtl-lang">
                     <form>
                         <h1> تکمیل فرایند ثبت نام </h1>
                         <basis core="api" name="api.useractivation" run="AtClient"
-                            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/useractivation" method="post"
-                            body='{"rkey": "[##cms.query.rkey##]"}' onprocessed="onProcessedUserActivation">
+                            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/useractivation"
+                            method="post" body='{"rkey": "[##cms.query.rkey##]"}'
+                            onprocessed="onProcessedUserActivation">
                         </basis>
                         <basis core='callback' run='AtClient' method='checkSource' triggers='api.useractivation'>
                         </basis>
                         <basis core='api' if='{##complete.registration.run|(false)##}' run='AtClient'
-                            url='[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/{##complete.registration.rkey##}/fa' method='get'
-                            triggers='complete.registration'></basis>
+                            url='[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/{##complete.registration.rkey##}/fa'
+                            method='get' triggers='complete.registration'></basis>
                         <basis core="schema" run="AtClient" datamembername="answer.data"
-                            if='{##complete.registration.run|(false)##}' schemaurl="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema"
+                            if='{##complete.registration.run|(false)##}'
+                            schemaurl="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema"
                             displaymode="edit" triggers='complete.registration' button="[data-btn-editUser]"
                             resultsourceid="editUser.data"></basis>
                         <basis core="cookie" name="rkey" if="{##complete.registration.run|(false)##}" run="AtClient"
@@ -99,7 +102,7 @@
                 </div>
                 <div class="clr"></div>
             </section>
-            <basis core="call" lid="1" file="footer.inc"  pageindex="[##cms.cms.pageindex##]"></basis>
+            <basis core="call" lid="1" file="footer.inc" pageindex="[##cms.cms.pageindex##]"></basis>
         </basis>
         <basis core="group" name="lid" if="'[##cms.query.lid|(1)##]' = '2'">
             <basis core="call" file="header-en.inc"></basis>
@@ -109,14 +112,16 @@
                     <form>
                         <h1> complete registration </h1>
                         <basis core="api" name="api.useractivation" run="AtClient"
-                            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/useractivation" method="post"
-                            body='{"rkey": "[##cms.query.rkey##]"}' onprocessed="onProcessedUserActivation">
+                            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/useractivation"
+                            method="post" body='{"rkey": "[##cms.query.rkey##]"}'
+                            onprocessed="onProcessedUserActivation">
                         </basis>
                         <basis core='api' if='{##complete.registration.run|(false)##}' run='AtClient'
-                            url='[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/{##complete.registration.rkey##}/en' method='get'
-                            triggers='complete.registration'></basis>
+                            url='[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/{##complete.registration.rkey##}/en'
+                            method='get' triggers='complete.registration'></basis>
                         <basis core="schema" run="AtClient" datamembername="answer.data"
-                            if='{##complete.registration.run|(false)##}' schemaurl="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema"
+                            if='{##complete.registration.run|(false)##}'
+                            schemaurl="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema"
                             displaymode="edit" triggers='complete.registration' button="[data-btn-editUser]"
                             resultsourceid="editUser.data"></basis>
                         <basis core="cookie" name="rkey" if="{##complete.registration.run|(false)##}" run="AtClient"
@@ -162,14 +167,16 @@
                     <form>
                         <h1> أكمل عملية التسجيل </h1>
                         <basis core="api" name="api.useractivation" run="AtClient"
-                            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/useractivation" method="post"
-                            body='{"rkey": "[##cms.query.rkey##]"}' onprocessed="onProcessedUserActivation">
+                            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/useractivation"
+                            method="post" body='{"rkey": "[##cms.query.rkey##]"}'
+                            onprocessed="onProcessedUserActivation">
                         </basis>
                         <basis core='api' if='{##complete.registration.run|(false)##}' run='AtClient'
-                            url='[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/{##complete.registration.rkey##}/ar' method='get'
-                            triggers='complete.registration'></basis>
+                            url='[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/{##complete.registration.rkey##}/ar'
+                            method='get' triggers='complete.registration'></basis>
                         <basis core="schema" run="AtClient" datamembername="answer.data"
-                            if='{##complete.registration.run|(false)##}' schemaurl="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema"
+                            if='{##complete.registration.run|(false)##}'
+                            schemaurl="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema"
                             displaymode="edit" triggers='complete.registration' button="[data-btn-editUser]"
                             resultsourceid="editUser.data"></basis>
                         <basis core="cookie" name="rkey" if="{##complete.registration.run|(false)##}" run="AtClient"
@@ -215,6 +222,51 @@
     </main>
 
     <script type="text/javascript">
+        const authSignupDataLayer = "[##cms.host.auth-dataLayer##]";
+        console.log("[auth signup dataLayer] init", {
+            authDataLayer: authSignupDataLayer,
+            enabled: authSignupDataLayer === true || authSignupDataLayer === "true"
+        });
+        function isAuthSignupDataLayerEnabled() {
+            return authSignupDataLayer === true || authSignupDataLayer === "true";
+        }
+        function getFirstAvailableValue(source, keys) {
+            if (!source) return undefined;
+            for (const key of keys) {
+                if (source[key] !== undefined && source[key] !== null && source[key] !== "") {
+                    return source[key];
+                }
+            }
+            return undefined;
+        }
+        function getSignupDataLayerPayload(responseJson) {
+            const userProperties = {
+                signup_source: getFirstAvailableValue(responseJson, ["signup_source", "signupSource"]) || localStorage.getItem("auth_signup_source") || "v4/userActivation",
+                signup_date: getFirstAvailableValue(responseJson, ["signup_date", "signupDate", "register_date", "registerDate"]) || new Date().toISOString().slice(0, 10)
+            };
+            const payload = {
+                event: "signup",
+                user_id: getFirstAvailableValue(responseJson, ["user_id", "userid", "id"]),
+                method: "email",
+                user_properties: userProperties
+            };
+            Object.keys(payload).forEach(key => payload[key] === undefined && delete payload[key]);
+            return payload;
+        }
+        function pushSignupDataLayer(responseJson) {
+            if (!isAuthSignupDataLayerEnabled()) {
+                console.log("[auth signup dataLayer] skipped", {
+                    authDataLayer: authSignupDataLayer,
+                    enabled: isAuthSignupDataLayerEnabled(),
+                    response: responseJson
+                });
+                return;
+            }
+            window.dataLayer = window.dataLayer || [];
+            const payload = getSignupDataLayerPayload(responseJson);
+            console.log("[auth signup dataLayer] push", payload);
+            window.dataLayer.push(payload);
+        }
         function checkSource(args) {
             console.log('api.useractivation')
             console.log(args)
@@ -244,6 +296,7 @@
                                     `The user ID is invalid`
                             }</div>`;
                     } else if (responseJson.errorid == '25') {
+                        pushSignupDataLayer(responseJson);
                         document.querySelector(".main-operationUser-container").querySelector(".login-btn").classList.remove("hidden");
                         document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
     <div class="success"> ${'[##cms.query.lid|(1)##]' == '1' ? `ثبت نام شما با موفقیت انجام شد، لطفا جهت تکمیل فرایند ثبت نام، اطلاعات زیر را وارد نمایید` :
@@ -275,6 +328,7 @@
                             }</div>`;
 
                     } else if (responseJson.errorid == '59') {
+                        pushSignupDataLayer(responseJson);
                         document.querySelector(".main-operationUser-container").querySelector(".login-btn").classList.remove("hidden");
                         document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
     <div class="success"> ${'[##cms.query.lid|(1)##]' == '1' ? `ثبت نام شما با موفقیت انجام شد، لطفا جهت تکمیل فرایند ثبت نام، اطلاعات زیر را وارد نمایید` :

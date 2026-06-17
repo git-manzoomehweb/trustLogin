@@ -34,7 +34,7 @@
 <basis core="call" if="{##user.profile.value|(false)##}" run="AtClient" file="/authentication/information"
     triggers="user.profile"></basis>
 <section class="user-entrance-body single-page" data-dmnid="[##cms.cms.domainid##]">
-    <section class="main-login-container rtl-lang" data-culture="fa">
+    <section class="main-login-container rtl-lang" data-culture="fa" data-agency-signup="[##cms.host.agency-signUp##]" data-auth-data-layer="[##cms.host.auth-dataLayer##]">
         <div class="login-closed" onclick="closeLoginContainer(this)">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
                 stroke-width="1.5" stroke="currentColor">

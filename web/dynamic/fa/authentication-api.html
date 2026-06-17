@@ -19,13 +19,14 @@
         body='{"token":"{##token.token.value##}", "username":"{##form.forgetPassword.username##}"}'
         onprocessed="onProcessedForgetPassword" triggers="form.forgetPassword"></basis>
     <basis core="api" name="api.selectchangepassmethod" if='{##token.token##} && {##form.selectchangepassmethod##}'
-        run="AtClient" url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/selectchangepassmethod" method="post"
+        run="AtClient" url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/selectchangepassmethod"
+        method="post"
         body='{"token":"{##token.token.value##}","userid":{##forgetpassword.userid.value##},"ismobile":{##form.selectchangepassmethod.ismobile##},"culture":"fa"}'
         onprocessed="onProcessedSelectChangePassMethod" triggers="form.selectchangepassmethod"></basis>
     <basis core="api" name="api.token" if='{##db.runTokenCommand.value|(false)##}' run="AtClient"
-        url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/token?recaptcha={##token.recaptcha.value|()##}" method="post"
-        body='{"dmntoken": "{##db.runTokenCommand.dmntoken##}"}' triggers="run.token db.runTokenCommand token.recaptcha"
-        onprocessed="onProcessedToken"></basis>
+        url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/token?recaptcha={##token.recaptcha.value|()##}"
+        method="post" body='{"dmntoken": "{##db.runTokenCommand.dmntoken##}"}'
+        triggers="run.token db.runTokenCommand token.recaptcha" onprocessed="onProcessedToken"></basis>
     <basis core="api" name="api.authentication" if='{##token.token##} && {##form.authentication##}' run="AtClient"
         url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/authentication?culture=fa" method="post"
         body='{"token": "{##token.token.value##}", "username": "{##form.authentication.username##}", "captcha": "{##form.authentication.captchaid##}"}'
@@ -39,15 +40,16 @@
     </basis>
 
     <basis core="api" name="api.checkrkey" run="AtClient" if="{##user.checkrkey##}"
-        url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/checkrkey/{##user.checkrkey.value##}" method="get"
-        onprocessed="onProcessedCheckrkey" triggers="user.checkrkey">
+        url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/checkrkey/{##user.checkrkey.value##}"
+        method="get" onprocessed="onProcessedCheckrkey" triggers="user.checkrkey">
     </basis>
     <basis core="call" if="{##user.profile.value|(false)##}" run="AtClient" file="/authentication/information?lid=1"
         triggers="user.profile"></basis>
     <section class="user-entrance-body" style="display: none;" data-dmnid="[##cms.cms.domainid##]">
         <section class="bg-login-container" onclick="closeLoginContainer(this)">
         </section>
-        <section class="main-login-container rtl-lang" data-culture="fa" data-agency-signup="[##cms.host.agency-signUp##]"> 
+        <section class="main-login-container rtl-lang" data-culture="fa"
+            data-agency-signup="[##cms.host.agency-signUp##]" data-auth-data-layer="[##cms.host.auth-dataLayer##]">
             <div class="login-closed" onclick="closeLoginContainer(this)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
                     stroke-width="1.5" stroke="currentColor">
@@ -55,8 +57,7 @@
                 </svg>
             </div>
             <div class="login-right-part">
-                <div class="login-mob-img"><img src=""
-                        width="130" height="105" alt="login" /></div>
+                <div class="login-mob-img"><img src="" width="130" height="105" alt="login" /></div>
                 <div class="login-title">
                     <div id="login-title">
                         <div class="login-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -114,13 +115,13 @@
                 </div>
             </div>
             <div class="login-left-part">
-                <img src="" width="250" height="250"
-                    alt="login" />
+                <img src="" width="250" height="250" alt="login" />
             </div>
             <div class="clr"></div>
         </section>
     </section>
-    <script type="text/javascript" src="[##cms.cms.cdn##]/authentication/js/authentication.function.js?ver=[##cms.cms.date2##][##cms.cms.time2##]"></script>
+    <script type="text/javascript"
+        src="[##cms.cms.cdn##]/authentication/js/authentication.function.js?ver=[##cms.cms.date2##][##cms.cms.time2##]"></script>
 </basis>
 <basis core="group" name="has-rkey" if="'[##cms.cookie.rkey##]' <> ''">
     <basis core="call" lid="1" file="Client_CheckRkey.inc"></basis>
@@ -145,12 +146,13 @@
             body='{"token":"{##token.token.value##}", "username":"{##form.forgetPassword.username##}"}'
             onprocessed="onProcessedForgetPassword" triggers="form.forgetPassword"></basis>
         <basis core="api" name="api.selectchangepassmethod" if='{##token.token##} && {##form.selectchangepassmethod##}'
-            run="AtClient" url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/selectchangepassmethod" method="post"
+            run="AtClient" url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/selectchangepassmethod"
+            method="post"
             body='{"token":"{##token.token.value##}","userid":{##forgetpassword.userid.value##},"ismobile":{##form.selectchangepassmethod.ismobile##},"culture":"fa"}'
             onprocessed="onProcessedSelectChangePassMethod" triggers="form.selectchangepassmethod"></basis>
         <basis core="api" name="api.token" if='{##db.runTokenCommand.value|(false)##}' run="AtClient"
-            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/token?recaptcha={##token.recaptcha.value|()##}" method="post"
-            body='{"dmntoken": "{##db.runTokenCommand.dmntoken##}"}'
+            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/token?recaptcha={##token.recaptcha.value|()##}"
+            method="post" body='{"dmntoken": "{##db.runTokenCommand.dmntoken##}"}'
             triggers="run.token db.runTokenCommand token.recaptcha" onprocessed="onProcessedToken"></basis>
         <basis core="api" name="api.authentication" if='{##token.token##} && {##form.authentication##}' run="AtClient"
             url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/authentication?culture=fa" method="post"
@@ -165,15 +167,16 @@
         </basis>
 
         <basis core="api" name="api.checkrkey" run="AtClient" if="{##user.checkrkey##}"
-            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/checkrkey/{##user.checkrkey.value##}" method="get"
-            onprocessed="onProcessedCheckrkey" triggers="user.checkrkey">
+            url="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/checkrkey/{##user.checkrkey.value##}"
+            method="get" onprocessed="onProcessedCheckrkey" triggers="user.checkrkey">
         </basis>
         <basis core="call" if="{##user.profile.value|(false)##}" run="AtClient" file="/authentication/information?lid=1"
             triggers="user.profile"></basis>
         <section class="user-entrance-body" style="display: none;" data-dmnid="[##cms.cms.domainid##]">
             <section class="bg-login-container" onclick="closeLoginContainer(this)">
             </section>
-            <section class="main-login-container rtl-lang" data-culture="fa">
+            <section class="main-login-container rtl-lang" data-culture="fa"
+                data-agency-signup="[##cms.host.agency-signUp##]" data-auth-data-layer="[##cms.host.auth-dataLayer##]">
                 <div class="login-closed" onclick="closeLoginContainer(this)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
@@ -181,8 +184,7 @@
                     </svg>
                 </div>
                 <div class="login-right-part">
-                    <div class="login-mob-img"><img src=""
-                            width="130" height="105" alt="login" /></div>
+                    <div class="login-mob-img"><img src="" width="130" height="105" alt="login" /></div>
                     <div class="login-title">
                         <div id="login-title">
                             <div class="login-icon">
@@ -242,8 +244,7 @@
                     </div>
                 </div>
                 <div class="login-left-part">
-                    <img src="" width="250" height="250"
-                        alt="login" />
+                    <img src="" width="250" height="250" alt="login" />
                 </div>
                 <div class="clr"></div>
             </section>
@@ -259,4 +260,5 @@
         </basis>
     </basis>
 </basis>
-<link href="[##cms.cms.cdn##]/authentication/css/authentication.ui.min.css?ver=[##cms.cms.date2##][##cms.cms.time2##]" type="text/css" rel="stylesheet" />
+<link href="[##cms.cms.cdn##]/authentication/css/authentication.ui.min.css?ver=[##cms.cms.date2##][##cms.cms.time2##]"
+    type="text/css" rel="stylesheet" />

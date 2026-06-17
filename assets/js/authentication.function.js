@@ -1,6 +1,7 @@
 var ownerEl = document.querySelector(".main-login-container");
 var culture = ownerEl.dataset.culture
 var agencySignup = ownerEl.dataset.agencySignup
+var authDataLayer = ownerEl.dataset.authDataLayer
 var loginForm = ownerEl.querySelector(".loginForm");
 var loginFormMessage = ownerEl.querySelector(".api-message");
 var countryCode = ownerEl.querySelector(".country-code");
@@ -9,6 +10,12 @@ var hashid;
 var hasCaptcha = false;
 var dmntoken = 0;
 var tellCode = "+98";
+var pendingAuthDataLayerEvent = null;
+var pendingAuthDataLayerMethod = null;
+console.log("[auth dataLayer] init", {
+    authDataLayer: authDataLayer,
+    enabled: authDataLayer === true || authDataLayer === "true"
+});
 const captchaContainer = document.createElement("div");
 captchaContainer.classList.add("captchaContainer");
 captchaContainer.setAttribute("id", "captchaContainer")
@@ -31,6 +38,83 @@ itemTemp.appendChild(itemIconTemp);
 itemTemp.appendChild(itemInputTemp);
 itemField.appendChild(itemInputTemp2);
 let username = "";
+
+function isAuthDataLayerEnabled() {
+    return authDataLayer === true || authDataLayer === "true";
+}
+
+function getFirstAvailableValue(source, keys) {
+    if (!source) return undefined;
+    for (const key of keys) {
+        if (source[key] !== undefined && source[key] !== null && source[key] !== "") {
+            return source[key];
+        }
+    }
+    return undefined;
+}
+
+function getAuthMethodFromValue(value) {
+    if (!value) return undefined;
+    const normalizedValue = convertToEnglishNumbers(String(value)).trim();
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedValue)) return "email";
+    if (/^\+?\d{1,4}?[-.\s]?(\(?\d{1,3}?\))?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(normalizedValue)) return "mobile";
+    return undefined;
+}
+
+function getAuthDataLayerMethod(responseType) {
+    if (responseType === "email" || responseType === "mobile") return responseType;
+
+    const loginEmailInput = loginForm?.querySelector("input[name='email']");
+    if (loginEmailInput?.value) return "email";
+
+    const loginMobileInput = loginForm?.querySelector("input[name='mobile']");
+    if (loginMobileInput?.value) return "mobile";
+
+    const usernameInput = loginForm?.querySelector("#firstUsernameInput");
+    return getAuthMethodFromValue(usernameInput?.getAttribute("data-value") || usernameInput?.value);
+}
+
+function getAuthDataLayerPayload(responseJson, eventName) {
+    const payload = {
+        event: eventName,
+        user_id: getFirstAvailableValue(responseJson, ["user_id", "userid", "id"])
+    };
+
+    if (pendingAuthDataLayerMethod) {
+        payload.method = pendingAuthDataLayerMethod;
+    }
+
+    if (eventName !== "login") {
+        payload.user_properties = {
+            signup_source: getFirstAvailableValue(responseJson, ["signup_source", "signupSource"]) || localStorage.getItem("auth_signup_source") || "v4/userActivation",
+            signup_date: getFirstAvailableValue(responseJson, ["signup_date", "signupDate", "register_date", "registerDate"]) || new Date().toISOString().slice(0, 10)
+        };
+    }
+
+    Object.keys(payload).forEach(key => payload[key] === undefined && delete payload[key]);
+    return payload;
+}
+
+function pushAuthDataLayer(responseJson) {
+    if (!isAuthDataLayerEnabled() || !pendingAuthDataLayerEvent) {
+        console.log("[auth dataLayer] skipped", {
+            authDataLayer: authDataLayer,
+            enabled: isAuthDataLayerEnabled(),
+            pendingEvent: pendingAuthDataLayerEvent,
+            pendingMethod: pendingAuthDataLayerMethod,
+            response: responseJson
+        });
+        return;
+    }
+
+    window.dataLayer = window.dataLayer || [];
+    const payload = getAuthDataLayerPayload(responseJson, pendingAuthDataLayerEvent);
+    console.log("[auth dataLayer] push", payload);
+    window.dataLayer.push(payload);
+    pendingAuthDataLayerEvent = null;
+    pendingAuthDataLayerMethod = null;
+}
+
 // ALa web service
 const ala_json = [{
     name: "Destino",
@@ -421,6 +505,12 @@ async function onProcessedAuthentication(args) {
     } else if (errorid == "2") {
         let type = responseJson.type;
         let newUser = responseJson.newUser;
+        pendingAuthDataLayerEvent = newUser == true ? "signup" : "login";
+        pendingAuthDataLayerMethod = getAuthDataLayerMethod(type);
+        if (pendingAuthDataLayerEvent === "signup") {
+            localStorage.setItem("auth_signup_source", responseJson.signup_source || responseJson.signupSource || "homepage_hero_banner");
+        }
+        console.log("[auth dataLayer] pending event", pendingAuthDataLayerEvent, responseJson);
         if (type == "mobile") {
             if (newUser == true) {
                 // ------------------------- new changes -------------------------
@@ -1155,6 +1245,9 @@ async function onProcessedLogin(args) {
     } else if (errorid == "11") {
         // successful
         const rkey = responseJson.rkey;
+        pendingAuthDataLayerEvent = pendingAuthDataLayerEvent || "login";
+        pendingAuthDataLayerMethod = getAuthDataLayerMethod(responseJson.type) || pendingAuthDataLayerMethod;
+        console.log("[auth dataLayer] pending event", pendingAuthDataLayerEvent, responseJson);
         loginFormMessage.innerHTML = `<span class="success">${culture === 'fa'
             ? `با موفقیت وارد شدید`
             : culture === 'ar'
@@ -1263,6 +1356,9 @@ async function onProcessedLogin(args) {
     } else if (errorid == "55") {
         // this user is already logged in
         const rkey = responseJson.rkey;
+        pendingAuthDataLayerEvent = pendingAuthDataLayerEvent || "login";
+        pendingAuthDataLayerMethod = getAuthDataLayerMethod(responseJson.type) || pendingAuthDataLayerMethod;
+        console.log("[auth dataLayer] pending event", pendingAuthDataLayerEvent, responseJson);
         loginFormMessage.innerHTML = `<span class="success">${culture === 'fa'
             ? `با موفقیت وارد شدید`
             : culture === 'ar'
@@ -1300,6 +1396,7 @@ async function onProcessedCheckrkey(args) {
     const response = args.response;
     const responseJson = await response.json();
     if (responseJson.checked == true) {
+        pushAuthDataLayer(responseJson);
         var passengerList_key = loginForm.querySelector(".passengerList-key").value;
         var internal_key = loginForm.querySelector(".internal-key").value;
         var index_key = loginForm.querySelector(".index-key").value;
@@ -1593,6 +1690,9 @@ async function onProcessedSelectUser(args) {
             }
         }, 3000);
     } else if (errorid == "2") {
+        pendingAuthDataLayerEvent = "login";
+        pendingAuthDataLayerMethod = getAuthDataLayerMethod(responseJson.type) || pendingAuthDataLayerMethod;
+        console.log("[auth dataLayer] pending event", pendingAuthDataLayerEvent, responseJson);
         document.querySelector("#login-title").classList.add("hidden")
         document.querySelector("#selectUser-title").classList.add("hidden")
         // --------------new--------------

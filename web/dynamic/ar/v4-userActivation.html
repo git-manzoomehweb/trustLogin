@@ -23,7 +23,7 @@
 
 <body>
     <main class="main-container">
-        <basis core="call" file="header.inc" lid="3"  pageindex="[##cms.cms.pageindex##]"></basis>
+        <basis core="call" file="header.inc" lid="3" pageindex="[##cms.cms.pageindex##]"></basis>
         <div class="clr"></div>
         <section class="content">
             <div class="main-operationUser-container rtl-lang">
@@ -34,10 +34,11 @@
                         body='{"rkey": "[##cms.query.rkey##]"}' onprocessed="onProcessedUserActivation">
                     </basis>
                     <basis core='api' if='{##complete.registration.run|(false)##}' run='AtClient'
-                        url='[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/{##complete.registration.rkey##}/ar' method='get'
-                        triggers='complete.registration'></basis>
+                        url='[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema/{##complete.registration.rkey##}/ar'
+                        method='get' triggers='complete.registration'></basis>
                     <basis core="schema" run="AtClient" datamembername="answer.data"
-                        if='{##complete.registration.run|(false)##}' schemaurl="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema"
+                        if='{##complete.registration.run|(false)##}'
+                        schemaurl="[##cms.host.trust_login_api|(https://api.trust-login.com)##]/schema"
                         displaymode="edit" triggers='complete.registration' button="[data-btn-editUser]"
                         resultsourceid="editUser.data"></basis>
                     <basis core="cookie" name="rkey" if="{##complete.registration.run|(false)##}" run="AtClient"
@@ -73,10 +74,55 @@
             </div>
             <div class="clr"></div>
         </section>
-        <basis core="call" file="footer.inc" lid="3"  pageindex="[##cms.cms.pageindex##]"></basis>
+        <basis core="call" file="footer.inc" lid="3" pageindex="[##cms.cms.pageindex##]"></basis>
     </main>
 
     <script type="text/javascript">
+        const authSignupDataLayer = "[##cms.host.auth-dataLayer##]";
+        console.log("[auth signup dataLayer] init", {
+            authDataLayer: authSignupDataLayer,
+            enabled: authSignupDataLayer === true || authSignupDataLayer === "true"
+        });
+        function isAuthSignupDataLayerEnabled() {
+            return authSignupDataLayer === true || authSignupDataLayer === "true";
+        }
+        function getFirstAvailableValue(source, keys) {
+            if (!source) return undefined;
+            for (const key of keys) {
+                if (source[key] !== undefined && source[key] !== null && source[key] !== "") {
+                    return source[key];
+                }
+            }
+            return undefined;
+        }
+        function getSignupDataLayerPayload(responseJson) {
+            const userProperties = {
+                signup_source: getFirstAvailableValue(responseJson, ["signup_source", "signupSource"]) || localStorage.getItem("auth_signup_source") || "v4/userActivation",
+                signup_date: getFirstAvailableValue(responseJson, ["signup_date", "signupDate", "register_date", "registerDate"]) || new Date().toISOString().slice(0, 10)
+            };
+            const payload = {
+                event: "signup",
+                user_id: getFirstAvailableValue(responseJson, ["user_id", "userid", "id"]),
+                method: "email",
+                user_properties: userProperties
+            };
+            Object.keys(payload).forEach(key => payload[key] === undefined && delete payload[key]);
+            return payload;
+        }
+        function pushSignupDataLayer(responseJson) {
+            if (!isAuthSignupDataLayerEnabled()) {
+                console.log("[auth signup dataLayer] skipped", {
+                    authDataLayer: authSignupDataLayer,
+                    enabled: isAuthSignupDataLayerEnabled(),
+                    response: responseJson
+                });
+                return;
+            }
+            window.dataLayer = window.dataLayer || [];
+            const payload = getSignupDataLayerPayload(responseJson);
+            console.log("[auth signup dataLayer] push", payload);
+            window.dataLayer.push(payload);
+        }
         async function onProcessedUserActivation(args) {
             const response = args.response;
             if (response.status == 200) {
@@ -93,6 +139,7 @@
                         document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
     <div class="error">معرف المستخدم غير صالح</div>`;
                     } else if (responseJson.errorid == '25') {
+                        pushSignupDataLayer(responseJson);
                         document.querySelector(".main-operationUser-container").querySelector(".login-btn").classList.remove("hidden");
                         document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
     <div class="success"> تم تسجيلك بنجاح، يرجى إدخال المعلومات أدناه لإكمال عملية التسجيل</div>`;
@@ -112,6 +159,7 @@
     <div class="error"> تم تفعيل هذا المستخدم</div>`;
 
                     } else if (responseJson.errorid == '59') {
+                        pushSignupDataLayer(responseJson);
                         document.querySelector(".main-operationUser-container").querySelector(".login-btn").classList.remove("hidden");
                         document.querySelector(".main-operationUser-container").querySelector(".api-message").innerHTML = `
     <div class="success">تم تسجيلك بنجاح، يرجى إدخال المعلومات أدناه لإكمال عملية التسجيل</div>`;
